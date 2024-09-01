@@ -1,12 +1,12 @@
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { Google } from "@mui/icons-material";
 import { ReactElement } from "react";
-import { Container } from "@mui/material";
+import Image from "next/image";
+import Box from "@mui/material/Box";
 
 export default function Home(): ReactElement {
   return (
-    <Container
+    <Box
       sx={{
         backgroundColor: "#FFFFFF",
         height: "100vh",
@@ -15,15 +15,19 @@ export default function Home(): ReactElement {
       }}
     >
       <Button
-        variant="outlined"
-        endIcon={<Google />}
+        variant="contained"
+        size="large"
+        endIcon={<Google sx={{ height: "36px", width: "36px" }} />}
         sx={{
           textTransform: "none",
-          fontWeight: "bold",
+          fontWieght: "100",
+          fontSize: "36px",
+          height: "100px",
         }}
       >
         Sign in with Google
       </Button>
-    </Container>
+      <Image src="/logo.svg" alt="Logo" width={290} height={100} />
+    </Box>
   );
 }

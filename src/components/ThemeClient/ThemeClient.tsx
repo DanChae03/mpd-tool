@@ -2,8 +2,14 @@
 
 import { createTheme, Theme, ThemeProvider } from "@mui/material/styles";
 import { ReactNode } from "react";
+import { Nunito_Sans } from "next/font/google";
+
+const font = Nunito_Sans({ subsets: ["latin"] });
 
 const theme: Theme = createTheme({
+  typography: {
+    fontFamily: font.style.fontFamily,
+  },
   palette: {
     primary: {
       main: "#E51937",
