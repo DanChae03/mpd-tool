@@ -1,13 +1,28 @@
+"use client";
+
 import Button from "@mui/material/Button";
 import { Google } from "@mui/icons-material";
 import { ReactElement } from "react";
 import Image from "next/image";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import "./globals.css";
 import Link from "next/link";
+import { signInWithGoogle } from "@/utils/firebase";
+import { useRouter } from "next/navigation";
 
 export default function Home(): ReactElement {
+  const router = useRouter();
+
+  const handleGoogleLogin = async () => {
+    try {
+      await signInWithGoogle();
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      alert("Failed to sign in with Google");
+    }
+  };
+
   return (
     <Stack
       alignItems="center"
@@ -56,6 +71,7 @@ export default function Home(): ReactElement {
         <Button
           variant="contained"
           size="large"
+          onClick={handleGoogleLogin}
           endIcon={<Google sx={{ height: "27px", width: "27px" }} />}
           sx={{
             textTransform: "none",
