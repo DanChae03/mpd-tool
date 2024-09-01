@@ -4,6 +4,7 @@ import CardActionArea from "@mui/material/CardActionArea";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 interface NavbarProps {
@@ -20,58 +21,74 @@ export function Navbar({ page }: NavbarProps) {
       width="270px"
       bgcolor="background.paper"
     >
-      <CardActionArea
-        sx={{
-          py: "18px",
-          pl: "45px",
-          bgcolor:
-            page !== "dashboard" ? "background.paper" : "background.default",
-        }}
-        onClick={() => (page !== "dashboard" ? router.push("/dashboard") : {})}
+      <Link
+        href="/dashboard"
+        replace
+        style={{ textDecoration: "none", width: "100%" }}
       >
-        <Typography
-          variant="h5"
-          fontWeight="bold"
-          color={page === "dashboard" ? "primary.main" : "secondary.main"}
+        <CardActionArea
+          sx={{
+            py: "18px",
+            pl: "45px",
+            bgcolor:
+              page !== "dashboard" ? "background.paper" : "background.default",
+          }}
         >
-          Dashboard
-        </Typography>
-      </CardActionArea>
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            color={page === "dashboard" ? "primary.main" : "secondary.main"}
+          >
+            Dashboard
+          </Typography>
+        </CardActionArea>
+      </Link>
       <Divider />
-      <CardActionArea
-        sx={{
-          py: "18px",
-          pl: "45px",
-          bgcolor: page !== "users" ? "background.paper" : "background.default",
-        }}
-        onClick={() => (page !== "users" ? router.push("/users") : {})}
+      <Link
+        href="/users"
+        replace
+        style={{ textDecoration: "none", width: "100%" }}
       >
-        <Typography
-          variant="h5"
-          fontWeight="bold"
-          color={page === "users" ? "primary.main" : "secondary.main"}
+        <CardActionArea
+          sx={{
+            py: "18px",
+            pl: "45px",
+            bgcolor:
+              page !== "users" ? "background.paper" : "background.default",
+          }}
         >
-          Manage Users
-        </Typography>
-      </CardActionArea>
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            color={page === "users" ? "primary.main" : "secondary.main"}
+          >
+            Manage Users
+          </Typography>
+        </CardActionArea>
+      </Link>
       <Divider />
-      <CardActionArea
-        sx={{
-          py: "18px",
-          pl: "45px",
-          bgcolor:
-            page !== "settings" ? "background.paper" : "background.default",
-        }}
-        onClick={() => (page !== "settings" ? router.push("/settings") : {})}
+      <Link
+        href="/settings"
+        replace
+        style={{ textDecoration: "none", width: "100%" }}
       >
-        <Typography
-          variant="h5"
-          fontWeight="bold"
-          color={page === "settings" ? "primary.main" : "secondary.main"}
+        <CardActionArea
+          sx={{
+            py: "18px",
+            pl: "45px",
+            bgcolor:
+              page !== "settings" ? "background.paper" : "background.default",
+          }}
         >
-          Settings
-        </Typography>
-      </CardActionArea>
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            color={page === "settings" ? "primary.main" : "secondary.main"}
+          >
+            Settings
+          </Typography>
+        </CardActionArea>
+      </Link>
     </Stack>
   );
 }
