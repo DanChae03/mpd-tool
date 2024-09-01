@@ -28,7 +28,7 @@ export default function Home(): ReactElement {
       alignItems="center"
       height="100vh"
       sx={{
-        backgroundColor: "background.paper",
+        bgcolor: "background.paper",
       }}
     >
       <Link
