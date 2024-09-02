@@ -2,25 +2,31 @@
 
 import Button from "@mui/material/Button";
 import { Google } from "@mui/icons-material";
-import { ReactElement } from "react";
+import { ReactElement, useState } from "react";
 import Image from "next/image";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Link from "next/link";
 import { signInWithGoogle } from "@/utils/firebase";
 import { useRouter } from "next/navigation";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function Home(): ReactElement {
+  const [state, setState] = useState<"loading" | "error" | undefined>(
+    undefined
+  );
+
   const router = useRouter();
 
   const handleGoogleLogin = async () => {
+    setState("loading");
     try {
       await signInWithGoogle();
       router.push("/dashboard");
     } catch (error) {
-      console.error("Google sign-in error:", error);
-      alert("Failed to sign in with Google");
+      console.error(error);
     }
+    setState("error");
   };
 
   return (
@@ -69,10 +75,25 @@ export default function Home(): ReactElement {
           </Typography>
         </Stack>
         <Button
+          disabled={state === "loading"}
           variant="contained"
           size="large"
           onClick={handleGoogleLogin}
-          endIcon={<Google sx={{ height: "27px", width: "27px" }} />}
+          endIcon={
+            state === "loading" ? (
+              <CircularProgress
+                size="27px"
+                sx={{
+                  color:
+                    state === "loading"
+                      ? "secondary.light"
+                      : "background.paper",
+                }}
+              />
+            ) : (
+              <Google sx={{ height: "27px", width: "27px" }} />
+            )
+          }
           sx={{
             textTransform: "none",
             fontSize: "27px",
@@ -83,6 +104,17 @@ export default function Home(): ReactElement {
         >
           Login or Register
         </Button>
+        {state === "error" && (
+          <Typography
+            variant="h6"
+            color="primary.main"
+            textAlign="center"
+            fontWeight="bold"
+            lineHeight="0px"
+          >
+            Error signing in. Please Try again.
+          </Typography>
+        )}
       </Stack>
     </Stack>
   );
