@@ -65,16 +65,10 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
   {
-    id: "firstName",
+    id: "name",
     numeric: false,
     disablePadding: false,
     label: "Name",
-  },
-  {
-    id: "lastName",
-    numeric: false,
-    disablePadding: false,
-    label: "Surname",
   },
   {
     id: "email",
@@ -179,14 +173,12 @@ export default function Partners(): ReactElement {
   const [filteredPartners, setFilteredPartners] = useState<Partner[]>([]);
   const [searchKey, setSearchKey] = useState<string>("");
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
-  const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
+  const [selectedPartner, setSelectedPartner] = useState<Partner>();
 
   useEffect(() => {
     calculateTotals();
-    const filtered = partners.filter(
-      (partner) =>
-        partner.firstName.toLowerCase().includes(searchKey.toLowerCase()) ||
-        partner.lastName.toLowerCase().includes(searchKey.toLowerCase())
+    const filtered = partners.filter((partner) =>
+      partner.name.toLowerCase().includes(searchKey.toLowerCase())
     );
     const filteredSearch = filtered.filter((partner) =>
       filters.includes(partner.status)
@@ -441,13 +433,25 @@ export default function Partners(): ReactElement {
                         component="th"
                         scope="row"
                         sx={{ fontSize: "18px", fontWeight: "bold" }}
+                        style={{
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          width: "180px",
+                        }}
                       >
-                        {row.firstName}
+                        {row.name}
                       </TableCell>
-                      <TableCell sx={{ fontSize: "18px", fontWeight: "bold" }}>
-                        {row.lastName}
-                      </TableCell>
-                      <TableCell sx={{ fontSize: "18px" }}>
+
+                      <TableCell
+                        sx={{ fontSize: "18px" }}
+                        style={{
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          width: "288px",
+                        }}
+                      >
                         {row.email || "N/A"}
                       </TableCell>
                       <TableCell sx={{ fontSize: "18px" }}>
@@ -500,16 +504,18 @@ export default function Partners(): ReactElement {
           />
         </Paper>
       </Stack>
-      <Drawer
-        anchor="right"
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-      >
-        <DrawerContent
-          partner={selectedPartner}
+      {selectedPartner != null && (
+        <Drawer
+          anchor="right"
+          open={drawerOpen}
           onClose={() => setDrawerOpen(false)}
-        />
-      </Drawer>
+        >
+          <DrawerContent
+            partner={selectedPartner}
+            onClose={() => setDrawerOpen(false)}
+          />
+        </Drawer>
+      )}
     </Stack>
   );
 }

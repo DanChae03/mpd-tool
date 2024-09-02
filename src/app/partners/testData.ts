@@ -1,10 +1,7 @@
-import { Partner } from "@/utils/types";
-
 export const partners: Partner[] = [
   {
     id: 0,
-    firstName: "John",
-    lastName: "Doe",
+    name: "John Doe",
     email: "john.doe@example.com",
     number: "+64210000001",
     sentDate: new Date("2023-08-15"),
@@ -16,8 +13,7 @@ export const partners: Partner[] = [
   },
   {
     id: 1,
-    firstName: "Jane",
-    lastName: "Smith",
+    name: "Jane Smith",
     email: "jane.smith@example.com",
     number: "+64210000002",
     sentDate: new Date("2023-08-16"),
@@ -29,8 +25,7 @@ export const partners: Partner[] = [
   },
   {
     id: 2,
-    firstName: "Alice",
-    lastName: "Brown",
+    name: "Alice Brown",
     email: "alice.brown@example.com",
     number: "+64210000003",
     sentDate: new Date("2023-08-17"),
@@ -42,8 +37,7 @@ export const partners: Partner[] = [
   },
   {
     id: 3,
-    firstName: "Bob",
-    lastName: "Johnson",
+    name: "Bob Johnson",
     email: "bob.johnson@example.com",
     number: "+64210000004",
     sentDate: new Date("2023-08-18"),
@@ -55,8 +49,7 @@ export const partners: Partner[] = [
   },
   {
     id: 4,
-    firstName: "Emma",
-    lastName: "Wilson",
+    name: "Emma Wilson",
     email: "emma.wilson@example.com",
     number: "+64210000005",
     sentDate: undefined,
@@ -68,8 +61,7 @@ export const partners: Partner[] = [
   },
   {
     id: 5,
-    firstName: "Michael",
-    lastName: "Lee",
+    name: "Michael Lee",
     email: undefined,
     number: undefined,
     sentDate: undefined,
@@ -81,8 +73,7 @@ export const partners: Partner[] = [
   },
   {
     id: 6,
-    firstName: "Olivia",
-    lastName: "Clark",
+    name: "Olivia Clark",
     email: "olivia.clark@example.com",
     number: "+64210000007",
     sentDate: new Date("2023-08-20"),
@@ -94,8 +85,7 @@ export const partners: Partner[] = [
   },
   {
     id: 7,
-    firstName: "James",
-    lastName: "Walker",
+    name: "James Walker",
     email: "james.walker@example.com",
     number: "+64210000008",
     sentDate: undefined,
@@ -107,8 +97,7 @@ export const partners: Partner[] = [
   },
   {
     id: 8,
-    firstName: "Sophia",
-    lastName: "Hall",
+    name: "Sophia Hall",
     email: "sophia.hall@example.com",
     number: "+64210000009",
     sentDate: new Date("2023-08-22"),
@@ -120,8 +109,7 @@ export const partners: Partner[] = [
   },
   {
     id: 9,
-    firstName: "Liam",
-    lastName: "Adams",
+    name: "Liam Adams",
     email: "liam.adams@example.com",
     number: "+64210000010",
     sentDate: new Date("2023-08-23"),
@@ -133,8 +121,7 @@ export const partners: Partner[] = [
   },
   {
     id: 10,
-    firstName: "Ava",
-    lastName: "Baker",
+    name: "Ava Baker",
     email: "ava.baker@example.com",
     number: "+64210000011",
     sentDate: new Date("2023-08-24"),
@@ -146,8 +133,7 @@ export const partners: Partner[] = [
   },
   {
     id: 11,
-    firstName: "William",
-    lastName: "Evans",
+    name: "William Evans",
     email: "william.evans@example.com",
     number: "+64210000012",
     sentDate: new Date("2023-08-25"),
@@ -159,8 +145,7 @@ export const partners: Partner[] = [
   },
   {
     id: 12,
-    firstName: "Mia",
-    lastName: "Carter",
+    name: "Mia Carter",
     email: "mia.carter@example.com",
     number: "+64210000013",
     sentDate: new Date("2023-08-26"),
@@ -172,8 +157,7 @@ export const partners: Partner[] = [
   },
   {
     id: 13,
-    firstName: "Benjamin",
-    lastName: "Phillips",
+    name: "Benjamin Phillips",
     email: undefined,
     number: undefined,
     sentDate: undefined,
@@ -185,8 +169,7 @@ export const partners: Partner[] = [
   },
   {
     id: 14,
-    firstName: "Charlotte",
-    lastName: "Mitchell",
+    name: "Charlotte Mitchell",
     email: "charlotte.mitchell@example.com",
     number: "+64210000015",
     sentDate: new Date("2023-08-27"),
@@ -198,8 +181,7 @@ export const partners: Partner[] = [
   },
   {
     id: 15,
-    firstName: "Elijah",
-    lastName: "Perez",
+    name: "Elijah Perez",
     email: "elijah.perez@example.com",
     number: "+64210000016",
     sentDate: new Date("2023-08-28"),
@@ -211,8 +193,7 @@ export const partners: Partner[] = [
   },
   {
     id: 16,
-    firstName: "Amelia",
-    lastName: "Harris",
+    name: "Amelia Harris",
     email: "amelia.harris@example.com",
     number: "+64210000017",
     sentDate: new Date("2023-08-29"),
@@ -224,8 +205,7 @@ export const partners: Partner[] = [
   },
   {
     id: 17,
-    firstName: "Lucas",
-    lastName: "Edwards",
+    name: "Lucas Edwards",
     email: undefined,
     number: undefined,
     sentDate: undefined,
@@ -237,8 +217,7 @@ export const partners: Partner[] = [
   },
   {
     id: 18,
-    firstName: "Harper",
-    lastName: "Collins",
+    name: "Harper Collins",
     email: "harper.collins@example.com",
     number: "+64210000019",
     sentDate: new Date("2023-08-30"),

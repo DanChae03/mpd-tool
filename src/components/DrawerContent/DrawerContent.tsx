@@ -31,8 +31,7 @@ export function DrawerContent({
   partner,
   onClose,
 }: DrawerContentProps): ReactElement {
-  const [firstName, setFirstName] = useState<string>(partner.firstName);
-  const [lastName, setLastName] = useState<string>(partner.lastName);
+  const [name, setName] = useState<string>(partner.name);
   const [email, setEmail] = useState<string | undefined>(partner.email);
   const [number, setNumber] = useState<string | undefined>(partner.number);
   const [status, setStatus] = useState<string>(partner.status);
@@ -57,14 +56,14 @@ export function DrawerContent({
         justifyContent="space-between"
       >
         <Typography variant="h4" fontWeight="bold">
-          {partner.firstName} {partner.lastName}
+          {partner.name}
         </Typography>
         <Stack direction="row">
-          <IconButton>
-            <Email fontSize="large" sx={{ color: "#4C8BF5" }} />
+          <IconButton disabled={email == null} sx={{ color: "#4C8BF5" }}>
+            <Email fontSize="large" />
           </IconButton>
-          <IconButton>
-            <Call fontSize="large" sx={{ color: "#4C8BF5" }} />
+          <IconButton disabled={number == null} sx={{ color: "#4C8BF5" }}>
+            <Call fontSize="large" />
           </IconButton>
           <IconButton onClick={() => setDisabled(!disabled)}>
             {disabled ? (
@@ -106,33 +105,15 @@ export function DrawerContent({
         justifyContent="space-between"
       >
         <Typography width="50%" fontWeight="bold" fontSize="18px">
-          First Name
-        </Typography>
-        <TextField
-          disabled={disabled}
-          fullWidth
-          placeholder="First Name"
-          size="small"
-          value={firstName}
-          onChange={(event) => setFirstName(event.target.value)}
-        />
-      </Stack>
-      <Stack
-        direction="row"
-        alignItems="center"
-        width="100%"
-        justifyContent="space-between"
-      >
-        <Typography width="50%" fontWeight="bold" fontSize="18px">
-          Last Name
+          Name
         </Typography>
         <TextField
           disabled={disabled}
           fullWidth
           placeholder="Last Name"
           size="small"
-          value={lastName}
-          onChange={(event) => setLastName(event.target.value)}
+          value={name}
+          onChange={(event) => setName(event.target.value)}
         />
       </Stack>
       <Stack

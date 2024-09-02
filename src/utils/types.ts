@@ -1,7 +1,6 @@
 export type Partner = {
   id: number; // unique
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string | undefined;
   number: string | undefined;
   sentDate: Date | undefined; // DD/MM/YY
