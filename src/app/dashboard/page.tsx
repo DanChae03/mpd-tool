@@ -6,6 +6,7 @@ import { Navbar } from "@/components/Navbar";
 import Typography from "@mui/material/Typography";
 import * as cheerio from "cheerio";
 import Card from "@mui/material/Card";
+import CardActionArea from "@mui/material/CardActionArea";
 
 async function getData() {
   const response = await fetch(
@@ -51,7 +52,7 @@ export default function Dashboard(): ReactElement {
         padding="63px"
       >
         <Typography
-          variant="h4"
+          variant="h3"
           fontWeight="bold"
           color="primary.main"
           paddingBottom="18px"
@@ -63,32 +64,70 @@ export default function Dashboard(): ReactElement {
           width="100%"
           justifyContent="space-between"
           spacing="36px"
+          paddingBottom="36px"
         >
-          <Card sx={{ padding: "45px", width: "100%" }}>
-            <Typography variant="h2" fontWeight="bold">
-              ${support}
-            </Typography>
-            <Typography variant="h5">
-              Of ${target} raised (
-              {((parseInt(support) / parseInt(target)) * 100).toFixed(1)}%).
-            </Typography>
-            <Typography variant="h5">X pledged.</Typography>
+          <Card sx={{ width: "100%" }}>
+            <CardActionArea sx={{ padding: "45px" }}>
+              <Typography variant="h3" fontWeight="bold">
+                ${support}
+              </Typography>
+              <Typography variant="h5">
+                Of ${target} raised (
+                {((parseInt(support) / parseInt(target)) * 100).toFixed(1)}%).
+              </Typography>
+              <Typography variant="h5">X pledged.</Typography>
+            </CardActionArea>
           </Card>
-          <Card sx={{ padding: "45px", width: "100%" }}>
-            <Typography variant="h2" fontWeight="bold">
-              {partners}
-            </Typography>
-            <Typography variant="h5">
-              Partners supporting you in finance and prayer.
-            </Typography>
+          <Card sx={{ width: "100%" }}>
+            <CardActionArea sx={{ padding: "45px" }}>
+              <Typography variant="h3" fontWeight="bold">
+                {partners}
+              </Typography>
+              <Typography variant="h5">
+                Partners supporting you in finance and prayer.
+              </Typography>
+            </CardActionArea>
           </Card>
-          <Card sx={{ padding: "45px", width: "100%" }}>
-            <Typography variant="h2" fontWeight="bold">
-              {deadline}
-            </Typography>
-            <Typography variant="h5">
-              Days left until the 100% deadline.
-            </Typography>
+          <Card sx={{ width: "100%" }}>
+            <CardActionArea sx={{ padding: "45px" }}>
+              <Typography variant="h3" fontWeight="bold">
+                {deadline}
+              </Typography>
+              <Typography variant="h5">
+                Days left until the 100% deadline.
+              </Typography>
+            </CardActionArea>
+          </Card>
+        </Stack>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          spacing="36px"
+          height="100%"
+        >
+          <Card sx={{ width: "40%" }}>
+            <CardActionArea sx={{ padding: "45px", height: "100%" }}>
+              <Typography
+                variant="h3"
+                fontWeight="bold"
+                color="primary.main"
+                paddingBottom="18px"
+              >
+                Relevant Events
+              </Typography>
+            </CardActionArea>
+          </Card>
+          <Card sx={{ width: "60%" }}>
+            <CardActionArea sx={{ padding: "45px", height: "100%" }}>
+              <Typography
+                variant="h3"
+                fontWeight="bold"
+                color="primary.main"
+                paddingBottom="18px"
+              >
+                Graph
+              </Typography>
+            </CardActionArea>
           </Card>
         </Stack>
       </Stack>
