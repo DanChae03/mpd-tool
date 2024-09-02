@@ -1,3 +1,5 @@
+import { Partner } from "@/utils/types";
+
 export const partners: Partner[] = [
   {
     id: 0,
