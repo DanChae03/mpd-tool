@@ -41,14 +41,14 @@ export default function Dashboard(): ReactElement {
         <Stack spacing="9px" width="100%">
           <Typography variant="h5">Link to Support Raising Page:</Typography>
           <TextField
-            sx={{ paddingBottom: "18px" }}
+            sx={{ bgcolor: "background.paper" }}
             placeholder="https://give.studentlife.org.nz/appeals/project-year-your-name"
             value={link}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setLink(event.target.value);
             }}
           />
-          <Typography variant="h5">
+          <Typography variant="h5" paddingTop="18px">
             Default Email Text (This will pre-fill the draft of any emails you
             send).
           </Typography>
@@ -60,20 +60,22 @@ export default function Dashboard(): ReactElement {
               setTemplate(event.target.value);
             }}
             placeholder="Hello! I would like your support for my upcoming mission trip..."
-            sx={{ paddingBottom: "18px" }}
+            sx={{ bgcolor: "background.paper" }}
           />
-          <Button
-            variant="contained"
-            sx={{
-              textTransform: "none",
-              fontSize: "18px",
-              height: "54px",
-              width: "216px",
-              borderRadius: "36px",
-            }}
-          >
-            Save Changes
-          </Button>
+          <Stack paddingTop="18px">
+            <Button
+              variant="contained"
+              sx={{
+                textTransform: "none",
+                fontSize: "18px",
+                height: "54px",
+                width: "216px",
+                borderRadius: "36px",
+              }}
+            >
+              Save Changes
+            </Button>
+          </Stack>
         </Stack>
       </Stack>
     </Stack>
