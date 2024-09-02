@@ -3,8 +3,20 @@ import { ReactElement } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Navbar } from "@/components/Navbar";
+import Typography from "@mui/material/Typography";
 
 export default function Dashboard(): ReactElement {
+  // async function fetchUser() {
+  //   const response = await fetch(
+  //     "https://give.studentlife.org.nz/appeals/taiwan-2024-kenneth-santos"
+  //   );
+  //   const body = await response.text();
+
+  //   console.log(body);
+  // }
+
+  // fetchUser();
+
   return (
     <Stack direction="row" height="100vh">
       <Link
@@ -20,7 +32,12 @@ export default function Dashboard(): ReactElement {
         height="100%"
         width="calc(100vw - 270px)"
         bgcolor="background.default"
-      ></Stack>
+        padding="63px"
+      >
+        <Typography variant="h4" fontWeight="bold">
+          Dashboard
+        </Typography>
+      </Stack>
     </Stack>
   );
 }

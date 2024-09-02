@@ -5,14 +5,12 @@ import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 interface NavbarProps {
   page: "dashboard" | "users" | "settings";
 }
 
 export function Navbar({ page }: NavbarProps) {
-  const router = useRouter();
   return (
     <Stack
       alignItems="center"
