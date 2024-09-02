@@ -59,10 +59,18 @@ export function DrawerContent({
           {partner.name}
         </Typography>
         <Stack direction="row">
-          <IconButton disabled={email == null} sx={{ color: "#4C8BF5" }}>
+          <IconButton
+            disabled={email == null}
+            sx={{ color: "#4C8BF5" }}
+            href={`mailto:${email}`} // TODO: Subject and Body
+          >
             <Email fontSize="large" />
           </IconButton>
-          <IconButton disabled={number == null} sx={{ color: "#4C8BF5" }}>
+          <IconButton
+            disabled={number == null}
+            sx={{ color: "#4C8BF5" }}
+            href={`tel:${number}`}
+          >
             <Call fontSize="large" />
           </IconButton>
           <IconButton onClick={() => setDisabled(!disabled)}>
