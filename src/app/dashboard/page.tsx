@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import * as cheerio from "cheerio";
 import Card from "@mui/material/Card";
 import CardActionArea from "@mui/material/CardActionArea";
+import { People, Savings, Today } from "@mui/icons-material";
 
 async function getData() {
   const response = await fetch(
@@ -68,9 +69,12 @@ export default function Dashboard(): ReactElement {
         >
           <Card sx={{ width: "100%" }}>
             <CardActionArea sx={{ padding: "45px" }}>
-              <Typography variant="h3" fontWeight="bold">
-                ${support}
-              </Typography>
+              <Stack direction="row" spacing="18px" alignItems="center">
+                <Typography variant="h3" fontWeight="bold" color="primary.main">
+                  ${support}
+                </Typography>
+                <Savings fontSize="large" sx={{ color: "primary.main" }} />
+              </Stack>
               <Typography variant="h5">
                 Of ${target} raised (
                 {((parseInt(support) / parseInt(target)) * 100).toFixed(1)}%).
@@ -80,9 +84,12 @@ export default function Dashboard(): ReactElement {
           </Card>
           <Card sx={{ width: "100%" }}>
             <CardActionArea sx={{ padding: "45px" }}>
-              <Typography variant="h3" fontWeight="bold">
-                {partners}
-              </Typography>
+              <Stack direction="row" spacing="18px" alignItems="center">
+                <Typography variant="h3" fontWeight="bold" color="primary.main">
+                  {partners}
+                </Typography>
+                <People fontSize="large" sx={{ color: "primary.main" }} />
+              </Stack>
               <Typography variant="h5">
                 Partners supporting you in finance and prayer.
               </Typography>
@@ -90,9 +97,12 @@ export default function Dashboard(): ReactElement {
           </Card>
           <Card sx={{ width: "100%" }}>
             <CardActionArea sx={{ padding: "45px" }}>
-              <Typography variant="h3" fontWeight="bold">
-                {deadline}
-              </Typography>
+              <Stack direction="row" spacing="18px" alignItems="center">
+                <Typography variant="h3" fontWeight="bold" color="primary.main">
+                  {deadline}
+                </Typography>
+                <Today fontSize="large" sx={{ color: "primary.main" }} />
+              </Stack>
               <Typography variant="h5">
                 Days left until the 100% deadline.
               </Typography>

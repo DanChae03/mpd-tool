@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import Link from "next/link";
 
 interface NavbarProps {
-  page: "dashboard" | "users" | "settings";
+  page: "dashboard" | "partners" | "settings";
 }
 
 export function Navbar({ page }: NavbarProps) {
@@ -43,7 +43,7 @@ export function Navbar({ page }: NavbarProps) {
       </Link>
       <Divider />
       <Link
-        href="/users"
+        href="/partners"
         replace
         style={{ textDecoration: "none", width: "100%" }}
       >
@@ -52,15 +52,15 @@ export function Navbar({ page }: NavbarProps) {
             py: "18px",
             pl: "45px",
             bgcolor:
-              page !== "users" ? "background.paper" : "background.default",
+              page !== "partners" ? "background.paper" : "background.default",
           }}
         >
           <Typography
             variant="h5"
             fontWeight="bold"
-            color={page === "users" ? "primary.main" : "secondary.main"}
+            color={page === "partners" ? "primary.main" : "secondary.main"}
           >
-            Manage Users
+            Partners
           </Typography>
         </CardActionArea>
       </Link>
