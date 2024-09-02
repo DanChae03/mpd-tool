@@ -68,7 +68,7 @@ export default function Dashboard(): ReactElement {
           paddingBottom="36px"
         >
           <Card sx={{ width: "100%" }}>
-            <CardActionArea sx={{ padding: "45px" }}>
+            <CardActionArea sx={{ padding: "45px", height: "100%" }}>
               <Stack direction="row" spacing="18px" alignItems="center">
                 <Typography variant="h3" fontWeight="bold" color="primary.main">
                   ${support}
@@ -83,7 +83,7 @@ export default function Dashboard(): ReactElement {
             </CardActionArea>
           </Card>
           <Card sx={{ width: "100%" }}>
-            <CardActionArea sx={{ padding: "45px" }}>
+            <CardActionArea sx={{ padding: "45px", height: "100%" }}>
               <Stack direction="row" spacing="18px" alignItems="center">
                 <Typography variant="h3" fontWeight="bold" color="primary.main">
                   {partners}
@@ -96,7 +96,7 @@ export default function Dashboard(): ReactElement {
             </CardActionArea>
           </Card>
           <Card sx={{ width: "100%" }}>
-            <CardActionArea sx={{ padding: "45px" }}>
+            <CardActionArea sx={{ padding: "45px", height: "100%" }}>
               <Stack direction="row" spacing="18px" alignItems="center">
                 <Typography variant="h3" fontWeight="bold" color="primary.main">
                   {deadline}
