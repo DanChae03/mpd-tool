@@ -1,5 +1,6 @@
 "use client";
 
+import { Handshake, Settings, SpaceDashboard } from "@mui/icons-material";
 import CardActionArea from "@mui/material/CardActionArea";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
@@ -27,7 +28,7 @@ export function Navbar({ page }: NavbarProps) {
         <CardActionArea
           sx={{
             py: "18px",
-            pl: "45px",
+            px: "45px",
             bgcolor:
               page !== "dashboard" ? "background.paper" : "background.default",
           }}
@@ -36,8 +37,12 @@ export function Navbar({ page }: NavbarProps) {
             variant="h5"
             fontWeight="bold"
             color={page === "dashboard" ? "primary.main" : "secondary.main"}
+            justifyContent="space-between"
+            alignItems="center"
+            display="flex"
           >
             Dashboard
+            <SpaceDashboard />
           </Typography>
         </CardActionArea>
       </Link>
@@ -50,7 +55,7 @@ export function Navbar({ page }: NavbarProps) {
         <CardActionArea
           sx={{
             py: "18px",
-            pl: "45px",
+            px: "45px",
             bgcolor:
               page !== "partners" ? "background.paper" : "background.default",
           }}
@@ -59,8 +64,12 @@ export function Navbar({ page }: NavbarProps) {
             variant="h5"
             fontWeight="bold"
             color={page === "partners" ? "primary.main" : "secondary.main"}
+            justifyContent="space-between"
+            alignItems="center"
+            display="flex"
           >
             Partners
+            <Handshake />
           </Typography>
         </CardActionArea>
       </Link>
@@ -73,7 +82,7 @@ export function Navbar({ page }: NavbarProps) {
         <CardActionArea
           sx={{
             py: "18px",
-            pl: "45px",
+            px: "45px",
             bgcolor:
               page !== "settings" ? "background.paper" : "background.default",
           }}
@@ -82,8 +91,12 @@ export function Navbar({ page }: NavbarProps) {
             variant="h5"
             fontWeight="bold"
             color={page === "settings" ? "primary.main" : "secondary.main"}
+            justifyContent="space-between"
+            alignItems="center"
+            display="flex"
           >
             Settings
+            <Settings />
           </Typography>
         </CardActionArea>
       </Link>
