@@ -29,6 +29,8 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
+import Drawer from "@mui/material/Drawer";
+import { DrawerContent } from "@/components/DrawerContent";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -176,6 +178,8 @@ export default function Partners(): ReactElement {
   const [confirmed, setConfirmed] = useState<number>(0);
   const [filteredPartners, setFilteredPartners] = useState<Partner[]>([]);
   const [searchKey, setSearchKey] = useState<string>("");
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+  const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
 
   useEffect(() => {
     calculateTotals();
@@ -222,8 +226,9 @@ export default function Partners(): ReactElement {
     setOrderBy(property);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
-    console.log(id);
+  const handleClick = (event: React.MouseEvent<unknown>, partner: Partner) => {
+    setSelectedPartner(partner);
+    setDrawerOpen(true);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -421,7 +426,7 @@ export default function Partners(): ReactElement {
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.id)}
+                      onClick={(event) => handleClick(event, row)}
                       key={row.id}
                       sx={{
                         cursor: "pointer",
@@ -495,6 +500,16 @@ export default function Partners(): ReactElement {
           />
         </Paper>
       </Stack>
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+      >
+        <DrawerContent
+          partner={selectedPartner}
+          onClose={() => setDrawerOpen(false)}
+        />
+      </Drawer>
     </Stack>
   );
 }
