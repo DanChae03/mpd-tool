@@ -131,7 +131,7 @@ export const partners: Partner[] = [
     confirmedDate: undefined,
     confirmedAmount: undefined,
     notes: "Interested, but unsure.",
-    status: "Contacted",
+    status: "Rejected",
   },
   {
     id: 11,

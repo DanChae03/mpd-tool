@@ -20,7 +20,7 @@ import Box from "@mui/material/Box";
 import { visuallyHidden } from "@mui/utils";
 import { partners } from "./testData";
 import IconButton from "@mui/material/IconButton";
-import { Search, Tune } from "@mui/icons-material";
+import { Add, Search, Tune } from "@mui/icons-material";
 import Menu from "@mui/material/Menu";
 import Card from "@mui/material/Card";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -31,6 +31,7 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
 import Drawer from "@mui/material/Drawer";
 import { DrawerContent } from "@/components/DrawerContent";
+import Button from "@mui/material/Button";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -167,6 +168,7 @@ export default function Partners(): ReactElement {
     "Contacted",
     "Pledged",
     "Confirmed",
+    "Rejected",
   ]);
   const [pledged, setPledged] = useState<number>(0);
   const [confirmed, setConfirmed] = useState<number>(0);
@@ -315,8 +317,14 @@ export default function Partners(): ReactElement {
             <IconButton onClick={handleMenuClick} sx={{ alignSelf: "center" }}>
               <Tune />
             </IconButton>
+            <Button
+              variant="contained"
+              sx={{ borderRadius: "18px" }}
+              onClick={() => setDrawerOpen(true)}
+            >
+              <Add />
+            </Button>
           </Stack>
-
           <Menu
             anchorEl={anchorElement}
             open={Boolean(anchorElement)}
@@ -400,6 +408,15 @@ export default function Partners(): ReactElement {
                   checked={filters.includes("Confirmed")}
                   onChange={() => handleSetFilters("Confirmed")}
                 />
+                <FormControlLabel
+                  value="start"
+                  control={<Checkbox />}
+                  label="Rejected"
+                  labelPlacement="start"
+                  sx={{ width: "144px", justifyContent: "space-between" }}
+                  checked={filters.includes("Rejected")}
+                  onChange={() => handleSetFilters("Rejected")}
+                />
               </Stack>
             </Card>
           </Menu>
@@ -425,7 +442,11 @@ export default function Partners(): ReactElement {
                         bgcolor:
                           row.confirmedAmount != null &&
                           row.confirmedAmount === row.pledgedAmount
-                            ? "#D9FCDB"
+                            ? "#EDFCEF"
+                            : row.status === "Pledged"
+                            ? "#EDF7FC"
+                            : row.status === "Rejected"
+                            ? "#FCEDED"
                             : "inherit",
                       }}
                     >
@@ -473,7 +494,18 @@ export default function Partners(): ReactElement {
                           : "N/A"}
                       </TableCell>
                       <TableCell
-                        sx={{ fontSize: "18px", fontWeight: "bold" }}
+                        sx={{
+                          fontSize: "18px",
+                          fontWeight: "bold",
+                          color:
+                            row.status === "Rejected"
+                              ? "primary.main"
+                              : row.status === "Confirmed"
+                              ? "#5CB85C"
+                              : row.status === "Pledged"
+                              ? "#4C8BF5"
+                              : "auto",
+                        }}
                         width="180px"
                       >
                         {row.status}
@@ -504,18 +536,19 @@ export default function Partners(): ReactElement {
           />
         </Paper>
       </Stack>
-      {selectedPartner != null && (
-        <Drawer
-          anchor="right"
-          open={drawerOpen}
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={() => {
+          setDrawerOpen(false);
+          setSelectedPartner(undefined);
+        }}
+      >
+        <DrawerContent
+          partner={selectedPartner}
           onClose={() => setDrawerOpen(false)}
-        >
-          <DrawerContent
-            partner={selectedPartner}
-            onClose={() => setDrawerOpen(false)}
-          />
-        </Drawer>
-      )}
+        />
+      </Drawer>
     </Stack>
   );
 }
