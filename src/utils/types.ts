@@ -1,5 +1,5 @@
 export type Partner = {
-  id: number; // unique
+  id: string; // unique
   name: string;
   email: string | undefined;
   number: string | undefined;

@@ -2,7 +2,7 @@ import { Partner } from "@/utils/types";
 
 export const partners: Partner[] = [
   {
-    id: 0,
+    id: "0",
     name: "John Doe",
     email: "john.doe@example.com",
     number: "+64210000001",
@@ -15,7 +15,7 @@ export const partners: Partner[] = [
     saved: true,
   },
   {
-    id: 1,
+    id: "1",
     name: "Jane Smith",
     email: "jane.smith@example.com",
     number: "+64210000002",
@@ -28,7 +28,7 @@ export const partners: Partner[] = [
     saved: false,
   },
   {
-    id: 2,
+    id: "2",
     name: "Alice Brown",
     email: "alice.brown@example.com",
     number: "+64210000003",
@@ -41,7 +41,7 @@ export const partners: Partner[] = [
     saved: true,
   },
   {
-    id: 3,
+    id: "3",
     name: "Bob Johnson",
     email: "bob.johnson@example.com",
     number: "+64210000004",
@@ -54,7 +54,7 @@ export const partners: Partner[] = [
     saved: false,
   },
   {
-    id: 4,
+    id: "4",
     name: "Emma Wilson",
     email: "emma.wilson@example.com",
     number: "+64210000005",
@@ -67,7 +67,7 @@ export const partners: Partner[] = [
     saved: true,
   },
   {
-    id: 5,
+    id: "5",
     name: "Michael Lee",
     email: undefined,
     number: undefined,
@@ -80,7 +80,7 @@ export const partners: Partner[] = [
     saved: false,
   },
   {
-    id: 6,
+    id: "6",
     name: "Olivia Clark",
     email: "olivia.clark@example.com",
     number: "+64210000007",
@@ -93,7 +93,7 @@ export const partners: Partner[] = [
     saved: true,
   },
   {
-    id: 7,
+    id: "7",
     name: "James Walker",
     email: "james.walker@example.com",
     number: "+64210000008",
@@ -106,7 +106,7 @@ export const partners: Partner[] = [
     saved: false,
   },
   {
-    id: 8,
+    id: "8",
     name: "Sophia Hall",
     email: "sophia.hall@example.com",
     number: "+64210000009",
@@ -119,7 +119,7 @@ export const partners: Partner[] = [
     saved: true,
   },
   {
-    id: 9,
+    id: "9",
     name: "Liam Adams",
     email: "liam.adams@example.com",
     number: "+64210000010",
@@ -132,7 +132,7 @@ export const partners: Partner[] = [
     saved: false,
   },
   {
-    id: 10,
+    id: "10",
     name: "Ava Baker",
     email: "ava.baker@example.com",
     number: "+64210000011",
@@ -145,7 +145,7 @@ export const partners: Partner[] = [
     saved: true,
   },
   {
-    id: 11,
+    id: "11",
     name: "William Evans",
     email: "william.evans@example.com",
     number: "+64210000012",
@@ -158,7 +158,7 @@ export const partners: Partner[] = [
     saved: false,
   },
   {
-    id: 12,
+    id: "12",
     name: "Mia Carter",
     email: "mia.carter@example.com",
     number: "+64210000013",
@@ -171,7 +171,7 @@ export const partners: Partner[] = [
     saved: true,
   },
   {
-    id: 13,
+    id: "13",
     name: "Benjamin Phillips",
     email: undefined,
     number: undefined,
@@ -184,7 +184,7 @@ export const partners: Partner[] = [
     saved: false,
   },
   {
-    id: 14,
+    id: "14",
     name: "Charlotte Mitchell",
     email: "charlotte.mitchell@example.com",
     number: "+64210000015",
@@ -197,7 +197,7 @@ export const partners: Partner[] = [
     saved: true,
   },
   {
-    id: 15,
+    id: "15",
     name: "Elijah Perez",
     email: "elijah.perez@example.com",
     number: "+64210000016",
@@ -210,7 +210,7 @@ export const partners: Partner[] = [
     saved: false,
   },
   {
-    id: 16,
+    id: "16",
     name: "Amelia Harris",
     email: "amelia.harris@example.com",
     number: "+64210000017",
@@ -223,7 +223,7 @@ export const partners: Partner[] = [
     saved: true,
   },
   {
-    id: 17,
+    id: "17",
     name: "Lucas Edwards",
     email: undefined,
     number: undefined,
@@ -236,7 +236,7 @@ export const partners: Partner[] = [
     saved: false,
   },
   {
-    id: 18,
+    id: "18",
     name: "Harper Collins",
     email: "harper.collins@example.com",
     number: "+64210000019",
