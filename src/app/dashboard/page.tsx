@@ -113,12 +113,10 @@ export default function Dashboard(): ReactElement {
               </Typography>
               <Savings fontSize="large" sx={{ color: "primary.main" }} />
             </Stack>
-            <Typography variant="h5">
+            <Typography variant="h6">
               Of ${target} raised (
               {((parseInt(support) / parseInt(target)) * 100).toFixed(1)}%).
-            </Typography>
-            <Typography variant="h5">
-              ${totalPledged} pledged (
+              <br /> ${totalPledged} pledged (
               {((totalPledged / parseInt(target)) * 100).toFixed(1)}
               %).
             </Typography>
@@ -130,7 +128,7 @@ export default function Dashboard(): ReactElement {
               </Typography>
               <People fontSize="large" sx={{ color: "primary.main" }} />
             </Stack>
-            <Typography variant="h5">
+            <Typography variant="h6">
               Partners supporting you in finance and prayer.
             </Typography>
           </Card>
@@ -141,7 +139,7 @@ export default function Dashboard(): ReactElement {
               </Typography>
               <Today fontSize="large" sx={{ color: "primary.main" }} />
             </Stack>
-            <Typography variant="h5">
+            <Typography variant="h6">
               Days left until the 100% deadline.
             </Typography>
           </Card>

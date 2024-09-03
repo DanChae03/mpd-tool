@@ -49,7 +49,7 @@ export function Chart({ partners }: ChartProps): ReactElement {
       ]}
       width={700}
       height={300}
-      margin={{ left: 40, right: 40, top: 20, bottom: 20 }}
+      margin={{ left: 40, right: 20, top: 20, bottom: 20 }}
       sx={{ pointerEvents: partners.length === 0 ? "none" : "auto" }}
     />
   );

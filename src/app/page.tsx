@@ -32,9 +32,6 @@ export default function Home(): ReactElement {
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential?.accessToken;
         const user = result.user;
-
-        console.log(user);
-        console.log(token);
       })
       .catch((error) => {
         console.error(error);
