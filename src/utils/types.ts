@@ -9,4 +9,5 @@ export type Partner = {
   confirmedAmount: number | undefined;
   notes: string; // Sentence
   status: string;
+  saved: boolean;
 };

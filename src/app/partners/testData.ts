@@ -12,6 +12,7 @@ export const partners: Partner[] = [
     confirmedAmount: 500,
     notes: "Met at the conference last month.",
     status: "Confirmed",
+    saved: true,
   },
   {
     id: 1,
@@ -24,6 +25,7 @@ export const partners: Partner[] = [
     confirmedAmount: undefined,
     notes: "Considering increasing the pledge.",
     status: "Pledged",
+    saved: false,
   },
   {
     id: 2,
@@ -36,6 +38,7 @@ export const partners: Partner[] = [
     confirmedAmount: undefined,
     notes: "Needs more information.",
     status: "Contacted",
+    saved: true,
   },
   {
     id: 3,
@@ -48,6 +51,7 @@ export const partners: Partner[] = [
     confirmedAmount: undefined,
     notes: "Left a voicemail.",
     status: "Letter Sent",
+    saved: false,
   },
   {
     id: 4,
@@ -60,6 +64,7 @@ export const partners: Partner[] = [
     confirmedAmount: undefined,
     notes: "No response yet.",
     status: "Asked",
+    saved: true,
   },
   {
     id: 5,
@@ -72,6 +77,7 @@ export const partners: Partner[] = [
     confirmedAmount: undefined,
     notes: "",
     status: "To Ask",
+    saved: false,
   },
   {
     id: 6,
@@ -84,6 +90,7 @@ export const partners: Partner[] = [
     confirmedAmount: 1000,
     notes: "Wants to discuss further opportunities.",
     status: "Confirmed",
+    saved: true,
   },
   {
     id: 7,
@@ -96,6 +103,7 @@ export const partners: Partner[] = [
     confirmedAmount: undefined,
     notes: "Will follow up next week.",
     status: "Letter Sent",
+    saved: false,
   },
   {
     id: 8,
@@ -108,6 +116,7 @@ export const partners: Partner[] = [
     confirmedAmount: undefined,
     notes: "Waiting for response.",
     status: "Contacted",
+    saved: true,
   },
   {
     id: 9,
@@ -120,6 +129,7 @@ export const partners: Partner[] = [
     confirmedAmount: undefined,
     notes: "Tentatively agreed.",
     status: "Pledged",
+    saved: false,
   },
   {
     id: 10,
@@ -132,6 +142,7 @@ export const partners: Partner[] = [
     confirmedAmount: undefined,
     notes: "Interested, but unsure.",
     status: "Rejected",
+    saved: true,
   },
   {
     id: 11,
@@ -144,6 +155,7 @@ export const partners: Partner[] = [
     confirmedAmount: undefined,
     notes: "Requires more details.",
     status: "Letter Sent",
+    saved: false,
   },
   {
     id: 12,
@@ -156,6 +168,7 @@ export const partners: Partner[] = [
     confirmedAmount: 600,
     notes: "Happy to contribute.",
     status: "Confirmed",
+    saved: true,
   },
   {
     id: 13,
@@ -168,6 +181,7 @@ export const partners: Partner[] = [
     confirmedAmount: undefined,
     notes: "",
     status: "To Ask",
+    saved: false,
   },
   {
     id: 14,
@@ -180,6 +194,7 @@ export const partners: Partner[] = [
     confirmedAmount: undefined,
     notes: "Asked for more time to decide.",
     status: "Contacted",
+    saved: true,
   },
   {
     id: 15,
@@ -192,6 +207,7 @@ export const partners: Partner[] = [
     confirmedAmount: undefined,
     notes: "Needs confirmation.",
     status: "Pledged",
+    saved: false,
   },
   {
     id: 16,
@@ -204,6 +220,7 @@ export const partners: Partner[] = [
     confirmedAmount: 400,
     notes: "Looking forward to the partnership.",
     status: "Confirmed",
+    saved: true,
   },
   {
     id: 17,
@@ -216,6 +233,7 @@ export const partners: Partner[] = [
     confirmedAmount: undefined,
     notes: "",
     status: "To Ask",
+    saved: false,
   },
   {
     id: 18,
@@ -228,5 +246,6 @@ export const partners: Partner[] = [
     confirmedAmount: undefined,
     notes: "Possibly interested.",
     status: "Contacted",
+    saved: true,
   },
 ];

@@ -5,8 +5,13 @@ import {
   AccountCircle,
   Call,
   Clear,
+  Delete,
+  DeleteForever,
+  DeleteOutline,
   Edit,
   Email,
+  Star,
+  StarBorder,
   Undo,
 } from "@mui/icons-material";
 import Button from "@mui/material/Button";
@@ -21,6 +26,11 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { ReactElement, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
 
 interface DrawerContentProps {
   partner: Partner | undefined;
@@ -36,7 +46,9 @@ export function DrawerContent({
   const [number, setNumber] = useState<string | undefined>(partner?.number);
   const [status, setStatus] = useState<string>(partner?.status ?? "To Ask");
   const [notes, setNotes] = useState<string>(partner?.notes ?? "");
-  const [disabled, setDisabled] = useState(partner != null);
+  const [disabled, setDisabled] = useState<boolean>(partner != null);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [saved, setSaved] = useState<boolean>(partner?.saved ?? false);
 
   const [sentDate, setSentDate] = useState<Dayjs | null>(
     dayjs(partner?.sentDate) ?? dayjs()
@@ -63,7 +75,14 @@ export function DrawerContent({
           {partner != null ? name : "New Partner"}
         </Typography>
         {partner != null && (
-          <Stack direction="row">
+          <Stack direction="row" spacing="9px">
+            <IconButton onClick={() => setSaved(!saved)}>
+              {saved ? (
+                <Star fontSize="large" sx={{ color: "#FFC443" }} />
+              ) : (
+                <StarBorder fontSize="large" />
+              )}
+            </IconButton>
             <IconButton
               disabled={email == null}
               sx={{ color: "#4C8BF5" }}
@@ -296,39 +315,55 @@ export function DrawerContent({
           </Stack>
         </>
       )}
-      <Stack
-        direction="row"
-        justifyContent="flex-end"
-        spacing="18px"
-        paddingTop="18px"
-      >
-        <Button
-          onClick={onClose}
-          variant="outlined"
-          sx={{
-            textTransform: "none",
-            fontSize: "18px",
-            height: "45px",
-            width: "126px",
-            borderRadius: "27px",
-          }}
-        >
-          Exit
-        </Button>
-        <Button
-          disabled={disabled}
-          variant="contained"
-          sx={{
-            textTransform: "none",
-            fontSize: "18px",
-            height: "45px",
-            width: "126px",
-            borderRadius: "27px",
-          }}
-        >
-          Save
-        </Button>
+      <Stack direction="row" justifyContent="space-between" paddingTop="18px">
+        <IconButton onClick={() => setDialogOpen(true)}>
+          <DeleteForever fontSize="large" color="primary" />
+        </IconButton>
+        <Stack direction="row" justifyContent="flex-end" spacing="18px">
+          <Button
+            onClick={onClose}
+            variant="outlined"
+            sx={{
+              textTransform: "none",
+              fontSize: "18px",
+              height: "45px",
+              width: "126px",
+              borderRadius: "27px",
+            }}
+          >
+            Exit
+          </Button>
+          <Button
+            disabled={disabled}
+            variant="contained"
+            sx={{
+              textTransform: "none",
+              fontSize: "18px",
+              height: "45px",
+              width: "126px",
+              borderRadius: "27px",
+            }}
+          >
+            Save
+          </Button>
+        </Stack>
       </Stack>
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+        <DialogTitle variant="h5" fontWeight="bold">
+          {"Delete Contact"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText variant="h6">
+            Are you sure you want to delete this contact?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" onClick={() => setDialogOpen(false)}>
+            Cancel
+          </Button>
+          <Button onClick={() => setDialogOpen(false)}>Delete</Button>
+        </DialogActions>
+      </Dialog>
     </Stack>
   );
 }

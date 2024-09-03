@@ -20,7 +20,7 @@ import Box from "@mui/material/Box";
 import { visuallyHidden } from "@mui/utils";
 import { partners } from "./testData";
 import IconButton from "@mui/material/IconButton";
-import { Add, Search, Tune } from "@mui/icons-material";
+import { Add, Search, Star, StarBorder, Tune } from "@mui/icons-material";
 import Menu from "@mui/material/Menu";
 import Card from "@mui/material/Card";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -32,6 +32,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Drawer from "@mui/material/Drawer";
 import { DrawerContent } from "@/components/DrawerContent";
 import Button from "@mui/material/Button";
+import { Switch } from "@mui/material";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -107,6 +108,12 @@ const headCells: readonly HeadCell[] = [
     disablePadding: false,
     label: "Status",
   },
+  {
+    id: "saved",
+    numeric: false,
+    disablePadding: false,
+    label: "Saved",
+  },
 ];
 
 interface EnhancedTableProps {
@@ -176,17 +183,26 @@ export default function Partners(): ReactElement {
   const [searchKey, setSearchKey] = useState<string>("");
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const [selectedPartner, setSelectedPartner] = useState<Partner>();
+  const [onlySaved, setOnlySaved] = useState<boolean>(false);
 
   useEffect(() => {
     calculateTotals();
-    const filtered = partners.filter((partner) =>
-      partner.name.toLowerCase().includes(searchKey.toLowerCase())
-    );
-    const filteredSearch = filtered.filter((partner) =>
-      filters.includes(partner.status)
-    );
+    let filteredSearch = partners;
+    if (searchKey.trim() != "") {
+      filteredSearch = filteredSearch.filter((partner) =>
+        partner.name.toLowerCase().includes(searchKey.toLowerCase())
+      );
+    }
+    if (filters.length < 7) {
+      filteredSearch = filteredSearch.filter((partner) =>
+        filters.includes(partner.status)
+      );
+    }
+    if (onlySaved) {
+      filteredSearch = filteredSearch.filter((partner) => partner.saved);
+    }
     setFilteredPartners(filteredSearch);
-  }, [filters, searchKey]);
+  }, [filters, onlySaved, searchKey]);
 
   const calculateTotals = () => {
     const totalPledged = partners.reduce((sum, partner) => {
@@ -340,7 +356,7 @@ export default function Partners(): ReactElement {
             slotProps={{
               paper: {
                 sx: {
-                  width: "189px",
+                  width: "216px",
                   borderRadius: "9px",
                 },
               },
@@ -359,7 +375,7 @@ export default function Partners(): ReactElement {
                   control={<Checkbox />}
                   label="To Ask"
                   labelPlacement="start"
-                  sx={{ width: "144px", justifyContent: "space-between" }}
+                  sx={{ width: "180px", justifyContent: "space-between" }}
                   checked={filters.includes("To Ask")}
                   onChange={() => handleSetFilters("To Ask")}
                 />
@@ -368,7 +384,7 @@ export default function Partners(): ReactElement {
                   control={<Checkbox />}
                   label="Asked"
                   labelPlacement="start"
-                  sx={{ width: "144px", justifyContent: "space-between" }}
+                  sx={{ width: "180px", justifyContent: "space-between" }}
                   checked={filters.includes("Asked")}
                   onChange={() => handleSetFilters("Asked")}
                 />
@@ -377,7 +393,7 @@ export default function Partners(): ReactElement {
                   control={<Checkbox />}
                   label="Letter Sent"
                   labelPlacement="start"
-                  sx={{ width: "144px", justifyContent: "space-between" }}
+                  sx={{ width: "180px", justifyContent: "space-between" }}
                   checked={filters.includes("Letter Sent")}
                   onChange={() => handleSetFilters("Letter Sent")}
                 />
@@ -386,7 +402,7 @@ export default function Partners(): ReactElement {
                   control={<Checkbox />}
                   label="Contacted"
                   labelPlacement="start"
-                  sx={{ width: "144px", justifyContent: "space-between" }}
+                  sx={{ width: "180px", justifyContent: "space-between" }}
                   checked={filters.includes("Contacted")}
                   onChange={() => handleSetFilters("Contacted")}
                 />
@@ -395,7 +411,7 @@ export default function Partners(): ReactElement {
                   control={<Checkbox />}
                   label="Pledged"
                   labelPlacement="start"
-                  sx={{ width: "144px", justifyContent: "space-between" }}
+                  sx={{ width: "180px", justifyContent: "space-between" }}
                   checked={filters.includes("Pledged")}
                   onChange={() => handleSetFilters("Pledged")}
                 />
@@ -404,7 +420,7 @@ export default function Partners(): ReactElement {
                   control={<Checkbox />}
                   label="Confirmed"
                   labelPlacement="start"
-                  sx={{ width: "144px", justifyContent: "space-between" }}
+                  sx={{ width: "180px", justifyContent: "space-between" }}
                   checked={filters.includes("Confirmed")}
                   onChange={() => handleSetFilters("Confirmed")}
                 />
@@ -413,9 +429,17 @@ export default function Partners(): ReactElement {
                   control={<Checkbox />}
                   label="Rejected"
                   labelPlacement="start"
-                  sx={{ width: "144px", justifyContent: "space-between" }}
+                  sx={{ width: "180px", justifyContent: "space-between" }}
                   checked={filters.includes("Rejected")}
                   onChange={() => handleSetFilters("Rejected")}
+                />
+                <FormControlLabel
+                  value="start"
+                  control={<Switch checked={onlySaved} />}
+                  label="Saved only?"
+                  labelPlacement="start"
+                  sx={{ width: "180px", justifyContent: "space-between" }}
+                  onChange={() => setOnlySaved(!onlySaved)}
                 />
               </Stack>
             </Card>
@@ -509,6 +533,19 @@ export default function Partners(): ReactElement {
                         width="180px"
                       >
                         {row.status}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          fontSize: "18px",
+                        }}
+                      >
+                        <Box display="flex">
+                          {row.saved ? (
+                            <Star sx={{ color: "#FFC443" }} />
+                          ) : (
+                            <StarBorder />
+                          )}
+                        </Box>
                       </TableCell>
                     </TableRow>
                   );
