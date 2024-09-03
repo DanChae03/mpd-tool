@@ -10,6 +10,7 @@ import Link from "next/link";
 import { signInWithGoogle } from "@/utils/firebase";
 import { useRouter } from "next/navigation";
 import CircularProgress from "@mui/material/CircularProgress";
+import { GoogleAuthProvider } from "firebase/auth";
 
 export default function Home(): ReactElement {
   const [state, setState] = useState<"loading" | "error" | undefined>(
@@ -18,15 +19,24 @@ export default function Home(): ReactElement {
 
   const router = useRouter();
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = () => {
     setState("loading");
-    try {
-      await signInWithGoogle();
-      router.push("/dashboard");
-    } catch (error) {
-      console.error(error);
-    }
-    setState("error");
+    signInWithGoogle()
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential?.accessToken;
+        const user = result.user;
+
+        console.log(user);
+        console.log(token);
+
+        router.push("/dashboard");
+      })
+      .catch((error) => {
+        console.error(error);
+        setState("error");
+      });
   };
 
   return (

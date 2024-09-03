@@ -11,6 +11,7 @@ import { People, Savings, Today } from "@mui/icons-material";
 import { partners } from "../partners/testData";
 import dayjs from "dayjs";
 import { Chart } from "@/components/Chart";
+import { UserIcon } from "@/components/UserIcon";
 
 async function getData() {
   const response = await fetch(
@@ -225,6 +226,7 @@ export default function Dashboard(): ReactElement {
           </Card>
         </Stack>
       </Stack>
+      <UserIcon />
     </Stack>
   );
 }
