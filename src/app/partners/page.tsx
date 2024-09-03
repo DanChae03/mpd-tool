@@ -474,7 +474,7 @@ export default function Partners(): ReactElement {
                       sx={{
                         cursor: "pointer",
                         bgcolor:
-                          row.confirmedAmount != null &&
+                          row.confirmedAmount > 0 &&
                           row.confirmedAmount === row.pledgedAmount
                             ? "#EDFCEF"
                             : row.status === "Pledged"
@@ -518,12 +518,10 @@ export default function Partners(): ReactElement {
                           : row.nextStepDate?.toLocaleDateString()}
                       </TableCell>
                       <TableCell sx={{ fontSize: "18px" }}>
-                        {row.pledgedAmount !== undefined
-                          ? `$${row.pledgedAmount}`
-                          : ""}
+                        {row.pledgedAmount > 0 ? `$${row.pledgedAmount}` : ""}
                       </TableCell>
                       <TableCell sx={{ fontSize: "18px" }}>
-                        {row.confirmedAmount !== undefined
+                        {row.confirmedAmount > 0
                           ? `$${row.confirmedAmount}`
                           : ""}
                       </TableCell>

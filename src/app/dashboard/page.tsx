@@ -10,6 +10,7 @@ import CardActionArea from "@mui/material/CardActionArea";
 import { People, Savings, Today } from "@mui/icons-material";
 import { partners } from "../partners/testData";
 import dayjs from "dayjs";
+import { Chart } from "@/components/Chart";
 
 async function getData() {
   const response = await fetch(
@@ -55,6 +56,19 @@ export default function Dashboard(): ReactElement {
         partner.nextStepDate != null && partner.status !== "Confirmed"
     )
     .slice(0, 4);
+
+  const confirmed = partners
+    .filter(
+      (partner) =>
+        partner.confirmedAmount != null && partner.confirmedAmount > 0
+    )
+    .sort((a, b) => {
+      if (a.confirmedAmount > b.confirmedAmount) return 1;
+      if (b.confirmedAmount < a.confirmedAmount) return -1;
+      return 0;
+    });
+
+  console.log(confirmed);
 
   return (
     <Stack direction="row" height="100vh">
@@ -195,15 +209,23 @@ export default function Dashboard(): ReactElement {
             </CardActionArea>
           </Card>
           <Card sx={{ width: "60%" }}>
-            <CardActionArea sx={{ padding: "45px", height: "100%" }}>
-              <Typography
-                variant="h3"
-                fontWeight="bold"
-                color="primary.main"
-                paddingBottom="18px"
+            <CardActionArea sx={{ padding: "27px", height: "100%" }}>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                spacing="36px"
+                height="100%"
               >
-                Graph
-              </Typography>
+                <Typography
+                  variant="h5"
+                  fontWeight="bold"
+                  color="primary.main"
+                  paddingBottom="18px"
+                >
+                  Graph
+                </Typography>
+                <Chart />
+              </Stack>
             </CardActionArea>
           </Card>
         </Stack>

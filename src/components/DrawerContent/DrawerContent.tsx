@@ -2,12 +2,8 @@
 
 import { Partner } from "@/utils/types";
 import {
-  AccountCircle,
   Call,
-  Clear,
-  Delete,
   DeleteForever,
-  DeleteOutline,
   Edit,
   Email,
   Star,
@@ -51,16 +47,16 @@ export function DrawerContent({
   const [saved, setSaved] = useState<boolean>(partner?.saved ?? false);
 
   const [nextStepDate, setNextStepDate] = useState<Dayjs | null>(
-    dayjs(partner?.nextStepDate) ?? dayjs()
+    dayjs(partner?.nextStepDate)
   );
-  const [pledgedAmount, setPledgedAmount] = useState<number | undefined>(
-    partner?.pledgedAmount
+  const [pledgedAmount, setPledgedAmount] = useState<number>(
+    partner?.pledgedAmount ?? 0
   );
   const [confirmedDate, setConfirmedDate] = useState<Dayjs | null>(
-    dayjs(partner?.confirmedDate) ?? dayjs()
+    dayjs(partner?.confirmedDate)
   );
-  const [confirmedAmount, setConfirmedAmount] = useState<number | undefined>(
-    partner?.confirmedAmount
+  const [confirmedAmount, setConfirmedAmount] = useState<number>(
+    partner?.confirmedAmount ?? 0
   );
 
   return (

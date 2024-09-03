@@ -47,6 +47,9 @@ export default function Dashboard(): ReactElement {
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setLink(event.target.value);
             }}
+            slotProps={{
+              input: { style: { fontSize: "18px" } },
+            }}
           />
           <Typography variant="h5" paddingTop="18px">
             Default Email Text (This will pre-fill the draft of any emails you
@@ -58,6 +61,9 @@ export default function Dashboard(): ReactElement {
             value={template}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setTemplate(event.target.value);
+            }}
+            slotProps={{
+              input: { style: { fontSize: "18px" } },
             }}
             placeholder="Hello! I would like your support for my upcoming mission trip..."
             sx={{ bgcolor: "background.paper" }}
