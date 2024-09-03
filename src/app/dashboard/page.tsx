@@ -60,15 +60,18 @@ export default function Dashboard(): ReactElement {
   const confirmed = partners
     .filter(
       (partner) =>
-        partner.confirmedAmount != null && partner.confirmedAmount > 0
+        partner.confirmedAmount != null &&
+        partner.confirmedAmount > 0 &&
+        partner.confirmedDate != null
     )
     .sort((a, b) => {
-      if (a.confirmedAmount > b.confirmedAmount) return 1;
-      if (b.confirmedAmount < a.confirmedAmount) return -1;
+      const dateA = dayjs(a.confirmedDate);
+      const dateB = dayjs(b.confirmedDate);
+
+      if (dateA.isBefore(dateB)) return -1;
+      if (dateA.isAfter(dateB)) return 1;
       return 0;
     });
-
-  console.log(confirmed);
 
   return (
     <Stack direction="row" height="100vh">
@@ -216,15 +219,7 @@ export default function Dashboard(): ReactElement {
                 spacing="36px"
                 height="100%"
               >
-                <Typography
-                  variant="h5"
-                  fontWeight="bold"
-                  color="primary.main"
-                  paddingBottom="18px"
-                >
-                  Graph
-                </Typography>
-                <Chart />
+                <Chart partners={confirmed} />
               </Stack>
             </CardActionArea>
           </Card>
