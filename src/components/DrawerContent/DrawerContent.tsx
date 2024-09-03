@@ -20,10 +20,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { ReactElement, useState } from "react";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 interface DrawerContentProps {
-  partner: Partner;
+  partner: Partner | undefined;
   onClose: () => void;
 }
 
@@ -31,20 +31,24 @@ export function DrawerContent({
   partner,
   onClose,
 }: DrawerContentProps): ReactElement {
-  const [name, setName] = useState<string>(partner.name);
-  const [email, setEmail] = useState<string | undefined>(partner.email);
-  const [number, setNumber] = useState<string | undefined>(partner.number);
-  const [status, setStatus] = useState<string>(partner.status);
-  const [notes, setNotes] = useState<string>(partner.notes);
-  const [disabled, setDisabled] = useState(true);
+  const [name, setName] = useState<string>(partner?.name ?? "");
+  const [email, setEmail] = useState<string | undefined>(partner?.email);
+  const [number, setNumber] = useState<string | undefined>(partner?.number);
+  const [status, setStatus] = useState<string>(partner?.status ?? "To Ask");
+  const [notes, setNotes] = useState<string>(partner?.notes ?? "");
+  const [disabled, setDisabled] = useState(partner != null);
 
-  const [sentDate, setSentDate] = useState<Dayjs | null>(null);
-  const [pledgedAmount, setPledgedAmount] = useState<number | undefined>(
-    partner.pledgedAmount
+  const [sentDate, setSentDate] = useState<Dayjs | null>(
+    dayjs(partner?.sentDate) ?? dayjs()
   );
-  const [confirmedDate, setConfirmedDate] = useState<Dayjs | null>(null);
+  const [pledgedAmount, setPledgedAmount] = useState<number | undefined>(
+    partner?.pledgedAmount
+  );
+  const [confirmedDate, setConfirmedDate] = useState<Dayjs | null>(
+    dayjs(partner?.confirmedDate) ?? dayjs()
+  );
   const [confirmedAmount, setConfirmedAmount] = useState<number | undefined>(
-    partner.confirmedAmount
+    partner?.confirmedAmount
   );
 
   return (
@@ -56,31 +60,33 @@ export function DrawerContent({
         justifyContent="space-between"
       >
         <Typography variant="h4" fontWeight="bold">
-          {partner.name}
+          {partner != null ? name : "New Partner"}
         </Typography>
-        <Stack direction="row">
-          <IconButton
-            disabled={email == null}
-            sx={{ color: "#4C8BF5" }}
-            href={`mailto:${email}`} // TODO: Subject and Body
-          >
-            <Email fontSize="large" />
-          </IconButton>
-          <IconButton
-            disabled={number == null}
-            sx={{ color: "#4C8BF5" }}
-            href={`tel:${number}`}
-          >
-            <Call fontSize="large" />
-          </IconButton>
-          <IconButton onClick={() => setDisabled(!disabled)}>
-            {disabled ? (
-              <Edit fontSize="large" color={"primary"} />
-            ) : (
-              <Undo fontSize="large" color={"primary"} />
-            )}
-          </IconButton>
-        </Stack>
+        {partner != null && (
+          <Stack direction="row">
+            <IconButton
+              disabled={email == null}
+              sx={{ color: "#4C8BF5" }}
+              href={`mailto:${email}`} // TODO: Subject and Body
+            >
+              <Email fontSize="large" />
+            </IconButton>
+            <IconButton
+              disabled={number == null}
+              sx={{ color: "#4C8BF5" }}
+              href={`tel:${number}`}
+            >
+              <Call fontSize="large" />
+            </IconButton>
+            <IconButton onClick={() => setDisabled(!disabled)}>
+              {disabled ? (
+                <Edit fontSize="large" color={"primary"} />
+              ) : (
+                <Undo fontSize="large" color={"primary"} />
+              )}
+            </IconButton>
+          </Stack>
+        )}
       </Stack>
       <Stack
         direction="row"
@@ -104,6 +110,7 @@ export function DrawerContent({
           <MenuItem value={"Contacted"}>Contacted</MenuItem>
           <MenuItem value={"Pledged"}>Pledged</MenuItem>
           <MenuItem value={"Confirmed"}>Confirmed</MenuItem>
+          <MenuItem value={"Rejected"}>Rejected</MenuItem>
         </Select>
       </Stack>
       <Stack
