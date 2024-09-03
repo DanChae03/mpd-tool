@@ -59,6 +59,8 @@ export function DrawerContent({
     partner?.confirmedAmount ?? 0
   );
 
+  const emailBody = "This is a test body"; // TODO: Email Body Fetching
+
   return (
     <Stack width="630px" padding="63px" spacing="18px">
       <Stack
@@ -82,7 +84,7 @@ export function DrawerContent({
             <IconButton
               disabled={email == null}
               sx={{ color: "#4C8BF5" }}
-              href={`mailto:${email}`} // TODO: Subject and Body
+              href={`mailto:${email}?subject=Support Raising Letter - ${name}&body=${emailBody}`}
             >
               <Email fontSize="large" />
             </IconButton>
