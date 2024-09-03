@@ -34,11 +34,21 @@ import { DrawerContent } from "@/components/DrawerContent";
 import Button from "@mui/material/Button";
 import { Switch } from "@mui/material";
 
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
+function comparator<T>(a: T, b: T, orderBy: keyof T) {
+  const aValue = a[orderBy];
+  const bValue = b[orderBy];
+
+  if (aValue === undefined && bValue !== undefined) {
+    return 1;
+  }
+  if (aValue !== undefined && bValue === undefined) {
     return -1;
   }
-  if (b[orderBy] > a[orderBy]) {
+
+  if (bValue < aValue) {
+    return -1;
+  }
+  if (bValue > aValue) {
     return 1;
   }
   return 0;
@@ -53,9 +63,9 @@ function getComparator<Key extends keyof any>(
   a: { [key in Key]: number | string | undefined | boolean | Date },
   b: { [key in Key]: number | string | undefined | boolean | Date }
 ) => number {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
+  return order === "asc"
+    ? (a, b) => comparator(a, b, orderBy)
+    : (a, b) => -comparator(a, b, orderBy);
 }
 
 interface HeadCell {
