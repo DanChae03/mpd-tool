@@ -106,50 +106,44 @@ export default function Dashboard(): ReactElement {
           spacing="36px"
           paddingBottom="36px"
         >
-          <Card sx={{ width: "100%" }}>
-            <CardActionArea sx={{ padding: "45px", height: "100%" }}>
-              <Stack direction="row" spacing="18px" alignItems="center">
-                <Typography variant="h3" fontWeight="bold" color="primary.main">
-                  ${support}
-                </Typography>
-                <Savings fontSize="large" sx={{ color: "primary.main" }} />
-              </Stack>
-              <Typography variant="h5">
-                Of ${target} raised (
-                {((parseInt(support) / parseInt(target)) * 100).toFixed(1)}%).
+          <Card sx={{ width: "100%", padding: "45px" }}>
+            <Stack direction="row" spacing="18px" alignItems="center">
+              <Typography variant="h3" fontWeight="bold" color="primary.main">
+                ${support}
               </Typography>
-              <Typography variant="h5">
-                ${totalPledged} pledged (
-                {((totalPledged / parseInt(target)) * 100).toFixed(1)}
-                %).
-              </Typography>
-            </CardActionArea>
+              <Savings fontSize="large" sx={{ color: "primary.main" }} />
+            </Stack>
+            <Typography variant="h5">
+              Of ${target} raised (
+              {((parseInt(support) / parseInt(target)) * 100).toFixed(1)}%).
+            </Typography>
+            <Typography variant="h5">
+              ${totalPledged} pledged (
+              {((totalPledged / parseInt(target)) * 100).toFixed(1)}
+              %).
+            </Typography>
           </Card>
-          <Card sx={{ width: "100%" }}>
-            <CardActionArea sx={{ padding: "45px", height: "100%" }}>
-              <Stack direction="row" spacing="18px" alignItems="center">
-                <Typography variant="h3" fontWeight="bold" color="primary.main">
-                  {supporters}
-                </Typography>
-                <People fontSize="large" sx={{ color: "primary.main" }} />
-              </Stack>
-              <Typography variant="h5">
-                Partners supporting you in finance and prayer.
+          <Card sx={{ width: "100%", padding: "45px" }}>
+            <Stack direction="row" spacing="18px" alignItems="center">
+              <Typography variant="h3" fontWeight="bold" color="primary.main">
+                {supporters}
               </Typography>
-            </CardActionArea>
+              <People fontSize="large" sx={{ color: "primary.main" }} />
+            </Stack>
+            <Typography variant="h5">
+              Partners supporting you in finance and prayer.
+            </Typography>
           </Card>
-          <Card sx={{ width: "100%" }}>
-            <CardActionArea sx={{ padding: "45px", height: "100%" }}>
-              <Stack direction="row" spacing="18px" alignItems="center">
-                <Typography variant="h3" fontWeight="bold" color="primary.main">
-                  {deadline}
-                </Typography>
-                <Today fontSize="large" sx={{ color: "primary.main" }} />
-              </Stack>
-              <Typography variant="h5">
-                Days left until the 100% deadline.
+          <Card sx={{ width: "100%", padding: "45px" }}>
+            <Stack direction="row" spacing="18px" alignItems="center">
+              <Typography variant="h3" fontWeight="bold" color="primary.main">
+                {deadline}
               </Typography>
-            </CardActionArea>
+              <Today fontSize="large" sx={{ color: "primary.main" }} />
+            </Stack>
+            <Typography variant="h5">
+              Days left until the 100% deadline.
+            </Typography>
           </Card>
         </Stack>
         <Stack
@@ -212,17 +206,15 @@ export default function Dashboard(): ReactElement {
               </Stack>
             </CardActionArea>
           </Card>
-          <Card sx={{ width: "60%" }}>
-            <CardActionArea sx={{ padding: "27px", height: "100%" }}>
-              <Stack
-                direction="row"
-                justifyContent="space-between"
-                spacing="36px"
-                height="100%"
-              >
-                <Chart partners={confirmed} />
-              </Stack>
-            </CardActionArea>
+          <Card sx={{ width: "60%", padding: "27px" }}>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              spacing="36px"
+              height="100%"
+            >
+              <Chart partners={confirmed} />
+            </Stack>
           </Card>
         </Stack>
       </Stack>

@@ -7,15 +7,21 @@ import Image from "next/image";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Link from "next/link";
-import { signInWithGoogle } from "@/utils/firebase";
+import { auth, signInWithGoogle } from "@/utils/firebase";
 import { useRouter } from "next/navigation";
 import CircularProgress from "@mui/material/CircularProgress";
-import { GoogleAuthProvider } from "firebase/auth";
+import { GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
 
 export default function Home(): ReactElement {
   const [state, setState] = useState<"loading" | "error" | undefined>(
     undefined
   );
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      router.push("/dashboard");
+    }
+  });
 
   const router = useRouter();
 
@@ -23,15 +29,12 @@ export default function Home(): ReactElement {
     setState("loading");
     signInWithGoogle()
       .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential?.accessToken;
         const user = result.user;
 
         console.log(user);
         console.log(token);
-
-        router.push("/dashboard");
       })
       .catch((error) => {
         console.error(error);

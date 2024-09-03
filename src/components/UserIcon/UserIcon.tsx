@@ -13,12 +13,9 @@ import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { ReactElement, useState } from "react";
 
-interface UserIconProps {
-  src?: string;
-}
-
-export function UserIcon({ src }: UserIconProps): ReactElement {
+export function UserIcon(): ReactElement {
   const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null);
+  const src: string | null | undefined = auth?.currentUser?.photoURL;
 
   const router = useRouter();
 
