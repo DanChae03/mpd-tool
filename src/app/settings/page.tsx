@@ -31,7 +31,7 @@ export default function Dashboard(): ReactElement {
         padding="63px"
       >
         <Typography
-          variant="h3"
+          variant="h4"
           fontWeight="bold"
           color="primary.main"
           paddingBottom="18px"

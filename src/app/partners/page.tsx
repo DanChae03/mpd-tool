@@ -299,7 +299,7 @@ export default function Partners(): ReactElement {
         <Stack direction="row" justifyContent="space-between">
           <Stack direction="row" alignItems="end" spacing="36px">
             <Typography
-              variant="h3"
+              variant="h4"
               fontWeight="bold"
               color="primary.main"
               paddingBottom="18px"
