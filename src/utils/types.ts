@@ -3,7 +3,7 @@ export type Partner = {
   name: string;
   email: string | undefined;
   number: string | undefined;
-  sentDate: Date | undefined; // DD/MM/YY
+  nextStepDate: Date | undefined; // DD/MM/YY
   pledgedAmount: number | undefined;
   confirmedDate: Date | undefined; // DD/MM/YY
   confirmedAmount: number | undefined;

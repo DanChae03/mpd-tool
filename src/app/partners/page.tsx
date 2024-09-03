@@ -85,10 +85,10 @@ const headCells: readonly HeadCell[] = [
     label: "Number",
   },
   {
-    id: "sentDate",
+    id: "nextStepDate",
     numeric: false,
     disablePadding: false,
-    label: "Letter Sent",
+    label: "Next Step",
   },
   {
     id: "pledgedAmount",
@@ -497,25 +497,25 @@ export default function Partners(): ReactElement {
                           width: "288px",
                         }}
                       >
-                        {row.email || "N/A"}
+                        {row.email || ""}
                       </TableCell>
                       <TableCell sx={{ fontSize: "18px" }}>
-                        {row.number || "N/A"}
+                        {row.number || ""}
                       </TableCell>
                       <TableCell sx={{ fontSize: "18px" }}>
-                        {row.sentDate
-                          ? row.sentDate.toLocaleDateString()
-                          : "Not Sent"}
+                        {row.status === "Confirmed"
+                          ? "Done"
+                          : row.nextStepDate?.toLocaleDateString()}
                       </TableCell>
                       <TableCell sx={{ fontSize: "18px" }}>
                         {row.pledgedAmount !== undefined
                           ? `$${row.pledgedAmount}`
-                          : "N/A"}
+                          : ""}
                       </TableCell>
                       <TableCell sx={{ fontSize: "18px" }}>
                         {row.confirmedAmount !== undefined
                           ? `$${row.confirmedAmount}`
-                          : "N/A"}
+                          : ""}
                       </TableCell>
                       <TableCell
                         sx={{

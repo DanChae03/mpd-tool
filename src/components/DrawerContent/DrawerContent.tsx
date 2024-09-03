@@ -50,8 +50,8 @@ export function DrawerContent({
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [saved, setSaved] = useState<boolean>(partner?.saved ?? false);
 
-  const [sentDate, setSentDate] = useState<Dayjs | null>(
-    dayjs(partner?.sentDate) ?? dayjs()
+  const [nextStepDate, setNextStepDate] = useState<Dayjs | null>(
+    dayjs(partner?.nextStepDate) ?? dayjs()
   );
   const [pledgedAmount, setPledgedAmount] = useState<number | undefined>(
     partner?.pledgedAmount
@@ -132,6 +132,39 @@ export function DrawerContent({
           <MenuItem value={"Rejected"}>Rejected</MenuItem>
         </Select>
       </Stack>
+      {(status === "Pledged" ||
+        status === "Contacted" ||
+        status === "Letter Sent") && (
+        <Stack
+          direction="row"
+          alignItems="center"
+          width="100%"
+          justifyContent="space-between"
+        >
+          <Typography width="50%" fontWeight="bold" fontSize="18px">
+            Next Step Date
+          </Typography>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              disabled={disabled}
+              value={nextStepDate}
+              onChange={(newDate: Dayjs | null) => setNextStepDate(newDate)}
+              format="DD/MM/YYYY"
+              sx={{
+                width: "100%",
+
+                "& .MuiOutlinedInput-root": {
+                  bgcolor: "background.paper",
+                  height: "40px",
+                },
+                "& .MuiIconButton-root": {
+                  marginRight: "0px",
+                },
+              }}
+            />
+          </LocalizationProvider>
+        </Stack>
+      )}
       <Stack
         direction="row"
         alignItems="center"
@@ -206,40 +239,6 @@ export function DrawerContent({
           onChange={(event) => setNotes(event.target.value)}
         />
       </Stack>
-      {(status === "Confirmed" ||
-        status === "Pledged" ||
-        status === "Contacted" ||
-        status === "Letter Sent") && (
-        <Stack
-          direction="row"
-          alignItems="center"
-          width="100%"
-          justifyContent="space-between"
-        >
-          <Typography width="50%" fontWeight="bold" fontSize="18px">
-            Date Letter Sent
-          </Typography>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              disabled={disabled}
-              value={sentDate}
-              onChange={(newDate: Dayjs | null) => setSentDate(newDate)}
-              format="DD/MM/YYYY"
-              sx={{
-                width: "100%",
-
-                "& .MuiOutlinedInput-root": {
-                  bgcolor: "background.paper",
-                  height: "40px",
-                },
-                "& .MuiIconButton-root": {
-                  marginRight: "0px",
-                },
-              }}
-            />
-          </LocalizationProvider>
-        </Stack>
-      )}
       {(status === "Pledged" || status === "Confirmed") && (
         <Stack
           direction="row"
