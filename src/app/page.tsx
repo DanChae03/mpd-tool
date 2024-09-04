@@ -2,7 +2,7 @@
 
 import Button from "@mui/material/Button";
 import { Google } from "@mui/icons-material";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import Image from "next/image";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
@@ -10,28 +10,40 @@ import Link from "next/link";
 import { auth, signInWithGoogle } from "@/utils/firebase";
 import { useRouter } from "next/navigation";
 import CircularProgress from "@mui/material/CircularProgress";
-import { GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
+import {
+  getAdditionalUserInfo,
+  getAuth,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+} from "firebase/auth";
 
 export default function Home(): ReactElement {
   const [state, setState] = useState<"loading" | "error" | undefined>(
     undefined
   );
 
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      router.push("/dashboard");
-    }
-  });
-
   const router = useRouter();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push("/dashboard");
+      }
+    });
+  }, [router]);
 
   const handleGoogleLogin = () => {
     setState("loading");
     signInWithGoogle()
       .then((result) => {
         const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential?.accessToken;
-        const user = result.user;
+
+        const isNewUser = getAdditionalUserInfo(result)?.isNewUser;
+
+        if (isNewUser) {
+          // TODO: Create blank document
+        }
+        router.push("/dashboard");
       })
       .catch((error) => {
         console.error(error);

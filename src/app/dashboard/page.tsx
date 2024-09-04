@@ -14,25 +14,25 @@ import { Chart } from "@/components/Chart";
 import { UserIcon } from "@/components/UserIcon";
 
 async function getData() {
-  const response = await fetch(
-    "https://give.studentlife.org.nz/appeals/taiwan-2024-kenneth-santos"
-  );
-  const body = await response.text();
-  const data = cheerio.load(body);
-
-  const output = {
-    support: data("h3.mb-0")
+  const output = { support: "0", target: "0", supporters: "0", deadline: "0" };
+  if (1 === 1) {
+    // TODO: Actual condition for url being present
+    const response = await fetch(
+      "https://give.studentlife.org.nz/appeals/taiwan-2024-kenneth-santos"
+    );
+    const body = await response.text();
+    const data = cheerio.load(body);
+    output.support = data("h3.mb-0")
       .eq(0)
       .text()
-      .replace(/[^0-9]/g, ""),
-    target: data("h3.mb-0")
+      .replace(/[^0-9]/g, "");
+    output.target = data("h3.mb-0")
       .next()
       .text()
-      .replace(/[^0-9]/g, ""),
-    supporters: data("h3.mb-0").eq(1).text(),
-    deadline: data("h3.mb-0").eq(2).text(),
-  };
-
+      .replace(/[^0-9]/g, "");
+    output.supporters = data("h3.mb-0").eq(1).text();
+    output.deadline = data("h3.mb-0").eq(2).text();
+  }
   return output;
 }
 
@@ -114,11 +114,19 @@ export default function Dashboard(): ReactElement {
               <Savings fontSize="large" sx={{ color: "primary.main" }} />
             </Stack>
             <Typography variant="h6">
-              Of ${target} raised (
-              {((parseInt(support) / parseInt(target)) * 100).toFixed(1)}%).
-              <br /> ${totalPledged} pledged (
-              {((totalPledged / parseInt(target)) * 100).toFixed(1)}
-              %).
+              {deadline !== "0" ? (
+                <>
+                  Of ${target} raised (
+                  {((parseInt(support) / parseInt(target)) * 100).toFixed(1)}%).
+                  <br /> ${totalPledged} pledged (
+                  {((totalPledged / parseInt(target)) * 100).toFixed(1)}%).
+                </>
+              ) : (
+                <>
+                  No Support page found. <br />
+                  Please add the link in Settings.
+                </>
+              )}
             </Typography>
           </Card>
           <Card sx={{ width: "100%", padding: "45px" }}>
@@ -128,8 +136,16 @@ export default function Dashboard(): ReactElement {
               </Typography>
               <People fontSize="large" sx={{ color: "primary.main" }} />
             </Stack>
+
             <Typography variant="h6">
-              Partners supporting you in finance and prayer.
+              {deadline !== "0" ? (
+                <>Partners supporting you in finance and prayer.</>
+              ) : (
+                <>
+                  No Support page found. <br />
+                  Please add the link in Settings.
+                </>
+              )}
             </Typography>
           </Card>
           <Card sx={{ width: "100%", padding: "45px" }}>
@@ -140,7 +156,14 @@ export default function Dashboard(): ReactElement {
               <Today fontSize="large" sx={{ color: "primary.main" }} />
             </Stack>
             <Typography variant="h6">
-              Days left until the 100% deadline.
+              {deadline !== "0" ? (
+                <>Days left until the 100% deadline.</>
+              ) : (
+                <>
+                  No Support page found. <br />
+                  Please add the link in Settings.
+                </>
+              )}
             </Typography>
           </Card>
         </Stack>

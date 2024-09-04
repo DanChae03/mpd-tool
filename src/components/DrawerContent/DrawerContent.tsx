@@ -3,6 +3,7 @@
 import { Partner } from "@/utils/types";
 import {
   Call,
+  Clear,
   DeleteForever,
   Edit,
   Email,
@@ -69,18 +70,22 @@ export function DrawerContent({
         width="100%"
         justifyContent="space-between"
       >
-        <Typography variant="h4" fontWeight="bold">
-          {partner != null ? name : "New Partner"}
-        </Typography>
-        {partner != null && (
-          <Stack direction="row" spacing="9px">
-            <IconButton onClick={() => setSaved(!saved)}>
+        <Stack direction="row" alignItems="center" spacing="9px">
+          <Typography variant="h4" fontWeight="bold">
+            {partner != null ? name : "New Partner"}
+          </Typography>
+          {partner != null && (
+            <IconButton disabled={disabled} onClick={() => setSaved(!saved)}>
               {saved ? (
                 <Star fontSize="large" sx={{ color: "#FFC443" }} />
               ) : (
                 <StarBorder fontSize="large" />
               )}
             </IconButton>
+          )}
+        </Stack>
+        {partner != null && (
+          <Stack direction="row" spacing="9px">
             <IconButton
               disabled={email == null}
               sx={{ color: "#4C8BF5" }}
@@ -99,7 +104,7 @@ export function DrawerContent({
               {disabled ? (
                 <Edit fontSize="large" color={"primary"} />
               ) : (
-                <Undo fontSize="large" color={"primary"} />
+                <Clear fontSize="large" color={"primary"} />
               )}
             </IconButton>
           </Stack>

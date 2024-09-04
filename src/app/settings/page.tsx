@@ -8,6 +8,7 @@ import { Navbar } from "@/components/Navbar";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import { UserIcon } from "@/components/UserIcon";
 
 export default function Dashboard(): ReactElement {
   const [link, setLink] = useState<string>("");
@@ -84,6 +85,7 @@ export default function Dashboard(): ReactElement {
           </Stack>
         </Stack>
       </Stack>
+      <UserIcon />
     </Stack>
   );
 }

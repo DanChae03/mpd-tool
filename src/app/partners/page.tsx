@@ -33,6 +33,9 @@ import Drawer from "@mui/material/Drawer";
 import { DrawerContent } from "@/components/DrawerContent";
 import Button from "@mui/material/Button";
 import { Switch } from "@mui/material";
+import { auth } from "@/utils/firebase";
+import { useRouter } from "next/navigation";
+import { onAuthStateChanged } from "firebase/auth";
 
 function comparator<T>(a: T, b: T, orderBy: keyof T) {
   const aValue = a[orderBy];
@@ -194,6 +197,16 @@ export default function Partners(): ReactElement {
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const [selectedPartner, setSelectedPartner] = useState<Partner>();
   const [onlySaved, setOnlySaved] = useState<boolean>(false);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.push("/");
+      }
+    });
+  }, [router]);
 
   useEffect(() => {
     calculateTotals();
