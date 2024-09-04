@@ -91,6 +91,7 @@ export default function Dashboard(): ReactElement {
         width="calc(100vw - 270px)"
         bgcolor="background.default"
         padding="63px"
+        paddingTop="45px"
       >
         <UserIcon />
         <Stack
