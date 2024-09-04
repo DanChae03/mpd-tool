@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { doc, getDoc, getFirestore } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const firebaseConfig = {
@@ -22,3 +22,17 @@ export const database = getFirestore(app);
 export const signInWithGoogle = () => signInWithPopup(auth, provider);
 
 export default app;
+
+export const fetchDocument = async (UUI: string) => {
+  const docRef = doc(database, "users", UUI);
+
+  try {
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      return docSnap.data();
+    }
+  } catch (error) {
+    console.error("Error getting document:", error);
+  }
+};
