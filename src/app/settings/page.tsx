@@ -1,7 +1,7 @@
 "use client";
 
 import Stack from "@mui/material/Stack";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Navbar } from "@/components/Navbar";
@@ -9,10 +9,40 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { UserIcon } from "@/components/UserIcon";
+import { doc, updateDoc } from "firebase/firestore";
+import { database, fetchDocument } from "@/utils/firebase";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import { Check } from "@mui/icons-material";
 
 export default function Dashboard(): ReactElement {
-  const [link, setLink] = useState<string>("");
-  const [template, setTemplate] = useState<string>("");
+  const [webpage, setWebpage] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+  const [initialWebpage, setInitialWebpage] = useState<string>("");
+  const [initialMessage, setInitialMessage] = useState<string>("");
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const getData = async () => {
+      const data = await fetchDocument("X7NdCOkf9fRNEhvGTDw1kfSRMLX2");
+      if (data != null) {
+        setWebpage(data.webpage);
+        setMessage(data.message);
+        setInitialWebpage(data.webpage);
+        setInitialMessage(data.message);
+      }
+    };
+    getData();
+  }, []);
+
+  const setData = async () => {
+    setInitialWebpage(webpage);
+    setInitialMessage(message);
+    await updateDoc(doc(database, "users", "X7NdCOkf9fRNEhvGTDw1kfSRMLX2"), {
+      message: message,
+      webpage: webpage,
+    }).then(() => setOpen(true));
+  };
 
   return (
     <Stack direction="row" height="100vh">
@@ -44,9 +74,9 @@ export default function Dashboard(): ReactElement {
           <TextField
             sx={{ bgcolor: "background.paper" }}
             placeholder="https://give.studentlife.org.nz/appeals/project-year-your-name"
-            value={link}
+            value={webpage}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setLink(event.target.value);
+              setWebpage(event.target.value);
             }}
             slotProps={{
               input: { style: { fontSize: "18px" } },
@@ -59,9 +89,9 @@ export default function Dashboard(): ReactElement {
           <TextField
             multiline
             rows="12"
-            value={template}
+            value={message}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setTemplate(event.target.value);
+              setMessage(event.target.value);
             }}
             slotProps={{
               input: { style: { fontSize: "18px" } },
@@ -71,6 +101,13 @@ export default function Dashboard(): ReactElement {
           />
           <Stack paddingTop="18px">
             <Button
+              onClick={() => setData()}
+              disabled={
+                !webpage.startsWith(
+                  "https://give.studentlife.org.nz/appeals/"
+                ) ||
+                (message === initialMessage && webpage === initialWebpage)
+              }
               variant="contained"
               sx={{
                 textTransform: "none",
@@ -85,6 +122,21 @@ export default function Dashboard(): ReactElement {
           </Stack>
         </Stack>
       </Stack>
+      <Snackbar
+        open={open}
+        autoHideDuration={5000}
+        onClose={() => setOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert
+          variant="filled"
+          icon={<Check fontSize="inherit" />}
+          severity="success"
+          sx={{ fontSize: "18px" }}
+        >
+          Saved Successfully.
+        </Alert>
+      </Snackbar>
       <UserIcon />
     </Stack>
   );

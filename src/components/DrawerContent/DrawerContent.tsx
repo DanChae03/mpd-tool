@@ -9,7 +9,6 @@ import {
   Email,
   Star,
   StarBorder,
-  Undo,
 } from "@mui/icons-material";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -21,7 +20,7 @@ import Typography from "@mui/material/Typography";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -32,11 +31,13 @@ import DialogActions from "@mui/material/DialogActions";
 interface DrawerContentProps {
   partner: Partner | undefined;
   onClose: () => void;
+  message: string;
 }
 
 export function DrawerContent({
   partner,
   onClose,
+  message,
 }: DrawerContentProps): ReactElement {
   const [name, setName] = useState<string>(partner?.name ?? "");
   const [email, setEmail] = useState<string | undefined>(partner?.email);
@@ -59,8 +60,6 @@ export function DrawerContent({
   const [confirmedAmount, setConfirmedAmount] = useState<number>(
     partner?.confirmedAmount ?? 0
   );
-
-  const emailBody = "This is a test body"; // TODO: Email Body Fetching
 
   return (
     <Stack width="630px" padding="63px" spacing="18px">
@@ -87,18 +86,18 @@ export function DrawerContent({
         {partner != null && (
           <Stack direction="row" spacing="9px">
             <IconButton
-              disabled={email == null}
-              sx={{ color: "#4C8BF5" }}
-              href={`mailto:${email}?subject=Support Raising Letter - ${name}&body=${emailBody}`}
-            >
-              <Email fontSize="large" />
-            </IconButton>
-            <IconButton
               disabled={number == null}
-              sx={{ color: "#4C8BF5" }}
+              sx={{ color: "success.main" }}
               href={`tel:${number}`}
             >
               <Call fontSize="large" />
+            </IconButton>
+            <IconButton
+              disabled={email == null}
+              sx={{ color: "#4C8BF5" }}
+              href={`mailto:${email}?subject=Support Raising Letter - ${name}&body=${message}`}
+            >
+              <Email fontSize="large" />
             </IconButton>
             <IconButton onClick={() => setDisabled(!disabled)}>
               {disabled ? (
