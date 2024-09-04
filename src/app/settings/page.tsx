@@ -8,12 +8,13 @@ import { Navbar } from "@/components/Navbar";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { UserIcon } from "@/components/UserIcon";
 import { doc, updateDoc } from "firebase/firestore";
-import { database, fetchDocument } from "@/utils/firebase";
+import { auth, database, fetchDocument } from "@/utils/firebase";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { Check } from "@mui/icons-material";
+import { useRouter } from "next/navigation";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function Dashboard(): ReactElement {
   const [webpage, setWebpage] = useState<string>("");
@@ -21,6 +22,16 @@ export default function Dashboard(): ReactElement {
   const [initialWebpage, setInitialWebpage] = useState<string>("");
   const [initialMessage, setInitialMessage] = useState<string>("");
   const [open, setOpen] = useState(false);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.push("/");
+      }
+    });
+  }, [router]);
 
   useEffect(() => {
     const getData = async () => {
@@ -137,7 +148,6 @@ export default function Dashboard(): ReactElement {
           Saved Successfully.
         </Alert>
       </Snackbar>
-      <UserIcon />
     </Stack>
   );
 }

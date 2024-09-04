@@ -92,14 +92,7 @@ export default function Dashboard(): ReactElement {
         bgcolor="background.default"
         padding="63px"
       >
-        <Typography
-          variant="h4"
-          fontWeight="bold"
-          color="primary.main"
-          paddingBottom="18px"
-        >
-          Dashboard
-        </Typography>
+        <UserIcon />
         <Stack
           direction="row"
           width="100%"
@@ -240,7 +233,6 @@ export default function Dashboard(): ReactElement {
           </Card>
         </Stack>
       </Stack>
-      <UserIcon />
     </Stack>
   );
 }

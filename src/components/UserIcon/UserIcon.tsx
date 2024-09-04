@@ -45,13 +45,16 @@ export function UserIcon(): ReactElement {
   };
 
   return (
-    <Box
-      sx={{
-        position: "fixed",
-        top: "54px",
-        right: "63px",
-      }}
+    <Stack
+      direction="row"
+      width="100%"
+      justifyContent="space-between"
+      alignItems="center"
+      paddingBottom="9px"
     >
+      <Typography variant="h4" fontWeight="bold" color="primary.main">
+        {`Welcome, ${auth.currentUser?.displayName}`}
+      </Typography>
       <IconButton onClick={handleClick}>
         <Avatar
           sx={{
@@ -101,6 +104,6 @@ export function UserIcon(): ReactElement {
           </Stack>
         </MenuItem>
       </Menu>
-    </Box>
+    </Stack>
   );
 }
