@@ -33,9 +33,10 @@ import Drawer from "@mui/material/Drawer";
 import { DrawerContent } from "@/components/DrawerContent";
 import Button from "@mui/material/Button";
 import { Switch } from "@mui/material";
-import { auth } from "@/utils/firebase";
+import { auth, database, fetchDocument } from "@/utils/firebase";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
 function comparator<T>(a: T, b: T, orderBy: keyof T) {
   const aValue = a[orderBy];
@@ -197,6 +198,17 @@ export default function Partners(): ReactElement {
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const [selectedPartner, setSelectedPartner] = useState<Partner>();
   const [onlySaved, setOnlySaved] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
+
+  useEffect(() => {
+    const getData = async () => {
+      const data = await fetchDocument("X7NdCOkf9fRNEhvGTDw1kfSRMLX2");
+      if (data != null) {
+        setMessage(data.message);
+      }
+    };
+    getData();
+  }, []);
 
   const router = useRouter();
 
@@ -605,6 +617,7 @@ export default function Partners(): ReactElement {
         <DrawerContent
           partner={selectedPartner}
           onClose={() => setDrawerOpen(false)}
+          message={message}
         />
       </Drawer>
     </Stack>
