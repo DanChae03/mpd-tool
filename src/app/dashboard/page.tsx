@@ -13,12 +13,13 @@ import dayjs from "dayjs";
 import { Chart } from "@/components/Chart";
 import { UserIcon } from "@/components/UserIcon";
 
-async function getData() {
+const getData = async () => {
   const output = { support: "0", target: "0", supporters: "0", deadline: "0" };
   if (1 === 1) {
     // TODO: Actual condition for url being present
     const response = await fetch(
-      "https://give.studentlife.org.nz/appeals/taiwan-2024-kenneth-santos"
+      "https://give.studentlife.org.nz/appeals/taiwan-2024-kenneth-santos",
+      { cache: "no-store" }
     );
     const body = await response.text();
     const data = cheerio.load(body);
@@ -34,7 +35,7 @@ async function getData() {
     output.deadline = data("h3.mb-0").eq(2).text();
   }
   return output;
-}
+};
 
 export default function Dashboard(): ReactElement {
   const { support, supporters, deadline, target } = use(getData());
