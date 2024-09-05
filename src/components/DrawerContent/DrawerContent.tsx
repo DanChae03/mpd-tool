@@ -49,16 +49,16 @@ export function DrawerContent({
   const [saved, setSaved] = useState<boolean>(partner?.saved ?? false);
 
   const [nextStepDate, setNextStepDate] = useState<Dayjs | null>(
-    dayjs(partner?.nextStepDate)
+    dayjs(partner?.nextStepDate),
   );
   const [pledgedAmount, setPledgedAmount] = useState<number>(
-    partner?.pledgedAmount ?? 0
+    partner?.pledgedAmount ?? 0,
   );
   const [confirmedDate, setConfirmedDate] = useState<Dayjs | null>(
-    dayjs(partner?.confirmedDate)
+    dayjs(partner?.confirmedDate),
   );
   const [confirmedAmount, setConfirmedAmount] = useState<number>(
-    partner?.confirmedAmount ?? 0
+    partner?.confirmedAmount ?? 0,
   );
 
   return (

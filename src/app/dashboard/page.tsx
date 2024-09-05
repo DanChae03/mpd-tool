@@ -19,7 +19,7 @@ const getData = async () => {
     // TODO: Actual condition for url being present
     const response = await fetch(
       "https://give.studentlife.org.nz/appeals/taiwan-2024-kenneth-santos",
-      { cache: "no-store" }
+      { cache: "no-store" },
     );
     const body = await response.text();
     const data = cheerio.load(body);
@@ -55,7 +55,7 @@ export default function Dashboard(): ReactElement {
     })
     .filter(
       (partner) =>
-        partner.nextStepDate != null && partner.status !== "Confirmed"
+        partner.nextStepDate != null && partner.status !== "Confirmed",
     )
     .slice(0, 4);
 
@@ -64,7 +64,7 @@ export default function Dashboard(): ReactElement {
       (partner) =>
         partner.confirmedAmount != null &&
         partner.confirmedAmount > 0 &&
-        partner.confirmedDate != null
+        partner.confirmedDate != null,
     )
     .sort((a, b) => {
       const dateA = dayjs(a.confirmedDate);
@@ -91,7 +91,7 @@ export default function Dashboard(): ReactElement {
         width="calc(100vw - 270px)"
         bgcolor="background.default"
         padding="63px"
-        paddingTop="45px"
+        paddingTop="47px"
       >
         <UserIcon />
         <Stack
@@ -100,6 +100,7 @@ export default function Dashboard(): ReactElement {
           justifyContent="space-between"
           spacing="36px"
           paddingBottom="36px"
+          maxHeight="270px"
         >
           <Card sx={{ width: "100%", padding: "45px" }}>
             <Stack direction="row" spacing="18px" alignItems="center">
@@ -152,7 +153,7 @@ export default function Dashboard(): ReactElement {
             </Stack>
             <Typography variant="h6">
               {deadline !== "0" ? (
-                <>Days left until the 100% deadline.</>
+                <>{`Days left until the 100% deadline (${dayjs().add(parseInt(deadline), "day").format("dddd, DD[th] MMMM")})`}</>
               ) : (
                 <>
                   No Support page found. <br />
@@ -168,7 +169,7 @@ export default function Dashboard(): ReactElement {
           spacing="36px"
           height="100%"
         >
-          <Card sx={{ width: "40%" }}>
+          <Card sx={{ width: "40%", maxHeight: "396px" }}>
             <CardActionArea
               sx={{ padding: "27px", height: "100%" }}
               href="/partners"
@@ -204,16 +205,16 @@ export default function Dashboard(): ReactElement {
                             {partner.status === "To Ask"
                               ? "Ask for Support"
                               : partner.status === "Asked"
-                              ? "Send Letter"
-                              : partner.status === "Letter Sent"
-                              ? "Contact regarding letter"
-                              : partner.status === "Contacted"
-                              ? "Follow up regarding decision"
-                              : "Follow up on pledge"}
+                                ? "Send Letter"
+                                : partner.status === "Letter Sent"
+                                  ? "Contact regarding letter"
+                                  : partner.status === "Contacted"
+                                    ? "Follow up regarding decision"
+                                    : "Follow up on pledge"}
                           </Typography>
                         </Stack>
-                        <Typography variant="h6">
-                          {dayjs(partner.nextStepDate).format("dddd, MMM DD")}
+                        <Typography variant="h6" textAlign="right">
+                          {dayjs(partner.nextStepDate).format("dddd, DD/MM")}
                         </Typography>
                       </Stack>
                     ))
@@ -222,10 +223,11 @@ export default function Dashboard(): ReactElement {
               </Stack>
             </CardActionArea>
           </Card>
-          <Card sx={{ width: "60%", padding: "27px" }}>
+          <Card sx={{ width: "60%", padding: "27px", maxHeight: "396px" }}>
             <Stack
               direction="row"
               justifyContent="space-between"
+              alignItems="center"
               spacing="36px"
               height="100%"
             >

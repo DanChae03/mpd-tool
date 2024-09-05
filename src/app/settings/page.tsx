@@ -115,7 +115,7 @@ export default function Dashboard(): ReactElement {
               onClick={() => setData()}
               disabled={
                 !webpage.startsWith(
-                  "https://give.studentlife.org.nz/appeals/"
+                  "https://give.studentlife.org.nz/appeals/",
                 ) ||
                 (message === initialMessage && webpage === initialWebpage)
               }

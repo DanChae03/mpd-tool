@@ -3,7 +3,6 @@
 import { auth } from "@/utils/firebase";
 import { Logout } from "@mui/icons-material";
 import Avatar from "@mui/material/Avatar";
-import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";

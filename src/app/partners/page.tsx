@@ -62,10 +62,10 @@ type Order = "asc" | "desc";
 
 function getComparator<Key extends keyof any>(
   order: Order,
-  orderBy: Key
+  orderBy: Key,
 ): (
   a: { [key in Key]: number | string | undefined | boolean | Date },
-  b: { [key in Key]: number | string | undefined | boolean | Date }
+  b: { [key in Key]: number | string | undefined | boolean | Date },
 ) => number {
   return order === "asc"
     ? (a, b) => comparator(a, b, orderBy)
@@ -133,7 +133,7 @@ const headCells: readonly HeadCell[] = [
 interface EnhancedTableProps {
   onRequestSort: (
     event: React.MouseEvent<unknown>,
-    property: keyof Partner
+    property: keyof Partner,
   ) => void;
   order: Order;
   orderBy: string;
@@ -225,12 +225,12 @@ export default function Partners(): ReactElement {
     let filteredSearch = partners;
     if (searchKey.trim() != "") {
       filteredSearch = filteredSearch.filter((partner) =>
-        partner.name.toLowerCase().includes(searchKey.toLowerCase())
+        partner.name.toLowerCase().includes(searchKey.toLowerCase()),
       );
     }
     if (filters.length < 7) {
       filteredSearch = filteredSearch.filter((partner) =>
-        filters.includes(partner.status)
+        filters.includes(partner.status),
       );
     }
     if (onlySaved) {
@@ -264,7 +264,7 @@ export default function Partners(): ReactElement {
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
-    property: keyof Partner
+    property: keyof Partner,
   ) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -281,7 +281,7 @@ export default function Partners(): ReactElement {
   };
 
   const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
@@ -503,10 +503,10 @@ export default function Partners(): ReactElement {
                           row.confirmedAmount === row.pledgedAmount
                             ? "#EDFCEF"
                             : row.status === "Pledged"
-                            ? "#EDF7FC"
-                            : row.status === "Rejected"
-                            ? "#FCEDED"
-                            : "inherit",
+                              ? "#EDF7FC"
+                              : row.status === "Rejected"
+                                ? "#FCEDED"
+                                : "inherit",
                       }}
                     >
                       <TableCell
@@ -558,10 +558,10 @@ export default function Partners(): ReactElement {
                             row.status === "Rejected"
                               ? "primary.main"
                               : row.status === "Confirmed"
-                              ? "#5CB85C"
-                              : row.status === "Pledged"
-                              ? "#4C8BF5"
-                              : "auto",
+                                ? "#5CB85C"
+                                : row.status === "Pledged"
+                                  ? "#4C8BF5"
+                                  : "auto",
                         }}
                         width="180px"
                       >
@@ -592,7 +592,7 @@ export default function Partners(): ReactElement {
             </Table>
           </TableContainer>
           <TablePagination
-            rowsPerPageOptions={[4, 8, 12]}
+            rowsPerPageOptions={[5, 10, 15]}
             component="div"
             count={
               filters.length === 0 || searchKey !== ""

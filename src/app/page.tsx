@@ -19,7 +19,7 @@ import {
 
 export default function Home(): ReactElement {
   const [state, setState] = useState<"loading" | "error" | undefined>(
-    undefined
+    undefined,
   );
 
   const router = useRouter();
