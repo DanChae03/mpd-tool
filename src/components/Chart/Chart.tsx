@@ -11,7 +11,7 @@ interface ChartProps {
 
 export function Chart({ partners }: ChartProps): ReactElement {
   const names: string[] = [];
-  const dates: (Date | null)[] = [];
+  const dates: (string | null)[] = [];
   const amounts: (number | null)[] = [];
   const cumulativeAmounts: number[] = [];
 

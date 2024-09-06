@@ -14,7 +14,7 @@ import { getAdditionalUserInfo, onAuthStateChanged } from "firebase/auth";
 
 export default function Home(): ReactElement {
   const [state, setState] = useState<"loading" | "error" | undefined>(
-    undefined,
+    undefined
   );
 
   const router = useRouter();
@@ -34,9 +34,10 @@ export default function Home(): ReactElement {
         const isNewUser = getAdditionalUserInfo(result)?.isNewUser;
         const UID = auth.currentUser?.uid;
         if (isNewUser && UID != null) {
-          createUser(UID);
+          createUser(UID).then(() => {
+            router.push("/dashboard");
+          });
         }
-        router.push("/dashboard");
       })
       .catch((error) => {
         console.error(error);

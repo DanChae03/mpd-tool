@@ -80,7 +80,9 @@ export function DrawerContent({
         notes: notes,
         status: status,
         saved: saved,
-      } as Partner);
+      } as Partner).then(() => {
+        onClose();
+      });
     }
   };
 
@@ -209,7 +211,7 @@ export function DrawerContent({
         <TextField
           disabled={disabled}
           fullWidth
-          placeholder="Last Name"
+          placeholder="Full Name"
           size="small"
           value={name}
           onChange={(event) => setName(event.target.value)}

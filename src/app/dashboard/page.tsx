@@ -6,7 +6,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Navbar } from "@/components/Navbar";
 import Typography from "@mui/material/Typography";
-import * as cheerio from "cheerio";
 import Card from "@mui/material/Card";
 import CardActionArea from "@mui/material/CardActionArea";
 import { People, Savings, Today } from "@mui/icons-material";

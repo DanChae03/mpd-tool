@@ -7,7 +7,6 @@ import {
   getDocs,
   getFirestore,
   setDoc,
-  Timestamp,
 } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { Partner } from "./types";
@@ -56,7 +55,6 @@ export const fetchPartners = async (UUI: string) => {
     const partners: Partner[] = [];
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      console.log(data);
       partners.push({
         ...data,
         id: doc.id,
@@ -99,8 +97,8 @@ export const deletePartner = async (UID: string, id: string) => {
 export const createUser = async (UID: string) => {
   try {
     await setDoc(doc(database, "users", UID), {
-      message: "",
-      webpage: "",
+      deadline: dayjs().add(1, "month").toString(),
+      target: 850,
     });
   } catch (error) {
     console.error("Error creating document:", error);

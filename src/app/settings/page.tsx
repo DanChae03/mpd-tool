@@ -28,16 +28,6 @@ export default function Dashboard(): ReactElement {
   const [open, setOpen] = useState<boolean>(false);
   const [changed, setChanged] = useState<boolean>(false);
 
-  const router = useRouter();
-
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        router.push("/");
-      }
-    });
-  }, [router]);
-
   useEffect(() => {
     const getData = async () => {
       const UID = auth.currentUser?.uid;

@@ -220,16 +220,6 @@ export default function Partners(): ReactElement {
     getData();
   }, []);
 
-  const router = useRouter();
-
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        router.push("/");
-      }
-    });
-  }, [router]);
-
   useEffect(() => {
     const calculateTotals = () => {
       const totalPledged = partners.reduce((sum, partner) => {
