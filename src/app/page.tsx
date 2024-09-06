@@ -7,15 +7,10 @@ import Image from "next/image";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Link from "next/link";
-import { auth, signInWithGoogle } from "@/utils/firebase";
+import { auth, createUser, signInWithGoogle } from "@/utils/firebase";
 import { useRouter } from "next/navigation";
 import CircularProgress from "@mui/material/CircularProgress";
-import {
-  getAdditionalUserInfo,
-  getAuth,
-  GoogleAuthProvider,
-  onAuthStateChanged,
-} from "firebase/auth";
+import { getAdditionalUserInfo, onAuthStateChanged } from "firebase/auth";
 
 export default function Home(): ReactElement {
   const [state, setState] = useState<"loading" | "error" | undefined>(
@@ -36,12 +31,10 @@ export default function Home(): ReactElement {
     setState("loading");
     signInWithGoogle()
       .then((result) => {
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-
         const isNewUser = getAdditionalUserInfo(result)?.isNewUser;
-
-        if (isNewUser) {
-          // TODO: Create blank document
+        const UID = auth.currentUser?.uid;
+        if (isNewUser && UID != null) {
+          createUser(UID);
         }
         router.push("/dashboard");
       })
