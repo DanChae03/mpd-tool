@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -59,10 +60,6 @@ export const fetchPartners = async (UUI: string) => {
       partners.push({
         ...data,
         id: doc.id,
-        nextStepDate:
-          data.nextStepDate != null ? data.nextStepDate.toDate() : null,
-        confirmedDate:
-          data.confirmedDate != null ? data.confirmedDate.toDate() : null,
       } as Partner);
     });
     return partners;
@@ -87,7 +84,15 @@ export const setPartner = async (UID: string, partner: Partner) => {
       saved: partner.saved,
     });
   } catch (error) {
-    console.error("Error creating document:", error);
+    console.error("Error updating document:", error);
+  }
+};
+
+export const deletePartner = async (UID: string, id: string) => {
+  try {
+    await deleteDoc(doc(database, "users", UID, "partners", id));
+  } catch (error) {
+    console.error("Error deleting document:", error);
   }
 };
 

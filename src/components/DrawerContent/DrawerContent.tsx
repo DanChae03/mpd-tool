@@ -27,7 +27,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
-import { auth, setPartner } from "@/utils/firebase";
+import { auth, deletePartner, setPartner } from "@/utils/firebase";
 import { v4 as uuidv4 } from "uuid";
 
 interface DrawerContentProps {
@@ -81,6 +81,13 @@ export function DrawerContent({
         status: status,
         saved: saved,
       } as Partner);
+    }
+  };
+
+  const handleDelete = async () => {
+    const UID = auth.currentUser?.uid;
+    if (UID != null && partner != null) {
+      await deletePartner(UID, partner.id);
     }
   };
 
@@ -386,7 +393,15 @@ export function DrawerContent({
           <Button variant="contained" onClick={() => setDialogOpen(false)}>
             Cancel
           </Button>
-          <Button onClick={() => setDialogOpen(false)}>Delete</Button>
+          <Button
+            onClick={() => {
+              setDialogOpen(false);
+              handleDelete();
+              onClose();
+            }}
+          >
+            Delete
+          </Button>
         </DialogActions>
       </Dialog>
     </Stack>
