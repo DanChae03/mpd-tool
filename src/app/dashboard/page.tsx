@@ -10,38 +10,16 @@ import * as cheerio from "cheerio";
 import Card from "@mui/material/Card";
 import CardActionArea from "@mui/material/CardActionArea";
 import { People, Savings, Today } from "@mui/icons-material";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { Chart } from "@/components/Chart";
 import { UserIcon } from "@/components/UserIcon";
-import { auth, fetchPartners } from "@/utils/firebase";
+import { auth, fetchDocument, fetchPartners } from "@/utils/firebase";
 import { Partner } from "@/utils/types";
-
-// const getData = async () => {
-//   const output = { support: "0", target: "0", supporters: "0", deadline: "0" };
-//   if (1 === 1) {
-//     // TODO: Actual condition for url being present
-//     const response = await fetch(
-//       "https://give.studentlife.org.nz/appeals/taiwan-2024-kenneth-santos",
-//       { cache: "no-store" }
-//     );
-//     const body = await response.text();
-//     const data = cheerio.load(body);
-//     output.support = data("h3.mb-0")
-//       .eq(0)
-//       .text()
-//       .replace(/[^0-9]/g, "");
-//     output.target = data("h3.mb-0")
-//       .next()
-//       .text()
-//       .replace(/[^0-9]/g, "");
-//     output.supporters = data("h3.mb-0").eq(1).text();
-//     output.deadline = data("h3.mb-0").eq(2).text();
-//   }
-//   return output;
-// };
 
 export default function Dashboard(): ReactElement {
   const [partners, setPartners] = useState<Partner[]>([]);
+  const [target, setTarget] = useState<number>(0);
+  const [deadline, setDeadline] = useState<Dayjs>(dayjs());
 
   useEffect(() => {
     const getData = async () => {
@@ -51,6 +29,9 @@ export default function Dashboard(): ReactElement {
         if (partnerData.length !== 0) {
           setPartners(partnerData);
         }
+        const statistics = await fetchDocument(UID);
+        setTarget(statistics?.target);
+        setDeadline(dayjs(statistics?.deadline));
       }
     };
 
@@ -68,10 +49,6 @@ export default function Dashboard(): ReactElement {
   const supporters = partners.filter(
     (partner) => partner.confirmedAmount != null
   ).length;
-
-  // TODO: Un-hard code
-  const target: string = "7000";
-  const deadline: string = "74";
 
   const filteredPartners = partners
     .sort((a, b) => {
@@ -139,19 +116,11 @@ export default function Dashboard(): ReactElement {
               <Savings fontSize="large" sx={{ color: "primary.main" }} />
             </Stack>
             <Typography variant="h6">
-              {deadline !== "0" ? (
-                <>
-                  Of ${target} raised (
-                  {((support / parseInt(target)) * 100).toFixed(1)}%).
-                  <br /> ${totalPledged} pledged (
-                  {((totalPledged / parseInt(target)) * 100).toFixed(1)}%).
-                </>
-              ) : (
-                <>
-                  No Support page found. <br />
-                  Please add the link in Settings.
-                </>
-              )}
+              <>
+                Of ${target} raised ({((support / target) * 100).toFixed(1)}%).
+                <br /> ${totalPledged} pledged (
+                {((totalPledged / target) * 100).toFixed(1)}%).
+              </>
             </Typography>
           </Card>
           <Card sx={{ width: "100%", padding: "45px" }}>
@@ -163,32 +132,18 @@ export default function Dashboard(): ReactElement {
             </Stack>
 
             <Typography variant="h6">
-              {deadline !== "0" ? (
-                <>Partners supporting you in finance and prayer.</>
-              ) : (
-                <>
-                  No Support page found. <br />
-                  Please add the link in Settings.
-                </>
-              )}
+              Partners supporting you in finance and prayer.
             </Typography>
           </Card>
           <Card sx={{ width: "100%", padding: "45px" }}>
             <Stack direction="row" spacing="18px" alignItems="center">
               <Typography variant="h3" fontWeight="bold" color="primary.main">
-                {deadline}
+                {deadline.diff(dayjs(), "day")}
               </Typography>
               <Today fontSize="large" sx={{ color: "primary.main" }} />
             </Stack>
             <Typography variant="h6">
-              {deadline !== "0" ? (
-                <>{`Days left until the 100% deadline (${dayjs().add(parseInt(deadline), "day").format("dddd, DD MMMM")})`}</>
-              ) : (
-                <>
-                  No Support page found. <br />
-                  Please add the link in Settings.
-                </>
-              )}
+              {`Days left until the 100% deadline (${deadline.format("dddd, DD MMMM")})`}
             </Typography>
           </Card>
         </Stack>
@@ -212,7 +167,7 @@ export default function Dashboard(): ReactElement {
                 >
                   Next Steps
                 </Typography>
-                <Stack height="100%" alignItems="center" spacing="9px">
+                <Stack spacing="9px">
                   {filteredPartners.length === 0 ? (
                     <Typography variant="h6" paddingBottom="18px">
                       {"No Next Steps. Let's get some new supporters!"}

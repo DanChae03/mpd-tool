@@ -15,13 +15,17 @@ import Alert from "@mui/material/Alert";
 import { Check } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs, { Dayjs } from "dayjs";
 
 export default function Dashboard(): ReactElement {
-  const [webpage, setWebpage] = useState<string>("");
+  const [deadline, setDeadline] = useState<Dayjs | null>(dayjs());
   const [message, setMessage] = useState<string>("");
-  const [initialWebpage, setInitialWebpage] = useState<string>("");
-  const [initialMessage, setInitialMessage] = useState<string>("");
-  const [open, setOpen] = useState(false);
+  const [target, setTarget] = useState<number>(0);
+  const [open, setOpen] = useState<boolean>(false);
+  const [changed, setChanged] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -39,10 +43,9 @@ export default function Dashboard(): ReactElement {
       if (UID != null) {
         const data = await fetchDocument(UID);
         if (data != null) {
-          setWebpage(data.webpage);
+          setDeadline(dayjs(data.deadline));
           setMessage(data.message);
-          setInitialWebpage(data.webpage);
-          setInitialMessage(data.message);
+          setTarget(data.target);
         }
       }
     };
@@ -52,12 +55,14 @@ export default function Dashboard(): ReactElement {
   const setData = async () => {
     const UID = auth.currentUser?.uid;
     if (UID != null) {
-      setInitialWebpage(webpage);
-      setInitialMessage(message);
       await updateDoc(doc(database, "users", UID), {
         message: message,
-        webpage: webpage,
-      }).then(() => setOpen(true));
+        deadline: deadline?.toString() ?? null,
+        target: target,
+      }).then(() => {
+        setOpen(true);
+        setChanged(false);
+      });
     }
   };
 
@@ -86,20 +91,52 @@ export default function Dashboard(): ReactElement {
         >
           Settings
         </Typography>
-        <Stack spacing="9px" width="100%">
-          <Typography variant="h5">Link to Support Raising Page:</Typography>
-          <TextField
-            sx={{ bgcolor: "background.paper" }}
-            placeholder="https://give.studentlife.org.nz/appeals/project-year-your-name"
-            value={webpage}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setWebpage(event.target.value);
-            }}
-            slotProps={{
-              input: { style: { fontSize: "18px" } },
-            }}
-          />
-          <Typography variant="h5" paddingTop="18px">
+        <Stack width="100%" spacing="18px">
+          <Stack direction="row" alignItems="center" spacing="45px">
+            <Stack spacing="9px">
+              <Typography variant="h5">Support Deadline:</Typography>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  value={deadline}
+                  onChange={(newDate: Dayjs | null) => {
+                    setDeadline(newDate);
+                    setChanged(true);
+                  }}
+                  format="DD/MM/YYYY"
+                  sx={{
+                    width: "270px",
+                    "& .MuiOutlinedInput-root": {
+                      bgcolor: "background.paper",
+                      height: "63px",
+                      fontSize: "18px",
+                    },
+                    "& .MuiIconButton-root": {
+                      marginRight: "0px",
+                    },
+                  }}
+                />
+              </LocalizationProvider>
+            </Stack>
+            <Stack spacing="9px">
+              <Typography variant="h5">Support Target ($):</Typography>
+              <TextField
+                value={target}
+                type="number"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setTarget(parseInt(event.target.value));
+                }}
+                slotProps={{
+                  input: { style: { fontSize: "18px", height: "63px" } },
+                }}
+                placeholder="Hello! I would like your support for my upcoming mission trip..."
+                sx={{
+                  bgcolor: "background.paper",
+                  width: "270px",
+                }}
+              />
+            </Stack>
+          </Stack>
+          <Typography variant="h5">
             Default Email Text (This will pre-fill the draft of any emails you
             send).
           </Typography>
@@ -109,6 +146,7 @@ export default function Dashboard(): ReactElement {
             value={message}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setMessage(event.target.value);
+              setChanged(true);
             }}
             slotProps={{
               input: { style: { fontSize: "18px" } },
@@ -119,12 +157,7 @@ export default function Dashboard(): ReactElement {
           <Stack paddingTop="18px">
             <Button
               onClick={() => setData()}
-              disabled={
-                !webpage.startsWith(
-                  "https://give.studentlife.org.nz/appeals/",
-                ) ||
-                (message === initialMessage && webpage === initialWebpage)
-              }
+              disabled={!changed || Number.isNaN(target) || target < 0}
               variant="contained"
               sx={{
                 textTransform: "none",
