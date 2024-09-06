@@ -44,16 +44,7 @@ export function UserIcon(): ReactElement {
   };
 
   return (
-    <Stack
-      direction="row"
-      width="100%"
-      justifyContent="space-between"
-      alignItems="center"
-      paddingBottom="9px"
-    >
-      <Typography variant="h4" fontWeight="bold" color="primary.main">
-        {`Welcome, ${auth.currentUser?.displayName}`}
-      </Typography>
+    <Stack>
       <IconButton onClick={handleClick}>
         <Avatar
           sx={{

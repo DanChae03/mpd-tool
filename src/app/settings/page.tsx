@@ -19,6 +19,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
+import { UserIcon } from "@/components/UserIcon";
 
 export default function Dashboard(): ReactElement {
   const [deadline, setDeadline] = useState<Dayjs | null>(dayjs());
@@ -82,15 +83,23 @@ export default function Dashboard(): ReactElement {
         width="calc(100vw - 270px)"
         bgcolor="background.default"
         padding="63px"
+        paddingTop="47px"
       >
-        <Typography
-          variant="h4"
-          fontWeight="bold"
-          color="primary.main"
-          paddingBottom="18px"
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
         >
-          Settings
-        </Typography>
+          <Typography
+            variant="h4"
+            fontWeight="bold"
+            color="primary.main"
+            paddingBottom="18px"
+          >
+            Settings
+          </Typography>
+          <UserIcon />
+        </Stack>
         <Stack width="100%" spacing="18px">
           <Stack direction="row" alignItems="center" spacing="45px">
             <Stack spacing="9px">

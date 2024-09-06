@@ -99,7 +99,17 @@ export default function Dashboard(): ReactElement {
         padding="63px"
         paddingTop="47px"
       >
-        <UserIcon />
+        <Stack
+          direction="row"
+          alignItems="center"
+          paddingBottom="9px"
+          justifyContent="space-between"
+        >
+          <Typography variant="h4" fontWeight="bold" color="primary.main">
+            {`Welcome, ${auth.currentUser?.displayName}`}
+          </Typography>
+          <UserIcon />
+        </Stack>
         <Stack
           direction="row"
           width="100%"

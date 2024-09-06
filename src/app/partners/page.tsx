@@ -36,6 +36,7 @@ import { auth, fetchDocument, fetchPartners } from "@/utils/firebase";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import dayjs from "dayjs";
+import { UserIcon } from "@/components/UserIcon";
 
 function comparator<T>(a: T, b: T, orderBy: keyof T) {
   const aValue = a[orderBy];
@@ -340,6 +341,7 @@ export default function Partners(): ReactElement {
         width="calc(100vw - 270px)"
         bgcolor="background.default"
         padding="63px"
+        paddingTop="47px"
       >
         <Stack direction="row" justifyContent="space-between">
           <Stack direction="row" alignItems="end" spacing="36px">
@@ -358,7 +360,12 @@ export default function Partners(): ReactElement {
               Total Confirmed: ${confirmed}
             </Typography>
           </Stack>
-          <Stack direction="row" alignItems="center" spacing="18px">
+          <Stack
+            direction="row"
+            alignItems="center"
+            spacing="18px"
+            paddingBottom="9px"
+          >
             <FormControl variant="outlined" size="small">
               <InputLabel>Search</InputLabel>
               <OutlinedInput
@@ -385,6 +392,7 @@ export default function Partners(): ReactElement {
             >
               <Add />
             </Button>
+            <UserIcon />
           </Stack>
           <Menu
             anchorEl={anchorElement}
