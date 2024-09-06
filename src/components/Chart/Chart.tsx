@@ -11,8 +11,8 @@ interface ChartProps {
 
 export function Chart({ partners }: ChartProps): ReactElement {
   const names: string[] = [];
-  const dates: (Date | undefined)[] = [];
-  const amounts: number[] = [];
+  const dates: (Date | null)[] = [];
+  const amounts: (number | null)[] = [];
   const cumulativeAmounts: number[] = [];
 
   let cumulative = 0;
@@ -21,8 +21,8 @@ export function Chart({ partners }: ChartProps): ReactElement {
     names.push(partner.name);
     dates.push(partner.confirmedDate);
     amounts.push(partner.confirmedAmount);
-    cumulativeAmounts.push(partner.confirmedAmount + cumulative);
-    cumulative += partner.confirmedAmount;
+    cumulativeAmounts.push((partner.confirmedAmount ?? 0) + cumulative);
+    cumulative += partner.confirmedAmount ?? 0;
   });
 
   return (

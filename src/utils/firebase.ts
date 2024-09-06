@@ -1,6 +1,16 @@
 import { initializeApp } from "firebase/app";
-import { doc, getDoc, getFirestore } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  getFirestore,
+  setDoc,
+  Timestamp,
+} from "firebase/firestore";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { Partner } from "./types";
+import dayjs from "dayjs";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAQn0Vyn36cZ9PAhb-sUE6NoPqhEgN_fxg",
@@ -34,5 +44,60 @@ export const fetchDocument = async (UUI: string) => {
     }
   } catch (error) {
     console.error("Error getting document:", error);
+  }
+};
+
+export const fetchPartners = async (UUI: string) => {
+  try {
+    const querySnapshot = await getDocs(
+      collection(database, "users", UUI, "partners")
+    );
+    const partners: Partner[] = [];
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      console.log(data);
+      partners.push({
+        ...data,
+        id: doc.id,
+        nextStepDate:
+          data.nextStepDate != null ? data.nextStepDate.toDate() : null,
+        confirmedDate:
+          data.confirmedDate != null ? data.confirmedDate.toDate() : null,
+      } as Partner);
+    });
+    return partners;
+  } catch (error) {
+    console.error("Error getting document:", error);
+    return [];
+  }
+};
+
+export const setPartner = async (UID: string, partner: Partner) => {
+  try {
+    await setDoc(doc(database, "users", UID, "partners", partner.id), {
+      name: partner.name,
+      email: partner.email,
+      number: partner.number,
+      nextStepDate: partner.nextStepDate,
+      pledgedAmount: partner.pledgedAmount,
+      confirmedDate: partner.confirmedDate,
+      confirmedAmount: partner.confirmedAmount,
+      notes: partner.notes,
+      status: partner.status,
+      saved: partner.saved,
+    });
+  } catch (error) {
+    console.error("Error creating document:", error);
+  }
+};
+
+export const createUser = async (UID: string) => {
+  try {
+    await setDoc(doc(database, "users", UID), {
+      message: "",
+      webpage: "",
+    });
+  } catch (error) {
+    console.error("Error creating document:", error);
   }
 };

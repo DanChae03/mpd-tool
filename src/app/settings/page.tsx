@@ -35,24 +35,30 @@ export default function Dashboard(): ReactElement {
 
   useEffect(() => {
     const getData = async () => {
-      const data = await fetchDocument("X7NdCOkf9fRNEhvGTDw1kfSRMLX2");
-      if (data != null) {
-        setWebpage(data.webpage);
-        setMessage(data.message);
-        setInitialWebpage(data.webpage);
-        setInitialMessage(data.message);
+      const UID = auth.currentUser?.uid;
+      if (UID != null) {
+        const data = await fetchDocument(UID);
+        if (data != null) {
+          setWebpage(data.webpage);
+          setMessage(data.message);
+          setInitialWebpage(data.webpage);
+          setInitialMessage(data.message);
+        }
       }
     };
     getData();
   }, []);
 
   const setData = async () => {
-    setInitialWebpage(webpage);
-    setInitialMessage(message);
-    await updateDoc(doc(database, "users", "X7NdCOkf9fRNEhvGTDw1kfSRMLX2"), {
-      message: message,
-      webpage: webpage,
-    }).then(() => setOpen(true));
+    const UID = auth.currentUser?.uid;
+    if (UID != null) {
+      setInitialWebpage(webpage);
+      setInitialMessage(message);
+      await updateDoc(doc(database, "users", UID), {
+        message: message,
+        webpage: webpage,
+      }).then(() => setOpen(true));
+    }
   };
 
   return (

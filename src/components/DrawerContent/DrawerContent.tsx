@@ -20,13 +20,15 @@ import Typography from "@mui/material/Typography";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
+import { auth, setPartner } from "@/utils/firebase";
+import { v4 as uuidv4 } from "uuid";
 
 interface DrawerContentProps {
   partner: Partner | undefined;
@@ -40,8 +42,10 @@ export function DrawerContent({
   message,
 }: DrawerContentProps): ReactElement {
   const [name, setName] = useState<string>(partner?.name ?? "");
-  const [email, setEmail] = useState<string | undefined>(partner?.email);
-  const [number, setNumber] = useState<string | undefined>(partner?.number);
+  const [email, setEmail] = useState<string | undefined | null>(partner?.email);
+  const [number, setNumber] = useState<string | undefined | null>(
+    partner?.number
+  );
   const [status, setStatus] = useState<string>(partner?.status ?? "To Ask");
   const [notes, setNotes] = useState<string>(partner?.notes ?? "");
   const [disabled, setDisabled] = useState<boolean>(partner != null);
@@ -49,17 +53,36 @@ export function DrawerContent({
   const [saved, setSaved] = useState<boolean>(partner?.saved ?? false);
 
   const [nextStepDate, setNextStepDate] = useState<Dayjs | null>(
-    dayjs(partner?.nextStepDate),
+    dayjs(partner?.nextStepDate)
   );
   const [pledgedAmount, setPledgedAmount] = useState<number>(
-    partner?.pledgedAmount ?? 0,
+    partner?.pledgedAmount ?? 0
   );
   const [confirmedDate, setConfirmedDate] = useState<Dayjs | null>(
-    dayjs(partner?.confirmedDate),
+    dayjs(partner?.confirmedDate)
   );
   const [confirmedAmount, setConfirmedAmount] = useState<number>(
-    partner?.confirmedAmount ?? 0,
+    partner?.confirmedAmount ?? 0
   );
+
+  const handleSave = async () => {
+    const UID = auth.currentUser?.uid;
+    if (UID != null) {
+      await setPartner(UID, {
+        id: partner != null ? partner.id : uuidv4(),
+        name: name,
+        email: email ?? null,
+        number: number ?? null,
+        nextStepDate: nextStepDate?.toString() ?? null,
+        pledgedAmount: pledgedAmount > 0 ? pledgedAmount : null,
+        confirmedDate: confirmedDate?.toString() ?? null,
+        confirmedAmount: confirmedAmount > 0 ? confirmedAmount : null,
+        notes: notes,
+        status: status,
+        saved: saved,
+      } as Partner);
+    }
+  };
 
   return (
     <Stack width="630px" padding="63px" spacing="18px">
@@ -344,6 +367,7 @@ export function DrawerContent({
               width: "126px",
               borderRadius: "27px",
             }}
+            onClick={() => handleSave()}
           >
             Save
           </Button>

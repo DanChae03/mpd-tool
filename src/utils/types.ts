@@ -1,12 +1,12 @@
 export type Partner = {
   id: string; // unique
   name: string;
-  email: string | undefined;
-  number: string | undefined;
-  nextStepDate: Date | undefined; // DD/MM/YY
-  pledgedAmount: number;
-  confirmedDate: Date | undefined; // DD/MM/YY
-  confirmedAmount: number;
+  email: string | null;
+  number: string | null;
+  nextStepDate: string | null; // DD/MM/YY
+  pledgedAmount: number | null;
+  confirmedDate: string | null; // DD/MM/YY
+  confirmedAmount: number | null;
   notes: string; // Sentence
   status: string;
   saved: boolean;

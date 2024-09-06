@@ -1,5 +1,7 @@
+"use client";
+
 import Stack from "@mui/material/Stack";
-import { ReactElement, use } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Navbar } from "@/components/Navbar";
@@ -8,41 +10,68 @@ import * as cheerio from "cheerio";
 import Card from "@mui/material/Card";
 import CardActionArea from "@mui/material/CardActionArea";
 import { People, Savings, Today } from "@mui/icons-material";
-import { partners } from "../partners/testData";
 import dayjs from "dayjs";
 import { Chart } from "@/components/Chart";
 import { UserIcon } from "@/components/UserIcon";
+import { auth, fetchPartners } from "@/utils/firebase";
+import { Partner } from "@/utils/types";
 
-const getData = async () => {
-  const output = { support: "0", target: "0", supporters: "0", deadline: "0" };
-  if (1 === 1) {
-    // TODO: Actual condition for url being present
-    const response = await fetch(
-      "https://give.studentlife.org.nz/appeals/taiwan-2024-kenneth-santos",
-      { cache: "no-store" },
-    );
-    const body = await response.text();
-    const data = cheerio.load(body);
-    output.support = data("h3.mb-0")
-      .eq(0)
-      .text()
-      .replace(/[^0-9]/g, "");
-    output.target = data("h3.mb-0")
-      .next()
-      .text()
-      .replace(/[^0-9]/g, "");
-    output.supporters = data("h3.mb-0").eq(1).text();
-    output.deadline = data("h3.mb-0").eq(2).text();
-  }
-  return output;
-};
+// const getData = async () => {
+//   const output = { support: "0", target: "0", supporters: "0", deadline: "0" };
+//   if (1 === 1) {
+//     // TODO: Actual condition for url being present
+//     const response = await fetch(
+//       "https://give.studentlife.org.nz/appeals/taiwan-2024-kenneth-santos",
+//       { cache: "no-store" }
+//     );
+//     const body = await response.text();
+//     const data = cheerio.load(body);
+//     output.support = data("h3.mb-0")
+//       .eq(0)
+//       .text()
+//       .replace(/[^0-9]/g, "");
+//     output.target = data("h3.mb-0")
+//       .next()
+//       .text()
+//       .replace(/[^0-9]/g, "");
+//     output.supporters = data("h3.mb-0").eq(1).text();
+//     output.deadline = data("h3.mb-0").eq(2).text();
+//   }
+//   return output;
+// };
 
 export default function Dashboard(): ReactElement {
-  const { support, supporters, deadline, target } = use(getData());
+  const [partners, setPartners] = useState<Partner[]>([]);
+
+  useEffect(() => {
+    const getData = async () => {
+      const UID = auth.currentUser?.uid;
+      if (UID != null) {
+        const partnerData = await fetchPartners(UID);
+        if (partnerData.length !== 0) {
+          setPartners(partnerData);
+        }
+      }
+    };
+
+    getData();
+  }, []);
 
   const totalPledged = partners.reduce((sum, partner) => {
-    return sum + (partner.pledgedAmount || 0);
+    return sum + (partner.pledgedAmount ?? 0);
   }, 0);
+
+  const support = partners.reduce((sum, partner) => {
+    return sum + (partner.confirmedAmount ?? 0);
+  }, 0);
+
+  const supporters = partners.filter(
+    (partner) => partner.confirmedAmount != null
+  ).length;
+
+  // TODO: Un-hard code
+  const target: string = "7000";
+  const deadline: string = "74";
 
   const filteredPartners = partners
     .sort((a, b) => {
@@ -55,7 +84,7 @@ export default function Dashboard(): ReactElement {
     })
     .filter(
       (partner) =>
-        partner.nextStepDate != null && partner.status !== "Confirmed",
+        partner.nextStepDate != null && partner.status !== "Confirmed"
     )
     .slice(0, 4);
 
@@ -64,7 +93,7 @@ export default function Dashboard(): ReactElement {
       (partner) =>
         partner.confirmedAmount != null &&
         partner.confirmedAmount > 0 &&
-        partner.confirmedDate != null,
+        partner.confirmedDate != null
     )
     .sort((a, b) => {
       const dateA = dayjs(a.confirmedDate);
@@ -113,7 +142,7 @@ export default function Dashboard(): ReactElement {
               {deadline !== "0" ? (
                 <>
                   Of ${target} raised (
-                  {((parseInt(support) / parseInt(target)) * 100).toFixed(1)}%).
+                  {((support / parseInt(target)) * 100).toFixed(1)}%).
                   <br /> ${totalPledged} pledged (
                   {((totalPledged / parseInt(target)) * 100).toFixed(1)}%).
                 </>
@@ -153,7 +182,7 @@ export default function Dashboard(): ReactElement {
             </Stack>
             <Typography variant="h6">
               {deadline !== "0" ? (
-                <>{`Days left until the 100% deadline (${dayjs().add(parseInt(deadline), "day").format("dddd, DD[th] MMMM")})`}</>
+                <>{`Days left until the 100% deadline (${dayjs().add(parseInt(deadline), "day").format("dddd, DD MMMM")})`}</>
               ) : (
                 <>
                   No Support page found. <br />

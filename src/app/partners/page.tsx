@@ -18,7 +18,6 @@ import { Partner } from "@/utils/types";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Box from "@mui/material/Box";
 import { visuallyHidden } from "@mui/utils";
-import { partners } from "./testData";
 import IconButton from "@mui/material/IconButton";
 import { Add, Search, Star, StarBorder, Tune } from "@mui/icons-material";
 import Menu from "@mui/material/Menu";
@@ -33,19 +32,19 @@ import Drawer from "@mui/material/Drawer";
 import { DrawerContent } from "@/components/DrawerContent";
 import Button from "@mui/material/Button";
 import { Switch } from "@mui/material";
-import { auth, database, fetchDocument } from "@/utils/firebase";
+import { auth, fetchDocument, fetchPartners } from "@/utils/firebase";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import dayjs from "dayjs";
 
 function comparator<T>(a: T, b: T, orderBy: keyof T) {
   const aValue = a[orderBy];
   const bValue = b[orderBy];
 
-  if (aValue === undefined && bValue !== undefined) {
+  if (aValue === null && bValue !== null) {
     return 1;
   }
-  if (aValue !== undefined && bValue === undefined) {
+  if (aValue !== null && bValue === null) {
     return -1;
   }
 
@@ -62,10 +61,10 @@ type Order = "asc" | "desc";
 
 function getComparator<Key extends keyof any>(
   order: Order,
-  orderBy: Key,
+  orderBy: Key
 ): (
-  a: { [key in Key]: number | string | undefined | boolean | Date },
-  b: { [key in Key]: number | string | undefined | boolean | Date },
+  a: { [key in Key]: number | string | null | boolean | Date },
+  b: { [key in Key]: number | string | null | boolean | Date }
 ) => number {
   return order === "asc"
     ? (a, b) => comparator(a, b, orderBy)
@@ -133,7 +132,7 @@ const headCells: readonly HeadCell[] = [
 interface EnhancedTableProps {
   onRequestSort: (
     event: React.MouseEvent<unknown>,
-    property: keyof Partner,
+    property: keyof Partner
   ) => void;
   order: Order;
   orderBy: string;
@@ -199,14 +198,24 @@ export default function Partners(): ReactElement {
   const [selectedPartner, setSelectedPartner] = useState<Partner>();
   const [onlySaved, setOnlySaved] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
+  const [partners, setPartners] = useState<Partner[]>([]);
 
   useEffect(() => {
     const getData = async () => {
-      const data = await fetchDocument("X7NdCOkf9fRNEhvGTDw1kfSRMLX2");
-      if (data != null) {
-        setMessage(data.message);
+      const UID = auth.currentUser?.uid;
+      if (UID != null) {
+        const messageData = await fetchDocument(UID);
+        if (messageData != null) {
+          setMessage(messageData.message);
+        }
+
+        const partnerData = await fetchPartners(UID);
+        if (partnerData.length !== 0) {
+          setPartners(partnerData);
+        }
       }
     };
+
     getData();
   }, []);
 
@@ -221,36 +230,36 @@ export default function Partners(): ReactElement {
   }, [router]);
 
   useEffect(() => {
+    const calculateTotals = () => {
+      const totalPledged = partners.reduce((sum, partner) => {
+        return sum + (partner.pledgedAmount ?? 0);
+      }, 0);
+
+      const totalConfirmed = partners.reduce((sum, partner) => {
+        return sum + (partner.confirmedAmount ?? 0);
+      }, 0);
+
+      setPledged(totalPledged);
+      setConfirmed(totalConfirmed);
+    };
+
     calculateTotals();
     let filteredSearch = partners;
     if (searchKey.trim() != "") {
       filteredSearch = filteredSearch.filter((partner) =>
-        partner.name.toLowerCase().includes(searchKey.toLowerCase()),
+        partner.name.toLowerCase().includes(searchKey.toLowerCase())
       );
     }
     if (filters.length < 7) {
       filteredSearch = filteredSearch.filter((partner) =>
-        filters.includes(partner.status),
+        filters.includes(partner.status)
       );
     }
     if (onlySaved) {
       filteredSearch = filteredSearch.filter((partner) => partner.saved);
     }
     setFilteredPartners(filteredSearch);
-  }, [filters, onlySaved, searchKey]);
-
-  const calculateTotals = () => {
-    const totalPledged = partners.reduce((sum, partner) => {
-      return sum + (partner.pledgedAmount || 0);
-    }, 0);
-
-    const totalConfirmed = partners.reduce((sum, partner) => {
-      return sum + (partner.confirmedAmount || 0);
-    }, 0);
-
-    setPledged(totalPledged);
-    setConfirmed(totalConfirmed);
-  };
+  }, [filters, onlySaved, partners, searchKey]);
 
   const handleSetFilters = (filter: string) => {
     if (!filters.includes(filter)) {
@@ -264,7 +273,7 @@ export default function Partners(): ReactElement {
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
-    property: keyof Partner,
+    property: keyof Partner
   ) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -281,7 +290,7 @@ export default function Partners(): ReactElement {
   };
 
   const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
@@ -307,6 +316,7 @@ export default function Partners(): ReactElement {
   }, [
     filters.length,
     searchKey,
+    partners,
     filteredPartners,
     order,
     orderBy,
@@ -490,7 +500,7 @@ export default function Partners(): ReactElement {
                 rowCount={partners.length}
               />
               <TableBody>
-                {visibleRows.map((row, index) => {
+                {visibleRows.map((row) => {
                   return (
                     <TableRow
                       hover
@@ -499,7 +509,7 @@ export default function Partners(): ReactElement {
                       sx={{
                         cursor: "pointer",
                         bgcolor:
-                          row.confirmedAmount > 0 &&
+                          row.confirmedAmount != null &&
                           row.confirmedAmount === row.pledgedAmount
                             ? "#EDFCEF"
                             : row.status === "Pledged"
@@ -540,13 +550,15 @@ export default function Partners(): ReactElement {
                       <TableCell sx={{ fontSize: "18px" }}>
                         {row.status === "Confirmed"
                           ? "Done"
-                          : row.nextStepDate?.toLocaleDateString()}
+                          : dayjs(row.nextStepDate).format("DD/MM")}
                       </TableCell>
                       <TableCell sx={{ fontSize: "18px" }}>
-                        {row.pledgedAmount > 0 ? `$${row.pledgedAmount}` : ""}
+                        {row.pledgedAmount != null
+                          ? `$${row.pledgedAmount}`
+                          : ""}
                       </TableCell>
                       <TableCell sx={{ fontSize: "18px" }}>
-                        {row.confirmedAmount > 0
+                        {row.confirmedAmount != null
                           ? `$${row.confirmedAmount}`
                           : ""}
                       </TableCell>
@@ -592,7 +604,7 @@ export default function Partners(): ReactElement {
             </Table>
           </TableContainer>
           <TablePagination
-            rowsPerPageOptions={[5, 10, 15]}
+            rowsPerPageOptions={[4, 8, 10]}
             component="div"
             count={
               filters.length === 0 || searchKey !== ""
