@@ -13,8 +13,6 @@ import { auth, database, fetchDocument } from "@/utils/firebase";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { Check } from "@mui/icons-material";
-import { useRouter } from "next/navigation";
-import { onAuthStateChanged } from "firebase/auth";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -173,7 +171,7 @@ export default function Dashboard(): ReactElement {
       </Stack>
       <Snackbar
         open={open}
-        autoHideDuration={5000}
+        autoHideDuration={3000}
         onClose={() => setOpen(false)}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       >

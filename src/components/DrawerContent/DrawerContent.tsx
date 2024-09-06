@@ -20,7 +20,7 @@ import Typography from "@mui/material/Typography";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { ReactElement, useState } from "react";
+import { Dispatch, ReactElement, SetStateAction, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -34,12 +34,16 @@ interface DrawerContentProps {
   partner: Partner | undefined;
   onClose: () => void;
   message: string;
+  setSnackbarOpen: () => void;
+  setSnackbarMessage: Dispatch<SetStateAction<string>>;
 }
 
 export function DrawerContent({
   partner,
   onClose,
   message,
+  setSnackbarOpen,
+  setSnackbarMessage,
 }: DrawerContentProps): ReactElement {
   const [name, setName] = useState<string>(partner?.name ?? "");
   const [email, setEmail] = useState<string | undefined | null>(partner?.email);
@@ -81,6 +85,12 @@ export function DrawerContent({
         status: status,
         saved: saved,
       } as Partner).then(() => {
+        setSnackbarMessage(
+          partner != null
+            ? "Partner updated successfully."
+            : "Partner created successfully."
+        );
+        setSnackbarOpen();
         onClose();
       });
     }
@@ -89,7 +99,12 @@ export function DrawerContent({
   const handleDelete = async () => {
     const UID = auth.currentUser?.uid;
     if (UID != null && partner != null) {
-      await deletePartner(UID, partner.id);
+      await deletePartner(UID, partner.id).then(() => {
+        setSnackbarMessage("Partner removed successfully.");
+        setSnackbarOpen();
+        setDialogOpen(false);
+        onClose();
+      });
     }
   };
 
@@ -397,9 +412,7 @@ export function DrawerContent({
           </Button>
           <Button
             onClick={() => {
-              setDialogOpen(false);
               handleDelete();
-              onClose();
             }}
           >
             Delete

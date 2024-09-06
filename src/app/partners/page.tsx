@@ -19,7 +19,14 @@ import TableSortLabel from "@mui/material/TableSortLabel";
 import Box from "@mui/material/Box";
 import { visuallyHidden } from "@mui/utils";
 import IconButton from "@mui/material/IconButton";
-import { Add, Search, Star, StarBorder, Tune } from "@mui/icons-material";
+import {
+  Add,
+  Check,
+  Search,
+  Star,
+  StarBorder,
+  Tune,
+} from "@mui/icons-material";
 import Menu from "@mui/material/Menu";
 import Card from "@mui/material/Card";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -31,10 +38,9 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Drawer from "@mui/material/Drawer";
 import { DrawerContent } from "@/components/DrawerContent";
 import Button from "@mui/material/Button";
-import { Switch } from "@mui/material";
+import { Alert, Switch } from "@mui/material";
 import { auth, fetchDocument, fetchPartners } from "@/utils/firebase";
-import { useRouter } from "next/navigation";
-import { onAuthStateChanged } from "firebase/auth";
+import Snackbar from "@mui/material/Snackbar";
 import dayjs from "dayjs";
 import { UserIcon } from "@/components/UserIcon";
 
@@ -200,6 +206,10 @@ export default function Partners(): ReactElement {
   const [onlySaved, setOnlySaved] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [partners, setPartners] = useState<Partner[]>([]);
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>(
+    "Operation successful."
+  );
 
   useEffect(() => {
     const getData = async () => {
@@ -628,8 +638,25 @@ export default function Partners(): ReactElement {
           partner={selectedPartner}
           onClose={() => setDrawerOpen(false)}
           message={message}
+          setSnackbarOpen={() => setSnackbarOpen(true)}
+          setSnackbarMessage={setSnackbarMessage}
         />
       </Drawer>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert
+          variant="filled"
+          icon={<Check fontSize="inherit" />}
+          severity="success"
+          sx={{ fontSize: "18px" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Stack>
   );
 }
