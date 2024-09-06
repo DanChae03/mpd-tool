@@ -1,7 +1,7 @@
 import { createTheme, Theme } from "@mui/material/styles";
 import { Nunito_Sans } from "next/font/google";
 
-const font = Nunito_Sans({ subsets: ["latin"] });
+const font = Nunito_Sans({ subsets: ["latin"], display: "swap" });
 
 export const theme: Theme = createTheme({
   typography: {
