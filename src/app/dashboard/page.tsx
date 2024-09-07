@@ -11,11 +11,11 @@ import CardActionArea from "@mui/material/CardActionArea";
 import { People, Savings, Today } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { Chart } from "@/components/Chart";
-import { UserIcon } from "@/components/UserIcon";
 import { auth, fetchDocument, fetchPartners } from "@/utils/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { DataContext } from "@/components/DataProvider/DataProvider";
+import { PageWrapper } from "@/components/PageWrapper";
 
 export default function Dashboard(): ReactElement {
   const {
@@ -103,146 +103,129 @@ export default function Dashboard(): ReactElement {
     });
 
   return (
-    <Stack direction="row" height="100vh">
-      <Navbar page="dashboard" />
+    <PageWrapper
+      title={`Welcome, ${auth.currentUser?.displayName}`}
+      page="dashboard"
+    >
       <Stack
-        height="100%"
-        width="calc(100vw - 270px)"
-        bgcolor="background.default"
-        padding="63px"
-        paddingTop="47px"
+        direction="row"
+        width="100%"
+        justifyContent="space-between"
+        spacing="36px"
+        paddingBottom="36px"
+        maxHeight="270px"
       >
-        <Stack
-          direction="row"
-          alignItems="center"
-          paddingBottom="9px"
-          justifyContent="space-between"
-        >
-          <Typography variant="h4" fontWeight="bold" color="primary.main">
-            {`Welcome, ${auth.currentUser?.displayName}`}
+        <Card sx={{ width: "100%", padding: "45px" }}>
+          <Stack direction="row" spacing="18px" alignItems="center">
+            <Typography variant="h3" fontWeight="bold" color="primary.main">
+              ${support}
+            </Typography>
+            <Savings fontSize="large" sx={{ color: "primary.main" }} />
+          </Stack>
+          <Typography variant="h6">
+            <>
+              Of ${target} raised ({((support / target) * 100).toFixed(1)}%)
+              <br /> ${totalPledged} pledged (
+              {((totalPledged / target) * 100).toFixed(1)}%)
+            </>
           </Typography>
-          <UserIcon />
-        </Stack>
-        <Stack
-          direction="row"
-          width="100%"
-          justifyContent="space-between"
-          spacing="36px"
-          paddingBottom="36px"
-          maxHeight="270px"
-        >
-          <Card sx={{ width: "100%", padding: "45px" }}>
-            <Stack direction="row" spacing="18px" alignItems="center">
-              <Typography variant="h3" fontWeight="bold" color="primary.main">
-                ${support}
-              </Typography>
-              <Savings fontSize="large" sx={{ color: "primary.main" }} />
-            </Stack>
-            <Typography variant="h6">
-              <>
-                Of ${target} raised ({((support / target) * 100).toFixed(1)}%).
-                <br /> ${totalPledged} pledged (
-                {((totalPledged / target) * 100).toFixed(1)}%).
-              </>
+        </Card>
+        <Card sx={{ width: "100%", padding: "45px" }}>
+          <Stack direction="row" spacing="18px" alignItems="center">
+            <Typography variant="h3" fontWeight="bold" color="primary.main">
+              {supporters}
             </Typography>
-          </Card>
-          <Card sx={{ width: "100%", padding: "45px" }}>
-            <Stack direction="row" spacing="18px" alignItems="center">
-              <Typography variant="h3" fontWeight="bold" color="primary.main">
-                {supporters}
-              </Typography>
-              <People fontSize="large" sx={{ color: "primary.main" }} />
-            </Stack>
+            <People fontSize="large" sx={{ color: "primary.main" }} />
+          </Stack>
 
-            <Typography variant="h6">
-              Partners supporting you in finance and prayer.
+          <Typography variant="h6">
+            Partners supporting you in finance and prayer
+          </Typography>
+        </Card>
+        <Card sx={{ width: "100%", padding: "45px" }}>
+          <Stack direction="row" spacing="18px" alignItems="center">
+            <Typography variant="h3" fontWeight="bold" color="primary.main">
+              {deadline.diff(dayjs(), "day")}
             </Typography>
-          </Card>
-          <Card sx={{ width: "100%", padding: "45px" }}>
-            <Stack direction="row" spacing="18px" alignItems="center">
-              <Typography variant="h3" fontWeight="bold" color="primary.main">
-                {deadline.diff(dayjs(), "day")}
+            <Today fontSize="large" sx={{ color: "primary.main" }} />
+          </Stack>
+          <Typography variant="h6">
+            {`Days left until the 100% deadline (${deadline.format("dddd, DD MMMM")})`}
+          </Typography>
+        </Card>
+      </Stack>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        spacing="36px"
+        height="100%"
+      >
+        <Card sx={{ width: "40%", maxHeight: "396px" }}>
+          <CardActionArea
+            sx={{ padding: "27px", height: "100%" }}
+            href="/partners"
+          >
+            <Stack height="100%">
+              <Typography
+                variant="h5"
+                fontWeight="bold"
+                color="primary.main"
+                paddingBottom="18px"
+              >
+                Next Steps
               </Typography>
-              <Today fontSize="large" sx={{ color: "primary.main" }} />
-            </Stack>
-            <Typography variant="h6">
-              {`Days left until the 100% deadline (${deadline.format("dddd, DD MMMM")})`}
-            </Typography>
-          </Card>
-        </Stack>
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          spacing="36px"
-          height="100%"
-        >
-          <Card sx={{ width: "40%", maxHeight: "396px" }}>
-            <CardActionArea
-              sx={{ padding: "27px", height: "100%" }}
-              href="/partners"
-            >
-              <Stack height="100%">
-                <Typography
-                  variant="h5"
-                  fontWeight="bold"
-                  color="primary.main"
-                  paddingBottom="18px"
-                >
-                  Next Steps
-                </Typography>
-                <Stack spacing="9px">
-                  {filteredPartners.length === 0 ? (
-                    <Typography variant="h6" paddingBottom="18px">
-                      {"No Next Steps. Let's get some new supporters!"}
-                    </Typography>
-                  ) : (
-                    filteredPartners.map((partner) => (
-                      <Stack
-                        key={partner.id}
-                        direction="row"
-                        justifyContent="space-between"
-                        width="100%"
-                        height="100%"
-                      >
-                        <Stack>
-                          <Typography variant="h6" fontWeight="bold">
-                            {partner.name}
-                          </Typography>
-                          <Typography variant="body1">
-                            {partner.status === "To Ask"
-                              ? "Ask for Support"
-                              : partner.status === "Asked"
-                                ? "Send Letter"
-                                : partner.status === "Letter Sent"
-                                  ? "Contact regarding letter"
-                                  : partner.status === "Contacted"
-                                    ? "Follow up regarding decision"
-                                    : "Follow up on pledge"}
-                          </Typography>
-                        </Stack>
-                        <Typography variant="h6" textAlign="right">
-                          {dayjs(partner.nextStepDate).format("dddd, DD/MM")}
+              <Stack spacing="9px">
+                {filteredPartners.length === 0 ? (
+                  <Typography variant="h6" paddingBottom="18px">
+                    {"No Next Steps. Let's get some new supporters!"}
+                  </Typography>
+                ) : (
+                  filteredPartners.map((partner) => (
+                    <Stack
+                      key={partner.id}
+                      direction="row"
+                      justifyContent="space-between"
+                      width="100%"
+                      height="100%"
+                    >
+                      <Stack>
+                        <Typography variant="h6" fontWeight="bold">
+                          {partner.name}
+                        </Typography>
+                        <Typography variant="body1">
+                          {partner.status === "To Ask"
+                            ? "Ask for Support"
+                            : partner.status === "Asked"
+                              ? "Send Letter"
+                              : partner.status === "Letter Sent"
+                                ? "Contact regarding letter"
+                                : partner.status === "Contacted"
+                                  ? "Follow up regarding decision"
+                                  : "Follow up on pledge"}
                         </Typography>
                       </Stack>
-                    ))
-                  )}
-                </Stack>
+                      <Typography variant="h6" textAlign="right">
+                        {dayjs(partner.nextStepDate).format("dddd, DD/MM")}
+                      </Typography>
+                    </Stack>
+                  ))
+                )}
               </Stack>
-            </CardActionArea>
-          </Card>
-          <Card sx={{ width: "60%", padding: "27px", maxHeight: "396px" }}>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              spacing="36px"
-              height="100%"
-            >
-              <Chart partners={confirmed} />
             </Stack>
-          </Card>
-        </Stack>
+          </CardActionArea>
+        </Card>
+        <Card sx={{ width: "60%", padding: "27px", maxHeight: "396px" }}>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            spacing="36px"
+            height="100%"
+          >
+            <Chart partners={confirmed} />
+          </Stack>
+        </Card>
       </Stack>
-    </Stack>
+    </PageWrapper>
   );
 }

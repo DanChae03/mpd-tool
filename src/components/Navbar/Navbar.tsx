@@ -9,7 +9,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 interface NavbarProps {
-  page: "dashboard" | "partners" | "settings";
+  page: string; // "dashboard" | "partners" | "settings";
 }
 
 export function Navbar({ page }: NavbarProps) {
