@@ -189,7 +189,7 @@ export default function Partners(): ReactElement {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<keyof Partner>("id");
   const [page, setPage] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(8);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null);
   const [filters, setFilters] = useState<string[]>([
     "To Ask",
@@ -670,7 +670,9 @@ export default function Partners(): ReactElement {
             </Table>
           </TableContainer>
           <TablePagination
-            rowsPerPageOptions={[4, 8, 10]}
+            rowsPerPageOptions={[
+              5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+            ]}
             component="div"
             count={
               filters.length === 0 || searchKey !== ""

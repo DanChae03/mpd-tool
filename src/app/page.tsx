@@ -22,14 +22,14 @@ export default function Home(): ReactElement {
 
   const { setTarget } = useContext(DataContext);
 
-  // useEffect(() => {
-  //   onAuthStateChanged(auth, (user) => {
-  //     if (user) {
-  //       setTarget(0);
-  //       router.push("/dashboard");
-  //     }
-  //   });
-  // }, [router, setTarget]);
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setTarget(0);
+        router.push("/dashboard");
+      }
+    });
+  }, [router, setTarget]);
 
   const handleGoogleLogin = () => {
     setState("loading");

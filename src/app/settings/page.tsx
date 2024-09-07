@@ -184,7 +184,13 @@ export default function Dashboard(): ReactElement {
           <Stack paddingTop="18px">
             <Button
               onClick={() => setData()}
-              disabled={!changed || Number.isNaN(target) || target < 0}
+              disabled={
+                !changed ||
+                Number.isNaN(target) ||
+                target < 0 ||
+                !message ||
+                message === ""
+              }
               variant="contained"
               sx={{
                 textTransform: "none",
