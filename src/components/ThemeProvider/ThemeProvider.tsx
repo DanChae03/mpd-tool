@@ -1,3 +1,6 @@
+"use client";
+import { ThemeProvider as ThemeClient } from "@mui/material/styles";
+import { ReactNode } from "react";
 import { createTheme, Theme } from "@mui/material/styles";
 import { Nunito_Sans } from "next/font/google";
 
@@ -28,3 +31,11 @@ export const theme: Theme = createTheme({
     },
   },
 });
+
+interface ThemeProviderProps {
+  children: ReactNode;
+}
+
+export function ThemeProvider({ children }: ThemeProviderProps) {
+  return <ThemeClient theme={theme}>{children}</ThemeClient>;
+}

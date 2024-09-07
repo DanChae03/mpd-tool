@@ -18,6 +18,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { UserIcon } from "@/components/UserIcon";
+import { onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard(): ReactElement {
   const [deadline, setDeadline] = useState<Dayjs | null>(dayjs());
@@ -25,6 +27,8 @@ export default function Dashboard(): ReactElement {
   const [target, setTarget] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
   const [changed, setChanged] = useState<boolean>(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     const getData = async () => {
@@ -38,8 +42,15 @@ export default function Dashboard(): ReactElement {
         }
       }
     };
-    getData();
-  }, []);
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        getData();
+      } else {
+        router.push("/");
+      }
+    });
+  }, [router]);
 
   const setData = async () => {
     const UID = auth.currentUser?.uid;

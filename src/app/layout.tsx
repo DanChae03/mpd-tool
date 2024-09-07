@@ -1,4 +1,4 @@
-import { ThemeClient } from "@/components/ThemeClient";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ThemeClient>{children}</ThemeClient>
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

@@ -14,11 +14,14 @@ import { Chart } from "@/components/Chart";
 import { UserIcon } from "@/components/UserIcon";
 import { auth, fetchDocument, fetchPartners } from "@/utils/firebase";
 import { Partner } from "@/utils/types";
+import { onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard(): ReactElement {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [target, setTarget] = useState<number>(0);
   const [deadline, setDeadline] = useState<Dayjs>(dayjs());
+  const router = useRouter();
 
   useEffect(() => {
     const getData = async () => {
@@ -34,8 +37,14 @@ export default function Dashboard(): ReactElement {
       }
     };
 
-    getData();
-  }, []);
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        getData();
+      } else {
+        router.push("/");
+      }
+    });
+  }, [router]);
 
   const totalPledged = partners.reduce((sum, partner) => {
     return sum + (partner.pledgedAmount ?? 0);

@@ -43,6 +43,8 @@ import { auth, fetchDocument, fetchPartners } from "@/utils/firebase";
 import Snackbar from "@mui/material/Snackbar";
 import dayjs from "dayjs";
 import { UserIcon } from "@/components/UserIcon";
+import { useRouter } from "next/navigation";
+import { onAuthStateChanged } from "firebase/auth";
 
 function comparator<T>(a: T, b: T, orderBy: keyof T) {
   const aValue = a[orderBy];
@@ -211,6 +213,8 @@ export default function Partners(): ReactElement {
     "Operation successful."
   );
 
+  const router = useRouter();
+
   useEffect(() => {
     const getData = async () => {
       const UID = auth.currentUser?.uid;
@@ -227,8 +231,14 @@ export default function Partners(): ReactElement {
       }
     };
 
-    getData();
-  }, []);
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        getData();
+      } else {
+        router.push("/");
+      }
+    });
+  }, [router]);
 
   useEffect(() => {
     const calculateTotals = () => {
