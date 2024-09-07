@@ -16,7 +16,6 @@
     "@mui/x-charts": "^7.15.0",
     "@mui/x-date-pickers": "^7.15.0",
     "dayjs": "^1.11.13",
-    "dotenv": "^16.4.5",
     "firebase": "^10.13.1",
     "next": "14.2.7",
     "react": "^18",

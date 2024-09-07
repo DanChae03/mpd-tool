@@ -11,10 +11,9 @@ import {
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { Partner } from "./types";
 import dayjs from "dayjs";
-import "dotenv/config";
 
 const firebaseConfig = {
-  apiKey: process.env.API_KEY,
+  apiKey: "AIzaSyAQn0Vyn36cZ9PAhb-sUE6NoPqhEgN_fxg",
   authDomain: "mpd-tool.firebaseapp.com",
   projectId: "mpd-tool",
   storageBucket: "mpd-tool.appspot.com",
