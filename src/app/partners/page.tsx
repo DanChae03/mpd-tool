@@ -548,7 +548,8 @@ export default function Partners(): ReactElement {
                         cursor: "pointer",
                         bgcolor:
                           row.confirmedAmount &&
-                          row.confirmedAmount === row.pledgedAmount
+                          row.pledgedAmount &&
+                          row.confirmedAmount >= row.pledgedAmount
                             ? "#EDFCEF"
                             : row.status === "Pledged"
                               ? "#EDF7FC"
