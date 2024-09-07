@@ -1,14 +1,20 @@
 "use client";
 
 import Stack from "@mui/material/Stack";
-import { ReactElement, useContext, useEffect } from "react";
+import { ReactElement, useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Navbar } from "@/components/Navbar";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import CardActionArea from "@mui/material/CardActionArea";
-import { People, Savings, Today } from "@mui/icons-material";
+import {
+  KeyboardArrowLeft,
+  KeyboardArrowRight,
+  People,
+  Savings,
+  Today,
+} from "@mui/icons-material";
 import dayjs from "dayjs";
 import { Chart } from "@/components/Chart";
 import { auth, fetchDocument, fetchPartners } from "@/utils/firebase";
@@ -16,6 +22,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { DataContext } from "@/components/DataProvider/DataProvider";
 import { PageWrapper } from "@/components/PageWrapper";
+import IconButton from "@mui/material/IconButton";
 
 export default function Dashboard(): ReactElement {
   const {
@@ -28,6 +35,8 @@ export default function Dashboard(): ReactElement {
     setMessage,
   } = useContext(DataContext);
   const router = useRouter();
+
+  const [pagination, setPagination] = useState<number>(0);
 
   useEffect(() => {
     const getData = async () => {
@@ -82,11 +91,14 @@ export default function Dashboard(): ReactElement {
     })
     .filter(
       (partner) =>
-        partner.nextStepDate != null && partner.status !== "Confirmed"
-    )
-    .slice(0, 4);
+        partner.nextStepDate != null &&
+        partner.status !== "Confirmed" &&
+        partner.status !== "Rejected"
+    );
 
-  const confirmed = partners
+  const paginationPartners = filteredPartners.slice(pagination, pagination + 4);
+
+  const confirmedPartners = partners
     .filter(
       (partner) =>
         partner.confirmedAmount != null &&
@@ -101,6 +113,14 @@ export default function Dashboard(): ReactElement {
       if (dateA.isAfter(dateB)) return 1;
       return 0;
     });
+
+  const handlePagination = (add: boolean) => {
+    if (add) {
+      setPagination(pagination + 4);
+    } else {
+      setPagination(pagination - 4);
+    }
+  };
 
   return (
     <PageWrapper
@@ -160,59 +180,80 @@ export default function Dashboard(): ReactElement {
         spacing="36px"
         height="100%"
       >
-        <Card sx={{ width: "40%", maxHeight: "396px" }}>
-          <CardActionArea
-            sx={{ padding: "27px", height: "100%" }}
-            href="/partners"
-          >
-            <Stack height="100%">
-              <Typography
-                variant="h5"
-                fontWeight="bold"
-                color="primary.main"
-                paddingBottom="18px"
-              >
+        <Card
+          sx={{
+            width: "40%",
+            maxHeight: "396px",
+            padding: "27px",
+            height: "100%",
+          }}
+        >
+          <Stack height="100%">
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              paddingBottom="9px"
+            >
+              <Typography variant="h5" fontWeight="bold" color="primary.main">
                 Next Steps
+                {filteredPartners.length > 0
+                  ? ` (${filteredPartners.length} Partners)`
+                  : ""}
               </Typography>
-              <Stack spacing="9px">
-                {filteredPartners.length === 0 ? (
-                  <Typography variant="h6" paddingBottom="18px">
-                    {"No Next Steps. Let's get some new supporters!"}
-                  </Typography>
-                ) : (
-                  filteredPartners.map((partner) => (
-                    <Stack
-                      key={partner.id}
-                      direction="row"
-                      justifyContent="space-between"
-                      width="100%"
-                      height="100%"
-                    >
-                      <Stack>
-                        <Typography variant="h6" fontWeight="bold">
-                          {partner.name}
-                        </Typography>
-                        <Typography variant="body1">
-                          {partner.status === "To Ask"
-                            ? "Ask for Support"
-                            : partner.status === "Asked"
-                              ? "Send Letter"
-                              : partner.status === "Letter Sent"
-                                ? "Contact regarding letter"
-                                : partner.status === "Contacted"
-                                  ? "Follow up regarding decision"
-                                  : "Follow up on pledge"}
-                        </Typography>
-                      </Stack>
-                      <Typography variant="h6" textAlign="right">
-                        {dayjs(partner.nextStepDate).format("dddd, DD/MM")}
-                      </Typography>
-                    </Stack>
-                  ))
-                )}
+              <Stack direction="row" alignItems="center">
+                <IconButton
+                  disabled={pagination < 3}
+                  onClick={() => handlePagination(false)}
+                >
+                  <KeyboardArrowLeft />
+                </IconButton>
+                <IconButton
+                  disabled={pagination + 4 > filteredPartners.length}
+                  onClick={() => handlePagination(true)}
+                >
+                  <KeyboardArrowRight />
+                </IconButton>
               </Stack>
             </Stack>
-          </CardActionArea>
+            <Stack spacing="9px">
+              {filteredPartners.length === 0 ? (
+                <Typography variant="h6" paddingBottom="18px">
+                  {"No Next Steps. Let's get some new supporters!"}
+                </Typography>
+              ) : (
+                paginationPartners.map((partner) => (
+                  <Stack
+                    key={partner.id}
+                    direction="row"
+                    justifyContent="space-between"
+                    width="100%"
+                    height="100%"
+                  >
+                    <Stack>
+                      <Typography variant="h6" fontWeight="bold">
+                        {partner.name}
+                      </Typography>
+                      <Typography variant="body1">
+                        {partner.status === "To Ask"
+                          ? "Ask for Support"
+                          : partner.status === "Asked"
+                            ? "Send Letter"
+                            : partner.status === "Letter Sent"
+                              ? "Contact regarding letter"
+                              : partner.status === "Contacted"
+                                ? "Follow up regarding decision"
+                                : "Follow up on pledge"}
+                      </Typography>
+                    </Stack>
+                    <Typography variant="h6" textAlign="right">
+                      {dayjs(partner.nextStepDate).format("dddd, DD/MM")}
+                    </Typography>
+                  </Stack>
+                ))
+              )}
+            </Stack>
+          </Stack>
         </Card>
         <Card sx={{ width: "60%", padding: "27px", maxHeight: "396px" }}>
           <Stack
@@ -222,7 +263,7 @@ export default function Dashboard(): ReactElement {
             spacing="36px"
             height="100%"
           >
-            <Chart partners={confirmed} />
+            <Chart partners={confirmedPartners} />
           </Stack>
         </Card>
       </Stack>
