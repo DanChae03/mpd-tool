@@ -282,6 +282,7 @@ export default function Partners(): ReactElement {
     property: keyof Partner
   ) => {
     const isAsc = orderBy === property && order === "asc";
+    setPage(0);
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
