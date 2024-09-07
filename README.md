@@ -6,35 +6,37 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+Login using your Google Account.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features -
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Dashboard
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- View totals - Pledged and Confirmed donations
+- Interactive Graph for Confirmed donation history.
+- Next steps - People to follow up on.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Partners
 
-## Learn More
+- Creating, editing and deleting of Partners.
+- Partners can have their 'status' set, depending on how far through the support process they are.
 
-To learn more about Next.js, take a look at the following resources:
+  - "To Ask" - You have not asked this person for support yet.
+  - "Asked" - You have asked this person if you can send them a support raising letter.
+  - "Letter Sent" - You have sent this person a support raising letter.
+  - "Contacted" - You have contacted / followed up with this person regarding the letter.
+  - "Pledged" - Person has pledged to support you financially.
+  - "Confirmed" - Person has supported with money that can be verified on the give page.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Partners can be sorted and bookmarked based on their factors.
+- Partners can be filtered based on their status.
+- Partners can be searched for by their names.
+- Partners can be called and emailed through the website, as long as their email / phone number has been added.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### Settings
 
-## Deploy on Vercel
+- Here the deadline and support goal for your project can be set.
+- You can also set a custom default message, that will pre-fill every email you send. This could be useful if you decide to email your supporters with the letter as the body.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Any questions or issues? Contact me at danchae03@gmail.com.
+Thanks for checking out my project.
