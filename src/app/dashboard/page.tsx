@@ -104,14 +104,6 @@ export default function Dashboard(): ReactElement {
 
   return (
     <Stack direction="row" height="100vh">
-      <Link
-        href="https://give.studentlife.org.nz/"
-        style={{ position: "absolute" }}
-      >
-        <Stack width="270px" marginTop="45px" alignItems="center">
-          <Image src="/logo.svg" alt="Logo" width={203} height={70} />
-        </Stack>
-      </Link>
       <Navbar page="dashboard" />
       <Stack
         height="100%"

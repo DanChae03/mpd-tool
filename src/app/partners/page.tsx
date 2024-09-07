@@ -189,7 +189,7 @@ export default function Partners(): ReactElement {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<keyof Partner>("id");
   const [page, setPage] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(8);
   const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null);
   const [filters, setFilters] = useState<string[]>([
     "To Ask",
@@ -357,14 +357,6 @@ export default function Partners(): ReactElement {
 
   return (
     <Stack direction="row" height="100vh">
-      <Link
-        href="https://give.studentlife.org.nz/"
-        style={{ position: "absolute" }}
-      >
-        <Stack width="270px" marginTop="45px" alignItems="center">
-          <Image src="/logo.svg" alt="Logo" width={203} height={70} />
-        </Stack>
-      </Link>
       <Navbar page="partners" />
       <Stack
         height="100%"
