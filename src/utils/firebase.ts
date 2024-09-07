@@ -26,6 +26,9 @@ const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
+provider.setCustomParameters({
+  prompt: "select_account",
+});
 
 export const database = getFirestore(app);
 
@@ -99,6 +102,7 @@ export const createUser = async (UID: string) => {
     await setDoc(doc(database, "users", UID), {
       deadline: dayjs().add(1, "month").toString(),
       target: 850,
+      message: "Add your Support Raising message here.",
     });
   } catch (error) {
     console.error("Error creating document:", error);

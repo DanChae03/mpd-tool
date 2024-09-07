@@ -210,9 +210,7 @@ export function DrawerContent({
           <MenuItem value={"Rejected"}>Rejected</MenuItem>
         </Select>
       </Stack>
-      {(status === "Pledged" ||
-        status === "Contacted" ||
-        status === "Letter Sent") && (
+      {status !== "Rejected" && status !== "Confirmed" && (
         <Stack
           direction="row"
           alignItems="center"

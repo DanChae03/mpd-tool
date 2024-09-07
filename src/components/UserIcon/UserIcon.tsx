@@ -8,21 +8,12 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useState } from "react";
 
 export function UserIcon(): ReactElement {
   const router = useRouter();
-
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        router.push("/");
-        localStorage.clear();
-      }
-    });
-  }, [router]);
 
   const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null);
   const src: string | null | undefined = auth?.currentUser?.photoURL;
