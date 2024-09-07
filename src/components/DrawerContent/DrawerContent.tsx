@@ -77,9 +77,9 @@ export function DrawerContent({
         name: name,
         email: email ?? null,
         number: number ?? null,
-        nextStepDate: nextStepDate?.toString() ?? null,
+        nextStepDate: nextStepDate != null ? nextStepDate.toString() : null,
         pledgedAmount: pledgedAmount > 0 ? pledgedAmount : null,
-        confirmedDate: confirmedDate?.toString() ?? null,
+        confirmedDate: confirmedDate != null ? confirmedDate.toString() : null,
         confirmedAmount: confirmedAmount > 0 ? confirmedAmount : null,
         notes: notes,
         status: status,
@@ -305,7 +305,9 @@ export function DrawerContent({
             placeholder="Pledged Amount"
             size="small"
             value={pledgedAmount}
-            onChange={(event) => setPledgedAmount(parseInt(event.target.value))}
+            onChange={(event) =>
+              setPledgedAmount(parseFloat(event.target.value))
+            }
           />
         </Stack>
       )}
@@ -328,7 +330,7 @@ export function DrawerContent({
               size="small"
               value={confirmedAmount}
               onChange={(event) =>
-                setConfirmedAmount(parseInt(event.target.value))
+                setConfirmedAmount(parseFloat(event.target.value))
               }
             />
           </Stack>

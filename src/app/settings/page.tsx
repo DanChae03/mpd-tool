@@ -46,7 +46,7 @@ export default function Dashboard(): ReactElement {
     if (UID != null) {
       await updateDoc(doc(database, "users", UID), {
         message: message,
-        deadline: deadline?.toString() ?? null,
+        deadline: deadline != null ? deadline.toString() : null,
         target: target,
       }).then(() => {
         setOpen(true);
@@ -120,7 +120,8 @@ export default function Dashboard(): ReactElement {
                 value={target}
                 type="number"
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setTarget(parseInt(event.target.value));
+                  setTarget(parseFloat(event.target.value));
+                  setChanged(true);
                 }}
                 slotProps={{
                   input: { style: { fontSize: "18px", height: "63px" } },

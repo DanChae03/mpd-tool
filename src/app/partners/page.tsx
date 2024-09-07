@@ -245,20 +245,25 @@ export default function Partners(): ReactElement {
     };
 
     calculateTotals();
+
     let filteredSearch = partners;
+
     if (searchKey.trim() != "") {
       filteredSearch = filteredSearch.filter((partner) =>
         partner.name.toLowerCase().includes(searchKey.toLowerCase())
       );
     }
-    if (filters.length < 7) {
+
+    if (filters.length !== 7) {
       filteredSearch = filteredSearch.filter((partner) =>
         filters.includes(partner.status)
       );
     }
+
     if (onlySaved) {
       filteredSearch = filteredSearch.filter((partner) => partner.saved);
     }
+    setPage(0);
     setFilteredPartners(filteredSearch);
   }, [filters, onlySaved, partners, searchKey]);
 
@@ -273,7 +278,7 @@ export default function Partners(): ReactElement {
   };
 
   const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
+    _event: React.MouseEvent<unknown>,
     property: keyof Partner
   ) => {
     const isAsc = orderBy === property && order === "asc";
@@ -517,7 +522,7 @@ export default function Partners(): ReactElement {
                       sx={{
                         cursor: "pointer",
                         bgcolor:
-                          row.confirmedAmount != null &&
+                          row.confirmedAmount &&
                           row.confirmedAmount === row.pledgedAmount
                             ? "#EDFCEF"
                             : row.status === "Pledged"
@@ -530,8 +535,9 @@ export default function Partners(): ReactElement {
                       <TableCell
                         component="th"
                         scope="row"
-                        sx={{ fontSize: "18px", fontWeight: "bold" }}
-                        style={{
+                        sx={{
+                          fontSize: "18px",
+                          fontWeight: "bold",
                           whiteSpace: "nowrap",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
@@ -542,38 +548,62 @@ export default function Partners(): ReactElement {
                       </TableCell>
 
                       <TableCell
-                        sx={{ fontSize: "18px" }}
-                        style={{
+                        sx={{
+                          fontSize: "18px",
                           whiteSpace: "nowrap",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
-                          width: "288px",
+                          maxWidth: "270px",
                         }}
                       >
                         {row.email || ""}
                       </TableCell>
-                      <TableCell sx={{ fontSize: "18px" }}>
+                      <TableCell
+                        sx={{
+                          fontSize: "18px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          maxWidth: "180px",
+                        }}
+                      >
                         {row.number || ""}
                       </TableCell>
-                      <TableCell sx={{ fontSize: "18px" }}>
+                      <TableCell
+                        sx={{
+                          fontSize: "18px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
                         {row.status === "Confirmed"
                           ? "Done"
                           : dayjs(row.nextStepDate).format("DD/MM")}
                       </TableCell>
-                      <TableCell sx={{ fontSize: "18px" }}>
-                        {row.pledgedAmount != null
-                          ? `$${row.pledgedAmount}`
-                          : ""}
+                      <TableCell
+                        sx={{
+                          fontSize: "18px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {row.pledgedAmount ? `$${row.pledgedAmount}` : ""}
                       </TableCell>
-                      <TableCell sx={{ fontSize: "18px" }}>
-                        {row.confirmedAmount != null
-                          ? `$${row.confirmedAmount}`
-                          : ""}
+                      <TableCell
+                        sx={{
+                          fontSize: "18px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {row.confirmedAmount ? `$${row.confirmedAmount}` : ""}
                       </TableCell>
                       <TableCell
                         sx={{
                           fontSize: "18px",
                           fontWeight: "bold",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
                           color:
                             row.status === "Rejected"
                               ? "primary.main"
@@ -590,6 +620,8 @@ export default function Partners(): ReactElement {
                       <TableCell
                         sx={{
                           fontSize: "18px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
                         }}
                       >
                         <Box display="flex">
