@@ -1,7 +1,7 @@
 "use client";
 
 import Stack from "@mui/material/Stack";
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useContext, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Navbar } from "@/components/Navbar";
@@ -9,31 +9,43 @@ import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import CardActionArea from "@mui/material/CardActionArea";
 import { People, Savings, Today } from "@mui/icons-material";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { Chart } from "@/components/Chart";
 import { UserIcon } from "@/components/UserIcon";
 import { auth, fetchDocument, fetchPartners } from "@/utils/firebase";
-import { Partner } from "@/utils/types";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { DataContext } from "@/components/DataProvider/DataProvider";
 
 export default function Dashboard(): ReactElement {
-  const [partners, setPartners] = useState<Partner[]>([]);
-  const [target, setTarget] = useState<number>(0);
-  const [deadline, setDeadline] = useState<Dayjs>(dayjs());
+  const {
+    partners,
+    target,
+    deadline,
+    setPartners,
+    setTarget,
+    setDeadline,
+    setMessage,
+  } = useContext(DataContext);
   const router = useRouter();
 
   useEffect(() => {
     const getData = async () => {
-      const UID = auth.currentUser?.uid;
-      if (UID != null) {
-        const partnerData = await fetchPartners(UID);
-        if (partnerData.length !== 0) {
-          setPartners(partnerData);
+      if (target === 0) {
+        const UID = auth.currentUser?.uid;
+        if (UID != null) {
+          const data = await fetchDocument(UID);
+          if (data != null) {
+            setMessage(data.message);
+            setTarget(data.target);
+            setDeadline(dayjs(data.deadline));
+          }
+
+          const partnerData = await fetchPartners(UID);
+          if (partnerData.length !== 0) {
+            setPartners(partnerData);
+          }
         }
-        const statistics = await fetchDocument(UID);
-        setTarget(statistics?.target);
-        setDeadline(dayjs(statistics?.deadline));
       }
     };
 
@@ -42,9 +54,10 @@ export default function Dashboard(): ReactElement {
         getData();
       } else {
         router.push("/");
+        localStorage.clear();
       }
     });
-  }, [router]);
+  }, [router, setDeadline, setMessage, setPartners, setTarget, target]);
 
   const totalPledged = partners.reduce((sum, partner) => {
     return sum + (partner.pledgedAmount ?? 0);

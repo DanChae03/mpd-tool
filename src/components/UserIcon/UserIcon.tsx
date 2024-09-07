@@ -19,6 +19,7 @@ export function UserIcon(): ReactElement {
     onAuthStateChanged(auth, (user) => {
       if (!user) {
         router.push("/");
+        localStorage.clear();
       }
     });
   }, [router]);
@@ -30,6 +31,7 @@ export function UserIcon(): ReactElement {
     signOut(auth)
       .then(() => {
         router.push("/");
+        localStorage.clear();
       })
       .catch((error) => {
         console.error(error);

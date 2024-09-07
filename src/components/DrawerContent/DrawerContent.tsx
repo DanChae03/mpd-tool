@@ -20,7 +20,13 @@ import Typography from "@mui/material/Typography";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Dispatch, ReactElement, SetStateAction, useState } from "react";
+import {
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  useContext,
+  useState,
+} from "react";
 import dayjs, { Dayjs } from "dayjs";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -29,11 +35,11 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
 import { auth, deletePartner, setPartner } from "@/utils/firebase";
 import { v4 as uuidv4 } from "uuid";
+import { DataContext } from "../DataProvider/DataProvider";
 
 interface DrawerContentProps {
-  partner: Partner | undefined;
+  partner: Partner | null;
   onClose: () => void;
-  message: string;
   setSnackbarOpen: () => void;
   setSnackbarMessage: Dispatch<SetStateAction<string>>;
 }
@@ -41,7 +47,6 @@ interface DrawerContentProps {
 export function DrawerContent({
   partner,
   onClose,
-  message,
   setSnackbarOpen,
   setSnackbarMessage,
 }: DrawerContentProps): ReactElement {
@@ -69,10 +74,31 @@ export function DrawerContent({
     partner?.confirmedAmount ?? 0
   );
 
+  const { setPartners, partners, message } = useContext(DataContext);
+
+  const updatePartners = (
+    newPartner: Partner | null,
+    id: string,
+    isNew: boolean
+  ) => {
+    if (newPartner != null && !isNew) {
+      const updatedPartners = partners.map((partner) =>
+        partner.id === id ? newPartner : partner
+      );
+      setPartners(updatedPartners);
+    } else if (newPartner != null) {
+      const updatedPartners = [...partners, newPartner];
+      setPartners(updatedPartners);
+    } else {
+      const updatedPartners = partners.filter((partner) => partner.id !== id);
+      setPartners(updatedPartners);
+    }
+  };
+
   const handleSave = async () => {
     const UID = auth.currentUser?.uid;
     if (UID != null) {
-      await setPartner(UID, {
+      const newPartner: Partner = {
         id: partner != null ? partner.id : uuidv4(),
         name: name,
         email: email ?? null,
@@ -84,7 +110,9 @@ export function DrawerContent({
         notes: notes,
         status: status,
         saved: saved,
-      } as Partner).then(() => {
+      };
+      await setPartner(UID, newPartner).then(() => {
+        updatePartners(newPartner, newPartner.id, partner == null);
         setSnackbarMessage(
           partner != null
             ? "Partner updated successfully."
@@ -100,6 +128,7 @@ export function DrawerContent({
     const UID = auth.currentUser?.uid;
     if (UID != null && partner != null) {
       await deletePartner(UID, partner.id).then(() => {
+        updatePartners(null, partner.id, false);
         setSnackbarMessage("Partner removed successfully.");
         setSnackbarOpen();
         setDialogOpen(false);

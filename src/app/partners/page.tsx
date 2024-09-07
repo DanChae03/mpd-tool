@@ -1,7 +1,7 @@
 "use client";
 
 import Stack from "@mui/material/Stack";
-import { ReactElement, useEffect, useMemo, useState } from "react";
+import { ReactElement, useContext, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Navbar } from "@/components/Navbar";
@@ -45,6 +45,7 @@ import dayjs from "dayjs";
 import { UserIcon } from "@/components/UserIcon";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
+import { DataContext } from "@/components/DataProvider/DataProvider";
 
 function comparator<T>(a: T, b: T, orderBy: keyof T) {
   const aValue = a[orderBy];
@@ -204,29 +205,41 @@ export default function Partners(): ReactElement {
   const [filteredPartners, setFilteredPartners] = useState<Partner[]>([]);
   const [searchKey, setSearchKey] = useState<string>("");
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
-  const [selectedPartner, setSelectedPartner] = useState<Partner>();
+  const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
   const [onlySaved, setOnlySaved] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>("");
-  const [partners, setPartners] = useState<Partner[]>([]);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>(
     "Operation successful."
   );
 
+  const {
+    partners,
+    setPartners,
+    message,
+    setMessage,
+    target,
+    setTarget,
+    setDeadline,
+  } = useContext(DataContext);
+
   const router = useRouter();
 
   useEffect(() => {
     const getData = async () => {
-      const UID = auth.currentUser?.uid;
-      if (UID != null) {
-        const messageData = await fetchDocument(UID);
-        if (messageData != null) {
-          setMessage(messageData.message);
-        }
+      if (target === 0) {
+        const UID = auth.currentUser?.uid;
+        if (UID != null) {
+          const data = await fetchDocument(UID);
+          if (data != null) {
+            setMessage(data.message);
+            setTarget(data.target);
+            setDeadline(dayjs(data.deadline));
+          }
 
-        const partnerData = await fetchPartners(UID);
-        if (partnerData.length !== 0) {
-          setPartners(partnerData);
+          const partnerData = await fetchPartners(UID);
+          if (partnerData.length !== 0) {
+            setPartners(partnerData);
+          }
         }
       }
     };
@@ -236,9 +249,10 @@ export default function Partners(): ReactElement {
         getData();
       } else {
         router.push("/");
+        localStorage.clear();
       }
     });
-  }, [router]);
+  }, [router, setDeadline, setMessage, setPartners, setTarget, target]);
 
   useEffect(() => {
     const calculateTotals = () => {
@@ -674,13 +688,15 @@ export default function Partners(): ReactElement {
         open={drawerOpen}
         onClose={() => {
           setDrawerOpen(false);
-          setSelectedPartner(undefined);
+          setSelectedPartner(null);
         }}
       >
         <DrawerContent
           partner={selectedPartner}
-          onClose={() => setDrawerOpen(false)}
-          message={message}
+          onClose={() => {
+            setDrawerOpen(false);
+            setSelectedPartner(null);
+          }}
           setSnackbarOpen={() => setSnackbarOpen(true)}
           setSnackbarMessage={setSnackbarMessage}
         />

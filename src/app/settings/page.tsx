@@ -1,7 +1,7 @@
 "use client";
 
 import Stack from "@mui/material/Stack";
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Navbar } from "@/components/Navbar";
@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { doc, updateDoc } from "firebase/firestore";
-import { auth, database, fetchDocument } from "@/utils/firebase";
+import { auth, database, fetchDocument, fetchPartners } from "@/utils/firebase";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { Check } from "@mui/icons-material";
@@ -20,25 +20,40 @@ import dayjs, { Dayjs } from "dayjs";
 import { UserIcon } from "@/components/UserIcon";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { DataContext } from "@/components/DataProvider/DataProvider";
 
 export default function Dashboard(): ReactElement {
-  const [deadline, setDeadline] = useState<Dayjs | null>(dayjs());
-  const [message, setMessage] = useState<string>("");
-  const [target, setTarget] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
   const [changed, setChanged] = useState<boolean>(false);
+
+  const {
+    target,
+    setTarget,
+    deadline,
+    setDeadline,
+    message,
+    setMessage,
+    setPartners,
+  } = useContext(DataContext);
 
   const router = useRouter();
 
   useEffect(() => {
     const getData = async () => {
-      const UID = auth.currentUser?.uid;
-      if (UID != null) {
-        const data = await fetchDocument(UID);
-        if (data != null) {
-          setDeadline(dayjs(data.deadline));
-          setMessage(data.message);
-          setTarget(data.target);
+      if (target === 0) {
+        const UID = auth.currentUser?.uid;
+        if (UID != null) {
+          const data = await fetchDocument(UID);
+          if (data != null) {
+            setMessage(data.message);
+            setTarget(data.target);
+            setDeadline(dayjs(data.deadline));
+          }
+
+          const partnerData = await fetchPartners(UID);
+          if (partnerData.length !== 0) {
+            setPartners(partnerData);
+          }
         }
       }
     };
@@ -48,9 +63,10 @@ export default function Dashboard(): ReactElement {
         getData();
       } else {
         router.push("/");
+        localStorage.clear();
       }
     });
-  }, [router]);
+  }, [router, setDeadline, setMessage, setPartners, setTarget, target]);
 
   const setData = async () => {
     const UID = auth.currentUser?.uid;
@@ -107,8 +123,10 @@ export default function Dashboard(): ReactElement {
                 <DatePicker
                   value={deadline}
                   onChange={(newDate: Dayjs | null) => {
-                    setDeadline(newDate);
-                    setChanged(true);
+                    if (newDate != null) {
+                      setDeadline(newDate);
+                      setChanged(true);
+                    }
                   }}
                   format="DD/MM/YYYY"
                   sx={{
