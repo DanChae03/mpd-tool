@@ -101,13 +101,25 @@ export function DrawerContent({
       const newPartner: Partner = {
         id: partner != null ? partner.id : uuidv4(),
         name: name,
-        email: email ?? null,
-        number: number ?? null,
-        nextStepDate: nextStepDate != null ? nextStepDate.toString() : null,
-        pledgedAmount: pledgedAmount > 0 ? pledgedAmount : null,
-        confirmedDate: confirmedDate != null ? confirmedDate.toString() : null,
-        confirmedAmount: confirmedAmount > 0 ? confirmedAmount : null,
-        notes: notes,
+        email: email || null,
+        number: number || null,
+        nextStepDate:
+          nextStepDate != null && status !== "Confirmed"
+            ? nextStepDate.toString()
+            : null,
+        pledgedAmount:
+          pledgedAmount > 0 && (status === "Pledged" || status === "Confirmed")
+            ? pledgedAmount
+            : null,
+        confirmedDate:
+          confirmedDate != null && status === "Confirmed"
+            ? confirmedDate.toString()
+            : null,
+        confirmedAmount:
+          confirmedAmount > 0 && status === "Confirmed"
+            ? confirmedAmount
+            : null,
+        notes: notes || null,
         status: status,
         saved: saved,
       };
@@ -411,7 +423,7 @@ export function DrawerContent({
             Exit
           </Button>
           <Button
-            disabled={disabled}
+            disabled={disabled || name != null}
             variant="contained"
             sx={{
               textTransform: "none",

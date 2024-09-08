@@ -7,7 +7,7 @@ export type Partner = {
   pledgedAmount: number | null;
   confirmedDate: string | null; // DD/MM/YY
   confirmedAmount: number | null;
-  notes: string; // Sentence
+  notes: string | null; // Sentence
   status: string;
   saved: boolean;
 };
