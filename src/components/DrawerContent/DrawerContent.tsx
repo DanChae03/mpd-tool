@@ -423,7 +423,7 @@ export function DrawerContent({
             Exit
           </Button>
           <Button
-            disabled={disabled || name == null}
+            disabled={disabled || name == null || name == ""}
             variant="contained"
             sx={{
               textTransform: "none",
