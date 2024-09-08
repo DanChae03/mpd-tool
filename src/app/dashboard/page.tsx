@@ -216,7 +216,7 @@ export default function Dashboard(): ReactElement {
                 </IconButton>
               </Stack>
             </Stack>
-            <Stack spacing="9px">
+            <Stack spacing="18px">
               {filteredPartners.length === 0 ? (
                 <Typography variant="h6" paddingBottom="18px">
                   {"No Next Steps. Let's get some new supporters!"}

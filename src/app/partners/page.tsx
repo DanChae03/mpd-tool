@@ -355,7 +355,7 @@ export default function Partners(): ReactElement {
 
   const visibleRows = useMemo(() => {
     const dataToUse =
-      filters.length === 6 && searchKey === "" ? partners : filteredPartners;
+      filters.length === 7 && searchKey === "" ? partners : filteredPartners;
 
     return dataToUse
       .sort(getComparator(order, orderBy))
@@ -678,7 +678,7 @@ export default function Partners(): ReactElement {
             </Table>
           </TableContainer>
           <TablePagination
-            rowsPerPageOptions={[6, 8, 10, 12, 14, 16, 18, 20]}
+            rowsPerPageOptions={[4, 6, 8, 10, 15, 20]}
             component="div"
             count={
               filters.length === 0 || searchKey !== ""
