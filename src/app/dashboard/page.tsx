@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import { DataContext } from "@/components/DataProvider/DataProvider";
 import { PageWrapper } from "@/components/PageWrapper";
 import IconButton from "@mui/material/IconButton";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function Dashboard(): ReactElement {
   const {
@@ -123,150 +124,172 @@ export default function Dashboard(): ReactElement {
   };
 
   return (
-    <PageWrapper
-      title={`Welcome, ${auth.currentUser?.displayName}`}
-      page="dashboard"
-    >
-      <Stack
-        direction="row"
-        width="100%"
-        justifyContent="space-between"
-        spacing="36px"
-        paddingBottom="36px"
-        maxHeight="270px"
-      >
-        <Card sx={{ width: "100%", padding: "45px" }}>
-          <Stack direction="row" spacing="18px" alignItems="center">
-            <Typography variant="h3" fontWeight="bold" color="primary.main">
-              ${support}
-            </Typography>
-            <Savings fontSize="large" sx={{ color: "primary.main" }} />
-          </Stack>
-          <Typography variant="h6">
-            <>
-              Of ${target} raised ({((support / target) * 100).toFixed(1)}%)
-              <br /> ${totalPledged} pledged (
-              {((totalPledged / target) * 100).toFixed(1)}%)
-            </>
-          </Typography>
-        </Card>
-        <Card sx={{ width: "100%", padding: "45px" }}>
-          <Stack direction="row" spacing="18px" alignItems="center">
-            <Typography variant="h3" fontWeight="bold" color="primary.main">
-              {supporters}
-            </Typography>
-            <People fontSize="large" sx={{ color: "primary.main" }} />
-          </Stack>
-
-          <Typography variant="h6">
-            Partners supporting you in finance and prayer
-          </Typography>
-        </Card>
-        <Card sx={{ width: "100%", padding: "45px" }}>
-          <Stack direction="row" spacing="18px" alignItems="center">
-            <Typography variant="h3" fontWeight="bold" color="primary.main">
-              {deadline.diff(dayjs(), "day")}
-            </Typography>
-            <Today fontSize="large" sx={{ color: "primary.main" }} />
-          </Stack>
-          <Typography variant="h6">
-            {`Days left until the 100% deadline (${deadline.format("dddd, DD MMMM")})`}
-          </Typography>
-        </Card>
-      </Stack>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        spacing="36px"
-        height="100%"
-      >
-        <Card
-          sx={{
-            width: "40%",
-            maxHeight: "396px",
-            padding: "27px",
-            height: "100%",
-          }}
+    <>
+      {auth.currentUser?.displayName != undefined && target > 0 ? (
+        <PageWrapper
+          title={`Welcome, ${auth.currentUser?.displayName}`}
+          page="dashboard"
         >
-          <Stack height="100%">
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              paddingBottom="9px"
-            >
-              <Typography variant="h5" fontWeight="bold" color="primary.main">
-                Next Steps
-                {filteredPartners.length > 0
-                  ? ` (${filteredPartners.length} Partners)`
-                  : ""}
-              </Typography>
-              <Stack direction="row" alignItems="center">
-                <IconButton
-                  disabled={pagination < 3}
-                  onClick={() => handlePagination(false)}
-                >
-                  <KeyboardArrowLeft />
-                </IconButton>
-                <IconButton
-                  disabled={pagination + 4 > filteredPartners.length}
-                  onClick={() => handlePagination(true)}
-                >
-                  <KeyboardArrowRight />
-                </IconButton>
-              </Stack>
-            </Stack>
-            <Stack spacing="18px">
-              {filteredPartners.length === 0 ? (
-                <Typography variant="h6" paddingBottom="18px">
-                  {"No Next Steps. Let's get some new supporters!"}
+          <Stack
+            direction="row"
+            width="100%"
+            justifyContent="space-between"
+            spacing="36px"
+            paddingBottom="36px"
+            maxHeight="270px"
+          >
+            <Card sx={{ width: "100%", padding: "45px" }}>
+              <Stack direction="row" spacing="18px" alignItems="center">
+                <Typography variant="h3" fontWeight="bold" color="primary.main">
+                  ${support}
                 </Typography>
-              ) : (
-                paginationPartners.map((partner) => (
-                  <Stack
-                    key={partner.id}
-                    direction="row"
-                    justifyContent="space-between"
-                    width="100%"
-                    height="100%"
-                  >
-                    <Stack>
-                      <Typography variant="h6" fontWeight="bold">
-                        {partner.name}
-                      </Typography>
-                      <Typography variant="body1">
-                        {partner.status === "To Ask"
-                          ? "Ask for Support"
-                          : partner.status === "Asked"
-                            ? "Send Letter"
-                            : partner.status === "Letter Sent"
-                              ? "Contact regarding letter"
-                              : partner.status === "Contacted"
-                                ? "Follow up regarding decision"
-                                : "Follow up on pledge"}
-                      </Typography>
-                    </Stack>
-                    <Typography variant="h6" textAlign="right">
-                      {dayjs(partner.nextStepDate).format("dddd, DD/MM")}
-                    </Typography>
-                  </Stack>
-                ))
-              )}
-            </Stack>
+                <Savings fontSize="large" sx={{ color: "primary.main" }} />
+              </Stack>
+              <Typography variant="h6">
+                <>
+                  Of ${target} raised ({((support / target) * 100).toFixed(1)}%)
+                  <br /> ${totalPledged} pledged (
+                  {((totalPledged / target) * 100).toFixed(1)}%)
+                </>
+              </Typography>
+            </Card>
+            <Card sx={{ width: "100%", padding: "45px" }}>
+              <Stack direction="row" spacing="18px" alignItems="center">
+                <Typography variant="h3" fontWeight="bold" color="primary.main">
+                  {supporters}
+                </Typography>
+                <People fontSize="large" sx={{ color: "primary.main" }} />
+              </Stack>
+
+              <Typography variant="h6">
+                Partners supporting you in finance and prayer
+              </Typography>
+            </Card>
+            <Card sx={{ width: "100%", padding: "45px" }}>
+              <Stack direction="row" spacing="18px" alignItems="center">
+                <Typography variant="h3" fontWeight="bold" color="primary.main">
+                  {deadline.diff(dayjs(), "day")}
+                </Typography>
+                <Today fontSize="large" sx={{ color: "primary.main" }} />
+              </Stack>
+              <Typography variant="h6">
+                {`Days left until the 100% deadline (${deadline.format("dddd, DD MMMM")})`}
+              </Typography>
+            </Card>
           </Stack>
-        </Card>
-        <Card sx={{ width: "60%", padding: "27px", maxHeight: "396px" }}>
           <Stack
             direction="row"
             justifyContent="space-between"
-            alignItems="center"
             spacing="36px"
             height="100%"
           >
-            <Chart partners={confirmedPartners} />
+            <Card
+              sx={{
+                width: "40%",
+                maxHeight: "396px",
+                padding: "27px",
+                height: "100%",
+              }}
+            >
+              <Stack height="100%">
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  paddingBottom="9px"
+                >
+                  <Typography
+                    variant="h5"
+                    fontWeight="bold"
+                    color="primary.main"
+                  >
+                    Next Steps
+                    {filteredPartners.length > 0
+                      ? ` (${filteredPartners.length} Partners)`
+                      : ""}
+                  </Typography>
+                  <Stack direction="row" alignItems="center">
+                    <IconButton
+                      disabled={pagination < 3}
+                      onClick={() => handlePagination(false)}
+                    >
+                      <KeyboardArrowLeft />
+                    </IconButton>
+                    <IconButton
+                      disabled={pagination + 4 > filteredPartners.length}
+                      onClick={() => handlePagination(true)}
+                    >
+                      <KeyboardArrowRight />
+                    </IconButton>
+                  </Stack>
+                </Stack>
+                <Stack spacing="18px">
+                  {filteredPartners.length === 0 ? (
+                    <Typography variant="h6" paddingBottom="18px">
+                      {"No Next Steps. Let's get some new supporters!"}
+                    </Typography>
+                  ) : (
+                    paginationPartners.map((partner) => (
+                      <Stack
+                        key={partner.id}
+                        direction="row"
+                        justifyContent="space-between"
+                        width="100%"
+                        height="100%"
+                      >
+                        <Stack>
+                          <Typography variant="h6" fontWeight="bold">
+                            {partner.name}
+                          </Typography>
+                          <Typography variant="body1">
+                            {partner.status === "To Ask"
+                              ? "Ask for Support"
+                              : partner.status === "Asked"
+                                ? "Send Letter"
+                                : partner.status === "Letter Sent"
+                                  ? "Contact regarding letter"
+                                  : partner.status === "Contacted"
+                                    ? "Follow up regarding decision"
+                                    : "Follow up on pledge"}
+                          </Typography>
+                        </Stack>
+                        <Typography variant="h6" textAlign="right">
+                          {dayjs(partner.nextStepDate).format("dddd, DD/MM")}
+                        </Typography>
+                      </Stack>
+                    ))
+                  )}
+                </Stack>
+              </Stack>
+            </Card>
+            <Card sx={{ width: "60%", padding: "27px", maxHeight: "396px" }}>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+                spacing="36px"
+                height="100%"
+              >
+                <Chart partners={confirmedPartners} />
+              </Stack>
+            </Card>
           </Stack>
-        </Card>
-      </Stack>
-    </PageWrapper>
+        </PageWrapper>
+      ) : (
+        <Stack
+          width="100vw"
+          height="100vh"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Stack direction="row" alignItems="center" spacing="45px">
+            <Typography variant="h4" fontWeight="bold" color="primary">
+              Loading...
+            </Typography>
+            <CircularProgress size="54px" />
+          </Stack>
+        </Stack>
+      )}
+    </>
   );
 }

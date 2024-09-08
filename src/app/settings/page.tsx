@@ -18,6 +18,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { DataContext } from "@/components/DataProvider/DataProvider";
 import { PageWrapper } from "@/components/PageWrapper";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function Dashboard(): ReactElement {
   const [open, setOpen] = useState<boolean>(false);
@@ -80,113 +81,131 @@ export default function Dashboard(): ReactElement {
   };
 
   return (
-    <PageWrapper title="Settings" page="settings">
-      <Stack width="100%" spacing="18px">
-        <Stack direction="row" alignItems="center" spacing="45px">
-          <Stack spacing="9px">
-            <Typography variant="h6">Support Deadline:</Typography>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                value={deadline}
-                onChange={(newDate: Dayjs | null) => {
-                  if (newDate != null) {
-                    setDeadline(newDate);
+    <>
+      {auth.currentUser?.displayName != undefined && target > 0 ? (
+        <PageWrapper title="Settings" page="settings">
+          <Stack width="100%" spacing="18px">
+            <Stack direction="row" alignItems="center" spacing="45px">
+              <Stack spacing="9px">
+                <Typography variant="h6">Support Deadline:</Typography>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    value={deadline}
+                    onChange={(newDate: Dayjs | null) => {
+                      if (newDate != null) {
+                        setDeadline(newDate);
+                        setChanged(true);
+                      }
+                    }}
+                    format="DD/MM/YYYY"
+                    sx={{
+                      width: "270px",
+                      "& .MuiOutlinedInput-root": {
+                        bgcolor: "background.paper",
+                        height: "63px",
+                        fontSize: "18px",
+                      },
+                      "& .MuiIconButton-root": {
+                        marginRight: "0px",
+                      },
+                    }}
+                  />
+                </LocalizationProvider>
+              </Stack>
+              <Stack spacing="9px">
+                <Typography variant="h6">Support Target ($):</Typography>
+                <TextField
+                  value={target}
+                  type="number"
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    setTarget(parseFloat(event.target.value));
                     setChanged(true);
-                  }
-                }}
-                format="DD/MM/YYYY"
-                sx={{
-                  width: "270px",
-                  "& .MuiOutlinedInput-root": {
+                  }}
+                  slotProps={{
+                    input: { style: { fontSize: "18px", height: "63px" } },
+                  }}
+                  placeholder="Hello! I would like your support for my upcoming mission trip..."
+                  sx={{
                     bgcolor: "background.paper",
-                    height: "63px",
-                    fontSize: "18px",
-                  },
-                  "& .MuiIconButton-root": {
-                    marginRight: "0px",
-                  },
+                    width: "270px",
+                  }}
+                />
+              </Stack>
+            </Stack>
+            <Stack spacing="9px">
+              <Typography variant="h6">
+                Default Email Text (This will pre-fill the draft of any emails
+                you send).
+              </Typography>
+              <TextField
+                multiline
+                rows="12"
+                value={message}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setMessage(event.target.value);
+                  setChanged(true);
                 }}
+                slotProps={{
+                  input: { style: { fontSize: "18px" } },
+                }}
+                placeholder="Hello! I would like your support for my upcoming mission trip..."
+                sx={{ bgcolor: "background.paper" }}
               />
-            </LocalizationProvider>
+            </Stack>
+            <Stack paddingTop="9px">
+              <Button
+                onClick={() => setData()}
+                disabled={
+                  !changed ||
+                  Number.isNaN(target) ||
+                  target < 0 ||
+                  !message ||
+                  message === ""
+                }
+                variant="contained"
+                sx={{
+                  textTransform: "none",
+                  fontSize: "18px",
+                  height: "54px",
+                  width: "216px",
+                  borderRadius: "36px",
+                }}
+              >
+                Save Changes
+              </Button>
+            </Stack>
           </Stack>
-          <Stack spacing="9px">
-            <Typography variant="h6">Support Target ($):</Typography>
-            <TextField
-              value={target}
-              type="number"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setTarget(parseFloat(event.target.value));
-                setChanged(true);
-              }}
-              slotProps={{
-                input: { style: { fontSize: "18px", height: "63px" } },
-              }}
-              placeholder="Hello! I would like your support for my upcoming mission trip..."
-              sx={{
-                bgcolor: "background.paper",
-                width: "270px",
-              }}
-            />
-          </Stack>
-        </Stack>
-        <Stack spacing="9px">
-          <Typography variant="h6">
-            Default Email Text (This will pre-fill the draft of any emails you
-            send).
-          </Typography>
-          <TextField
-            multiline
-            rows="12"
-            value={message}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setMessage(event.target.value);
-              setChanged(true);
-            }}
-            slotProps={{
-              input: { style: { fontSize: "18px" } },
-            }}
-            placeholder="Hello! I would like your support for my upcoming mission trip..."
-            sx={{ bgcolor: "background.paper" }}
-          />
-        </Stack>
-        <Stack paddingTop="9px">
-          <Button
-            onClick={() => setData()}
-            disabled={
-              !changed ||
-              Number.isNaN(target) ||
-              target < 0 ||
-              !message ||
-              message === ""
-            }
-            variant="contained"
-            sx={{
-              textTransform: "none",
-              fontSize: "18px",
-              height: "54px",
-              width: "216px",
-              borderRadius: "36px",
-            }}
+          <Snackbar
+            open={open}
+            autoHideDuration={3000}
+            onClose={() => setOpen(false)}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
           >
-            Save Changes
-          </Button>
-        </Stack>
-      </Stack>
-      <Snackbar
-        open={open}
-        autoHideDuration={3000}
-        onClose={() => setOpen(false)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      >
-        <Alert
-          variant="filled"
-          icon={<Check fontSize="inherit" />}
-          severity="success"
-          sx={{ fontSize: "18px" }}
+            <Alert
+              variant="filled"
+              icon={<Check fontSize="inherit" />}
+              severity="success"
+              sx={{ fontSize: "18px" }}
+            >
+              Saved Successfully.
+            </Alert>
+          </Snackbar>
+        </PageWrapper>
+      ) : (
+        <Stack
+          width="100vw"
+          height="100vh"
+          justifyContent="center"
+          alignItems="center"
         >
-          Saved Successfully.
-        </Alert>
-      </Snackbar>
-    </PageWrapper>
+          <Stack direction="row" alignItems="center" spacing="45px">
+            <Typography variant="h4" fontWeight="bold" color="primary">
+              Loading...
+            </Typography>
+            <CircularProgress size="54px" />
+          </Stack>
+        </Stack>
+      )}
+    </>
   );
 }

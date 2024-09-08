@@ -2,8 +2,6 @@
 
 import Stack from "@mui/material/Stack";
 import { ReactElement, useContext, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
 import { Navbar } from "@/components/Navbar";
 import Typography from "@mui/material/Typography";
 import TableContainer from "@mui/material/TableContainer";
@@ -38,7 +36,6 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Drawer from "@mui/material/Drawer";
 import { DrawerContent } from "@/components/DrawerContent";
 import Button from "@mui/material/Button";
-import { Alert, Switch } from "@mui/material";
 import { auth, fetchDocument, fetchPartners } from "@/utils/firebase";
 import Snackbar from "@mui/material/Snackbar";
 import dayjs from "dayjs";
@@ -46,6 +43,9 @@ import { UserIcon } from "@/components/UserIcon";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { DataContext } from "@/components/DataProvider/DataProvider";
+import Switch from "@mui/material/Switch";
+import Alert from "@mui/material/Alert";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const stateOrder = new Map<string, number>([
   ["To Ask", 0],
@@ -372,359 +372,386 @@ export default function Partners(): ReactElement {
   ]);
 
   return (
-    <Stack direction="row" height="100vh">
-      <Navbar page="partners" />
-      <Stack
-        height="100%"
-        width="calc(100vw - 270px)"
-        bgcolor="background.default"
-        padding="63px"
-        paddingTop="47px"
-      >
-        <Stack direction="row" justifyContent="space-between">
-          <Stack direction="row" alignItems="end" spacing="36px">
-            <Typography
-              variant="h4"
-              fontWeight="bold"
-              color="primary.main"
-              paddingBottom="18px"
-            >
-              Partners
-            </Typography>
-            <Typography variant="h6" fontWeight="bold" paddingBottom="18px">
-              Total Pledged: ${pledged}
-            </Typography>
-            <Typography variant="h6" fontWeight="bold" paddingBottom="18px">
-              Total Confirmed: ${confirmed}
-            </Typography>
-          </Stack>
+    <>
+      {auth.currentUser?.displayName != undefined && target > 0 ? (
+        <Stack direction="row" height="100vh">
+          <Navbar page="partners" />
           <Stack
-            direction="row"
-            alignItems="center"
-            spacing="18px"
-            paddingBottom="9px"
+            height="100%"
+            width="calc(100vw - 270px)"
+            bgcolor="background.default"
+            padding="63px"
+            paddingTop="47px"
           >
-            <FormControl variant="outlined" size="small">
-              <InputLabel>Search</InputLabel>
-              <OutlinedInput
-                value={searchKey}
-                onChange={(event) => {
-                  setSearchKey(event.target.value);
-                }}
-                label="Search"
-                sx={{ borderRadius: "20px", bgcolor: "background.paper" }}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <Search />
-                  </InputAdornment>
-                }
-              />
-            </FormControl>
-            <IconButton onClick={handleMenuClick} sx={{ alignSelf: "center" }}>
-              <Tune />
-            </IconButton>
-            <Button
-              variant="contained"
-              sx={{ borderRadius: "18px" }}
-              onClick={() => setDrawerOpen(true)}
-            >
-              <Add />
-            </Button>
-            <UserIcon />
-          </Stack>
-          <Menu
-            anchorEl={anchorElement}
-            open={Boolean(anchorElement)}
-            onClose={handleMenuClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            slotProps={{
-              paper: {
-                sx: {
-                  width: "216px",
-                  borderRadius: "9px",
-                },
-              },
-            }}
-          >
-            <Card
-              elevation={0}
-              sx={{ paddingX: "27px", paddingY: "9px", width: "100%" }}
-            >
-              <Stack justifyContent="space-between" width="100%" spacing="0px">
-                <Typography variant="h6" fontWeight="bold">
-                  Filter
+            <Stack direction="row" justifyContent="space-between">
+              <Stack direction="row" alignItems="end" spacing="36px">
+                <Typography
+                  variant="h4"
+                  fontWeight="bold"
+                  color="primary.main"
+                  paddingBottom="18px"
+                >
+                  Partners
                 </Typography>
-                <FormControlLabel
-                  value="start"
-                  control={<Checkbox />}
-                  label="To Ask"
-                  labelPlacement="start"
-                  sx={{ width: "180px", justifyContent: "space-between" }}
-                  checked={filters.includes("To Ask")}
-                  onChange={() => handleSetFilters("To Ask")}
-                />
-                <FormControlLabel
-                  value="start"
-                  control={<Checkbox />}
-                  label="Asked"
-                  labelPlacement="start"
-                  sx={{ width: "180px", justifyContent: "space-between" }}
-                  checked={filters.includes("Asked")}
-                  onChange={() => handleSetFilters("Asked")}
-                />
-                <FormControlLabel
-                  value="start"
-                  control={<Checkbox />}
-                  label="Letter Sent"
-                  labelPlacement="start"
-                  sx={{ width: "180px", justifyContent: "space-between" }}
-                  checked={filters.includes("Letter Sent")}
-                  onChange={() => handleSetFilters("Letter Sent")}
-                />
-                <FormControlLabel
-                  value="start"
-                  control={<Checkbox />}
-                  label="Contacted"
-                  labelPlacement="start"
-                  sx={{ width: "180px", justifyContent: "space-between" }}
-                  checked={filters.includes("Contacted")}
-                  onChange={() => handleSetFilters("Contacted")}
-                />
-                <FormControlLabel
-                  value="start"
-                  control={<Checkbox />}
-                  label="Pledged"
-                  labelPlacement="start"
-                  sx={{ width: "180px", justifyContent: "space-between" }}
-                  checked={filters.includes("Pledged")}
-                  onChange={() => handleSetFilters("Pledged")}
-                />
-                <FormControlLabel
-                  value="start"
-                  control={<Checkbox />}
-                  label="Confirmed"
-                  labelPlacement="start"
-                  sx={{ width: "180px", justifyContent: "space-between" }}
-                  checked={filters.includes("Confirmed")}
-                  onChange={() => handleSetFilters("Confirmed")}
-                />
-                <FormControlLabel
-                  value="start"
-                  control={<Checkbox />}
-                  label="Rejected"
-                  labelPlacement="start"
-                  sx={{ width: "180px", justifyContent: "space-between" }}
-                  checked={filters.includes("Rejected")}
-                  onChange={() => handleSetFilters("Rejected")}
-                />
-                <FormControlLabel
-                  value="start"
-                  control={<Switch checked={onlySaved} />}
-                  label="Saved only?"
-                  labelPlacement="start"
-                  sx={{ width: "180px", justifyContent: "space-between" }}
-                  onChange={() => setOnlySaved(!onlySaved)}
-                />
+                <Typography variant="h6" fontWeight="bold" paddingBottom="18px">
+                  Total Pledged: ${pledged}
+                </Typography>
+                <Typography variant="h6" fontWeight="bold" paddingBottom="18px">
+                  Total Confirmed: ${confirmed}
+                </Typography>
               </Stack>
-            </Card>
-          </Menu>
-        </Stack>
-        <Paper sx={{ width: "100%", mb: 2 }}>
-          <TableContainer>
-            <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
-              <EnhancedTableHead
-                order={order}
-                orderBy={orderBy}
-                onRequestSort={handleRequestSort}
-                rowCount={partners.length}
-              />
-              <TableBody>
-                {visibleRows.map((row) => {
-                  return (
-                    <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row)}
-                      key={row.id}
-                      sx={{
-                        cursor: "pointer",
-                        bgcolor:
-                          row.confirmedAmount &&
-                          row.pledgedAmount &&
-                          row.confirmedAmount >= row.pledgedAmount
-                            ? "#EDFCEF"
-                            : row.status === "Pledged"
-                              ? "#EDF7FC"
-                              : row.status === "Rejected"
-                                ? "#FCEDED"
-                                : "inherit",
-                      }}
-                    >
-                      <TableCell
-                        component="th"
-                        scope="row"
-                        sx={{
-                          fontSize: "18px",
-                          fontWeight: "bold",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          width: "180px",
-                        }}
-                      >
-                        {row.name}
-                      </TableCell>
-
-                      <TableCell
-                        sx={{
-                          fontSize: "18px",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          maxWidth: "270px",
-                        }}
-                      >
-                        {row.email || ""}
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          fontSize: "18px",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          maxWidth: "180px",
-                        }}
-                      >
-                        {row.number || ""}
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          fontSize: "18px",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                        }}
-                      >
-                        {row.status === "Confirmed"
-                          ? "Done"
-                          : dayjs(row.nextStepDate).format("DD/MM")}
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          fontSize: "18px",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                        }}
-                      >
-                        {row.pledgedAmount ? `$${row.pledgedAmount}` : ""}
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          fontSize: "18px",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                        }}
-                      >
-                        {row.confirmedAmount ? `$${row.confirmedAmount}` : ""}
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          fontSize: "18px",
-                          fontWeight: "bold",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          color:
-                            row.status === "Rejected"
-                              ? "primary.main"
-                              : row.status === "Confirmed"
-                                ? "#5CB85C"
+              <Stack
+                direction="row"
+                alignItems="center"
+                spacing="18px"
+                paddingBottom="9px"
+              >
+                <FormControl variant="outlined" size="small">
+                  <InputLabel>Search</InputLabel>
+                  <OutlinedInput
+                    value={searchKey}
+                    onChange={(event) => {
+                      setSearchKey(event.target.value);
+                    }}
+                    label="Search"
+                    sx={{ borderRadius: "20px", bgcolor: "background.paper" }}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <Search />
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+                <IconButton
+                  onClick={handleMenuClick}
+                  sx={{ alignSelf: "center" }}
+                >
+                  <Tune />
+                </IconButton>
+                <Button
+                  variant="contained"
+                  sx={{ borderRadius: "18px" }}
+                  onClick={() => setDrawerOpen(true)}
+                >
+                  <Add />
+                </Button>
+                <UserIcon />
+              </Stack>
+              <Menu
+                anchorEl={anchorElement}
+                open={Boolean(anchorElement)}
+                onClose={handleMenuClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "right",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                slotProps={{
+                  paper: {
+                    sx: {
+                      width: "216px",
+                      borderRadius: "9px",
+                    },
+                  },
+                }}
+              >
+                <Card
+                  elevation={0}
+                  sx={{ paddingX: "27px", paddingY: "9px", width: "100%" }}
+                >
+                  <Stack
+                    justifyContent="space-between"
+                    width="100%"
+                    spacing="0px"
+                  >
+                    <Typography variant="h6" fontWeight="bold">
+                      Filter
+                    </Typography>
+                    <FormControlLabel
+                      value="start"
+                      control={<Checkbox />}
+                      label="To Ask"
+                      labelPlacement="start"
+                      sx={{ width: "180px", justifyContent: "space-between" }}
+                      checked={filters.includes("To Ask")}
+                      onChange={() => handleSetFilters("To Ask")}
+                    />
+                    <FormControlLabel
+                      value="start"
+                      control={<Checkbox />}
+                      label="Asked"
+                      labelPlacement="start"
+                      sx={{ width: "180px", justifyContent: "space-between" }}
+                      checked={filters.includes("Asked")}
+                      onChange={() => handleSetFilters("Asked")}
+                    />
+                    <FormControlLabel
+                      value="start"
+                      control={<Checkbox />}
+                      label="Letter Sent"
+                      labelPlacement="start"
+                      sx={{ width: "180px", justifyContent: "space-between" }}
+                      checked={filters.includes("Letter Sent")}
+                      onChange={() => handleSetFilters("Letter Sent")}
+                    />
+                    <FormControlLabel
+                      value="start"
+                      control={<Checkbox />}
+                      label="Contacted"
+                      labelPlacement="start"
+                      sx={{ width: "180px", justifyContent: "space-between" }}
+                      checked={filters.includes("Contacted")}
+                      onChange={() => handleSetFilters("Contacted")}
+                    />
+                    <FormControlLabel
+                      value="start"
+                      control={<Checkbox />}
+                      label="Pledged"
+                      labelPlacement="start"
+                      sx={{ width: "180px", justifyContent: "space-between" }}
+                      checked={filters.includes("Pledged")}
+                      onChange={() => handleSetFilters("Pledged")}
+                    />
+                    <FormControlLabel
+                      value="start"
+                      control={<Checkbox />}
+                      label="Confirmed"
+                      labelPlacement="start"
+                      sx={{ width: "180px", justifyContent: "space-between" }}
+                      checked={filters.includes("Confirmed")}
+                      onChange={() => handleSetFilters("Confirmed")}
+                    />
+                    <FormControlLabel
+                      value="start"
+                      control={<Checkbox />}
+                      label="Rejected"
+                      labelPlacement="start"
+                      sx={{ width: "180px", justifyContent: "space-between" }}
+                      checked={filters.includes("Rejected")}
+                      onChange={() => handleSetFilters("Rejected")}
+                    />
+                    <FormControlLabel
+                      value="start"
+                      control={<Switch checked={onlySaved} />}
+                      label="Saved only?"
+                      labelPlacement="start"
+                      sx={{ width: "180px", justifyContent: "space-between" }}
+                      onChange={() => setOnlySaved(!onlySaved)}
+                    />
+                  </Stack>
+                </Card>
+              </Menu>
+            </Stack>
+            <Paper sx={{ width: "100%", mb: 2 }}>
+              <TableContainer>
+                <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
+                  <EnhancedTableHead
+                    order={order}
+                    orderBy={orderBy}
+                    onRequestSort={handleRequestSort}
+                    rowCount={partners.length}
+                  />
+                  <TableBody>
+                    {visibleRows.map((row) => {
+                      return (
+                        <TableRow
+                          hover
+                          onClick={(event) => handleClick(event, row)}
+                          key={row.id}
+                          sx={{
+                            cursor: "pointer",
+                            bgcolor:
+                              row.confirmedAmount &&
+                              row.pledgedAmount &&
+                              row.confirmedAmount >= row.pledgedAmount
+                                ? "#EDFCEF"
                                 : row.status === "Pledged"
-                                  ? "#4C8BF5"
-                                  : "auto",
-                        }}
-                        width="180px"
-                      >
-                        {row.status}
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          fontSize: "18px",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                        }}
-                      >
-                        <Box display="flex">
-                          {row.saved ? (
-                            <Star sx={{ color: "#FFC443" }} />
-                          ) : (
-                            <StarBorder />
-                          )}
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-                {emptyRows > 0 && (
-                  <TableRow>
-                    <TableCell colSpan={6} />
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[4, 6, 8, 10, 15, 20]}
-            component="div"
-            count={
-              filters.length === 0 || searchKey !== ""
-                ? partners.length
-                : filteredPartners.length
-            }
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Paper>
-      </Stack>
-      <Drawer
-        anchor="right"
-        open={drawerOpen}
-        onClose={() => {
-          setDrawerOpen(false);
-          setSelectedPartner(null);
-        }}
-      >
-        <DrawerContent
-          partner={selectedPartner}
-          onClose={() => {
-            setDrawerOpen(false);
-            setSelectedPartner(null);
-          }}
-          setSnackbarOpen={() => setSnackbarOpen(true)}
-          setSnackbarMessage={setSnackbarMessage}
-        />
-      </Drawer>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      >
-        <Alert
-          variant="filled"
-          icon={<Check fontSize="inherit" />}
-          severity="success"
-          sx={{ fontSize: "18px" }}
+                                  ? "#EDF7FC"
+                                  : row.status === "Rejected"
+                                    ? "#FCEDED"
+                                    : "inherit",
+                          }}
+                        >
+                          <TableCell
+                            component="th"
+                            scope="row"
+                            sx={{
+                              fontSize: "18px",
+                              fontWeight: "bold",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              width: "180px",
+                            }}
+                          >
+                            {row.name}
+                          </TableCell>
+
+                          <TableCell
+                            sx={{
+                              fontSize: "18px",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              maxWidth: "270px",
+                            }}
+                          >
+                            {row.email || ""}
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              fontSize: "18px",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              maxWidth: "180px",
+                            }}
+                          >
+                            {row.number || ""}
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              fontSize: "18px",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            {row.status === "Confirmed"
+                              ? "Done"
+                              : dayjs(row.nextStepDate).format("DD/MM")}
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              fontSize: "18px",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            {row.pledgedAmount ? `$${row.pledgedAmount}` : ""}
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              fontSize: "18px",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            {row.confirmedAmount
+                              ? `$${row.confirmedAmount}`
+                              : ""}
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              fontSize: "18px",
+                              fontWeight: "bold",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              color:
+                                row.status === "Rejected"
+                                  ? "primary.main"
+                                  : row.status === "Confirmed"
+                                    ? "#5CB85C"
+                                    : row.status === "Pledged"
+                                      ? "#4C8BF5"
+                                      : "auto",
+                            }}
+                            width="180px"
+                          >
+                            {row.status}
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              fontSize: "18px",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            <Box display="flex">
+                              {row.saved ? (
+                                <Star sx={{ color: "#FFC443" }} />
+                              ) : (
+                                <StarBorder />
+                              )}
+                            </Box>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                    {emptyRows > 0 && (
+                      <TableRow>
+                        <TableCell colSpan={6} />
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[4, 6, 8, 10, 15, 20]}
+                component="div"
+                count={
+                  filters.length === 0 || searchKey !== ""
+                    ? partners.length
+                    : filteredPartners.length
+                }
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            </Paper>
+          </Stack>
+          <Drawer
+            anchor="right"
+            open={drawerOpen}
+            onClose={() => {
+              setDrawerOpen(false);
+              setSelectedPartner(null);
+            }}
+          >
+            <DrawerContent
+              partner={selectedPartner}
+              onClose={() => {
+                setDrawerOpen(false);
+                setSelectedPartner(null);
+              }}
+              setSnackbarOpen={() => setSnackbarOpen(true)}
+              setSnackbarMessage={setSnackbarMessage}
+            />
+          </Drawer>
+          <Snackbar
+            open={snackbarOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackbarOpen(false)}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          >
+            <Alert
+              variant="filled"
+              icon={<Check fontSize="inherit" />}
+              severity="success"
+              sx={{ fontSize: "18px" }}
+            >
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
+        </Stack>
+      ) : (
+        <Stack
+          width="100vw"
+          height="100vh"
+          justifyContent="center"
+          alignItems="center"
         >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
-    </Stack>
+          <Stack direction="row" alignItems="center" spacing="45px">
+            <Typography variant="h4" fontWeight="bold" color="primary">
+              Loading...
+            </Typography>
+            <CircularProgress size="54px" />
+          </Stack>
+        </Stack>
+      )}
+    </>
   );
 }
