@@ -265,7 +265,6 @@ export default function Partners(): ReactElement {
         getData();
       } else {
         router.push("/");
-        localStorage.clear();
       }
     });
   }, [router, setDeadline, setMessage, setPartners, setTarget, target]);

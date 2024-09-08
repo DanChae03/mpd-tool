@@ -64,7 +64,6 @@ export default function Dashboard(): ReactElement {
         getData();
       } else {
         router.push("/");
-        localStorage.clear();
       }
     });
   }, [router, setDeadline, setMessage, setPartners, setTarget, target]);

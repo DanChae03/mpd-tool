@@ -35,6 +35,7 @@ export default function Home(): ReactElement {
     setState("loading");
     signInWithGoogle()
       .then((result) => {
+        localStorage.clear();
         const isNewUser = getAdditionalUserInfo(result)?.isNewUser;
         const UID = auth.currentUser?.uid;
         if (isNewUser && UID != null) {
