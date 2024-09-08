@@ -288,7 +288,7 @@ export default function Partners(): ReactElement {
 
     if (searchKey.trim() != "") {
       filteredSearch = filteredSearch.filter((partner) =>
-        partner.name.toLowerCase().includes(searchKey.toLowerCase())
+        partner.name.toLowerCase().includes(searchKey.trim().toLowerCase())
       );
     }
 
@@ -353,7 +353,9 @@ export default function Partners(): ReactElement {
 
   const visibleRows = useMemo(() => {
     const dataToUse =
-      filters.length === 7 && searchKey === "" ? partners : filteredPartners;
+      filters.length === 7 && searchKey.trim() === ""
+        ? partners
+        : filteredPartners;
 
     return dataToUse
       .sort(getComparator(order, orderBy))
@@ -690,7 +692,7 @@ export default function Partners(): ReactElement {
                 rowsPerPageOptions={[4, 6, 8, 10, 15, 20]}
                 component="div"
                 count={
-                  filters.length === 0 || searchKey !== ""
+                  filters.length === 7 && searchKey.trim() === ""
                     ? partners.length
                     : filteredPartners.length
                 }
