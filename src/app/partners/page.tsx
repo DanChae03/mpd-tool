@@ -743,11 +743,11 @@ export default function Partners(): ReactElement {
           justifyContent="center"
           alignItems="center"
         >
-          <Stack direction="row" alignItems="center" spacing="45px">
+          <Stack direction="row" alignItems="center" spacing="27px">
             <Typography variant="h4" fontWeight="bold" color="primary">
               Loading...
             </Typography>
-            <CircularProgress size="54px" />
+            <CircularProgress size="36px" />
           </Stack>
         </Stack>
       )}

@@ -23,7 +23,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 export default function Dashboard(): ReactElement {
   const [open, setOpen] = useState<boolean>(false);
   const [changed, setChanged] = useState<boolean>(false);
-
   const {
     target,
     setTarget,
@@ -33,6 +32,9 @@ export default function Dashboard(): ReactElement {
     setMessage,
     setPartners,
   } = useContext(DataContext);
+  const [currentTarget, setCurrentTarget] = useState<number>(target);
+  const [currentDeadline, setCurrentDeadline] = useState<Dayjs>(deadline);
+  const [currentMessage, setCurrentMessage] = useState<string>(message);
 
   const router = useRouter();
 
@@ -46,6 +48,9 @@ export default function Dashboard(): ReactElement {
             setMessage(data.message);
             setTarget(data.target);
             setDeadline(dayjs(data.deadline));
+            setCurrentMessage(data.message);
+            setCurrentTarget(data.target);
+            setCurrentDeadline(dayjs(data.deadline));
           }
 
           const partnerData = await fetchPartners(UID);
@@ -69,10 +74,13 @@ export default function Dashboard(): ReactElement {
     const UID = auth.currentUser?.uid;
     if (UID != null) {
       await updateDoc(doc(database, "users", UID), {
-        message: message,
-        deadline: deadline != null ? deadline.toString() : null,
-        target: target,
+        message: currentMessage,
+        deadline: currentDeadline != null ? currentDeadline.toString() : null,
+        target: currentTarget,
       }).then(() => {
+        setMessage(currentMessage);
+        setDeadline(currentDeadline);
+        setTarget(currentTarget);
         setOpen(true);
         setChanged(false);
       });
@@ -81,7 +89,8 @@ export default function Dashboard(): ReactElement {
 
   return (
     <>
-      {auth.currentUser?.displayName != undefined && target > 0 ? (
+      {auth.currentUser?.displayName != undefined &&
+      (target > 0 || currentTarget > 0) ? (
         <PageWrapper title="Settings" page="settings">
           <Stack width="100%" spacing="18px">
             <Stack direction="row" alignItems="center" spacing="45px">
@@ -89,10 +98,10 @@ export default function Dashboard(): ReactElement {
                 <Typography variant="h6">Support Deadline:</Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
-                    value={deadline}
+                    value={currentDeadline}
                     onChange={(newDate: Dayjs | null) => {
                       if (newDate != null) {
-                        setDeadline(newDate);
+                        setCurrentDeadline(newDate);
                         setChanged(true);
                       }
                     }}
@@ -114,10 +123,10 @@ export default function Dashboard(): ReactElement {
               <Stack spacing="9px">
                 <Typography variant="h6">Support Target ($):</Typography>
                 <TextField
-                  value={target}
+                  value={currentTarget}
                   type="number"
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setTarget(parseFloat(event.target.value));
+                    setCurrentTarget(parseFloat(event.target.value));
                     setChanged(true);
                   }}
                   slotProps={{
@@ -139,9 +148,9 @@ export default function Dashboard(): ReactElement {
               <TextField
                 multiline
                 rows="12"
-                value={message}
+                value={currentMessage}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setMessage(event.target.value);
+                  setCurrentMessage(event.target.value);
                   setChanged(true);
                 }}
                 slotProps={{
@@ -156,10 +165,10 @@ export default function Dashboard(): ReactElement {
                 onClick={() => setData()}
                 disabled={
                   !changed ||
-                  Number.isNaN(target) ||
-                  target < 0 ||
-                  !message ||
-                  message === ""
+                  Number.isNaN(currentTarget) ||
+                  currentTarget < 0 ||
+                  !currentMessage ||
+                  currentMessage === ""
                 }
                 variant="contained"
                 sx={{
@@ -197,11 +206,11 @@ export default function Dashboard(): ReactElement {
           justifyContent="center"
           alignItems="center"
         >
-          <Stack direction="row" alignItems="center" spacing="45px">
+          <Stack direction="row" alignItems="center" spacing="27px">
             <Typography variant="h4" fontWeight="bold" color="primary">
               Loading...
             </Typography>
-            <CircularProgress size="54px" />
+            <CircularProgress size="36px" />
           </Stack>
         </Stack>
       )}
