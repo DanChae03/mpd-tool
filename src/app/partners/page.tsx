@@ -47,6 +47,16 @@ import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { DataContext } from "@/components/DataProvider/DataProvider";
 
+const stateOrder = new Map<string, number>([
+  ["To Ask", 0],
+  ["Asked", 1],
+  ["Letter Sent", 2],
+  ["Contacted", 3],
+  ["Pledged", 4],
+  ["Confirmed", 5],
+  ["Rejected", 6],
+]);
+
 function comparator<T>(a: T, b: T, orderBy: keyof T) {
   const aValue = a[orderBy];
   const bValue = b[orderBy];
@@ -58,12 +68,25 @@ function comparator<T>(a: T, b: T, orderBy: keyof T) {
     return -1;
   }
 
+  if (orderBy === "status") {
+    const aStatus = stateOrder.get(aValue as string) ?? 0;
+    const bStatus = stateOrder.get(bValue as string) ?? 0;
+
+    if (bStatus < aStatus) {
+      return -1;
+    }
+    if (bStatus > aStatus) {
+      return 1;
+    }
+  }
+
   if (bValue < aValue) {
     return -1;
   }
   if (bValue > aValue) {
     return 1;
   }
+
   return 0;
 }
 
@@ -212,15 +235,8 @@ export default function Partners(): ReactElement {
     "Operation successful."
   );
 
-  const {
-    partners,
-    setPartners,
-    message,
-    setMessage,
-    target,
-    setTarget,
-    setDeadline,
-  } = useContext(DataContext);
+  const { partners, setPartners, setMessage, target, setTarget, setDeadline } =
+    useContext(DataContext);
 
   const router = useRouter();
 
