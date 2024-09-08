@@ -251,7 +251,6 @@ export default function Partners(): ReactElement {
             setTarget(data.target);
             setDeadline(dayjs(data.deadline));
           }
-
           const partnerData = await fetchPartners(UID);
           if (partnerData.length !== 0) {
             setPartners(partnerData);

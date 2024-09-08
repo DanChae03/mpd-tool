@@ -174,14 +174,14 @@ export function DrawerContent({
         {partner != null && (
           <Stack direction="row" spacing="9px">
             <IconButton
-              disabled={number == null}
+              disabled={!number}
               sx={{ color: "success.main" }}
               href={`tel:${number}`}
             >
               <Call fontSize="large" />
             </IconButton>
             <IconButton
-              disabled={email == null}
+              disabled={!email}
               sx={{ color: "#4C8BF5" }}
               href={`mailto:${email}?subject=Support Raising Letter - ${name}&body=${message}`}
             >
@@ -423,7 +423,7 @@ export function DrawerContent({
             Exit
           </Button>
           <Button
-            disabled={disabled || name == null || name == ""}
+            disabled={disabled || !name || !name.trim()}
             variant="contained"
             sx={{
               textTransform: "none",

@@ -52,7 +52,6 @@ export default function Dashboard(): ReactElement {
             setCurrentTarget(data.target);
             setCurrentDeadline(dayjs(data.deadline));
           }
-
           const partnerData = await fetchPartners(UID);
           if (partnerData.length !== 0) {
             setPartners(partnerData);

@@ -50,7 +50,6 @@ export default function Dashboard(): ReactElement {
             setTarget(data.target);
             setDeadline(dayjs(data.deadline));
           }
-
           const partnerData = await fetchPartners(UID);
           if (partnerData.length !== 0) {
             setPartners(partnerData);
@@ -77,7 +76,7 @@ export default function Dashboard(): ReactElement {
   }, 0);
 
   const supporters = partners.filter(
-    (partner) => partner.confirmedAmount != null
+    (partner) => partner.confirmedAmount != null && partner.confirmedAmount
   ).length;
 
   const filteredPartners = partners
