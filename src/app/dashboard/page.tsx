@@ -13,15 +13,16 @@ import {
 } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { Chart } from "@/components/Chart";
-import { auth, fetchDocument, fetchPartners } from "@/utils/firebase";
+import { auth, database, fetchDocument, fetchPartners } from "@/utils/firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { DataContext } from "@/components/DataProvider/DataProvider";
 import { PageWrapper } from "@/components/PageWrapper";
 import IconButton from "@mui/material/IconButton";
 import CircularProgress from "@mui/material/CircularProgress";
 import Dialog from "@mui/material/Dialog";
 import Button from "@mui/material/Button";
+import { doc, updateDoc } from "firebase/firestore";
 
 export default function Dashboard(): ReactElement {
   const {
@@ -37,13 +38,6 @@ export default function Dashboard(): ReactElement {
 
   const [pagination, setPagination] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
-  const params = useSearchParams();
-
-  useEffect(() => {
-    if (params.get("onboarding")) {
-      setOpen(true);
-    }
-  }, [params]);
 
   useEffect(() => {
     const getData = async () => {
@@ -55,6 +49,7 @@ export default function Dashboard(): ReactElement {
             setMessage(data.message);
             setTarget(data.target);
             setDeadline(dayjs(data.deadline));
+            setOpen(data.newUser);
           }
           const partnerData = await fetchPartners(UID);
           if (partnerData.length !== 0) {
@@ -72,6 +67,17 @@ export default function Dashboard(): ReactElement {
       }
     });
   }, [router, setDeadline, setMessage, setPartners, setTarget, target]);
+
+  const completeOnboarding = async () => {
+    const UID = auth.currentUser?.uid;
+    if (UID != null) {
+      await updateDoc(doc(database, "users", UID), {
+        newUser: false,
+      }).then(() => {
+        setOpen(false);
+      });
+    }
+  };
 
   const totalPledged = partners.reduce((sum, partner) => {
     return sum + (partner.pledgedAmount ?? 0);
@@ -301,7 +307,10 @@ export default function Dashboard(): ReactElement {
                   All the best with Support Raising!
                 </Typography>
                 <Button
-                  onClick={() => setOpen(false)}
+                  onClick={() => {
+                    completeOnboarding();
+                    setOpen(false);
+                  }}
                   variant="contained"
                   sx={{
                     textTransform: "none",

@@ -2,7 +2,7 @@
 
 import Button from "@mui/material/Button";
 import { Google } from "@mui/icons-material";
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
@@ -11,6 +11,8 @@ import { auth, createUser, signInWithGoogle } from "@/utils/firebase";
 import { useRouter } from "next/navigation";
 import CircularProgress from "@mui/material/CircularProgress";
 import { getAdditionalUserInfo, onAuthStateChanged } from "firebase/auth";
+import { DataContext } from "@/components/DataProvider/DataProvider";
+import dayjs from "dayjs";
 
 export default function Home(): ReactElement {
   const [state, setState] = useState<"loading" | "error" | undefined>(
@@ -19,14 +21,21 @@ export default function Home(): ReactElement {
 
   const router = useRouter();
 
+  const { setPartners, setTarget, setDeadline, setMessage } =
+    useContext(DataContext);
+
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         localStorage.clear();
+        setPartners([]);
+        setTarget(0);
+        setDeadline(dayjs());
+        setMessage("");
         router.push("/dashboard");
       }
     });
-  }, [router]);
+  }, [router, setDeadline, setMessage, setPartners, setTarget]);
 
   const handleGoogleLogin = () => {
     setState("loading");
@@ -36,9 +45,7 @@ export default function Home(): ReactElement {
         const isNewUser = getAdditionalUserInfo(result)?.isNewUser;
         const UID = auth.currentUser?.uid;
         if (isNewUser && UID != null) {
-          createUser(UID).then(() => {
-            router.push("/dashboard?onboarding=true");
-          });
+          createUser(UID);
         }
       })
       .catch((error) => {

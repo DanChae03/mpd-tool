@@ -103,6 +103,7 @@ export const createUser = async (UID: string) => {
       deadline: dayjs().add(1, "month").toString(),
       target: 850,
       message: "Add your Support Raising message here.",
+      newUser: true,
     });
   } catch (error) {
     console.error("Error creating document:", error);
