@@ -2,12 +2,8 @@
 
 import Stack from "@mui/material/Stack";
 import { ReactElement, useContext, useEffect, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { Navbar } from "@/components/Navbar";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
-import CardActionArea from "@mui/material/CardActionArea";
 import {
   KeyboardArrowLeft,
   KeyboardArrowRight,
@@ -19,11 +15,13 @@ import dayjs from "dayjs";
 import { Chart } from "@/components/Chart";
 import { auth, fetchDocument, fetchPartners } from "@/utils/firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { DataContext } from "@/components/DataProvider/DataProvider";
 import { PageWrapper } from "@/components/PageWrapper";
 import IconButton from "@mui/material/IconButton";
 import CircularProgress from "@mui/material/CircularProgress";
+import Dialog from "@mui/material/Dialog";
+import Button from "@mui/material/Button";
 
 export default function Dashboard(): ReactElement {
   const {
@@ -38,6 +36,14 @@ export default function Dashboard(): ReactElement {
   const router = useRouter();
 
   const [pagination, setPagination] = useState<number>(0);
+  const [open, setOpen] = useState<boolean>(false);
+  const params = useSearchParams();
+
+  useEffect(() => {
+    if (params.get("onboarding")) {
+      setOpen(true);
+    }
+  }, [params]);
 
   useEffect(() => {
     const getData = async () => {
@@ -272,6 +278,44 @@ export default function Dashboard(): ReactElement {
               </Stack>
             </Card>
           </Stack>
+          <Dialog open={open}>
+            <Card sx={{ width: "100%", padding: "45px" }}>
+              <Stack spacing="18px" alignItems="center">
+                <Typography variant="h4" fontWeight="bold" color="primary">
+                  Welcome to mpd-tool!
+                </Typography>
+                <Typography variant="h6" textAlign="center">
+                  This tool was developed by Dan Chae after he tried to support
+                  raise for an International project using an Excel spreadsheet.
+                </Typography>
+                <Typography variant="h6" fontWeight="bold" textAlign="center">
+                  {`Get started by going to the Settings Page and changing the
+                  Support target and Deadline date to that of your Project's.
+                  Make sure to save your changes.`}
+                </Typography>
+                <Typography variant="h6" fontWeight="bold" textAlign="center">
+                  Then, go to the Partners section and add some of your partners
+                  with the Plus button at the top right!
+                </Typography>
+                <Typography variant="h6" textAlign="center">
+                  All the best with Support Raising!
+                </Typography>
+                <Button
+                  onClick={() => setOpen(false)}
+                  variant="contained"
+                  sx={{
+                    textTransform: "none",
+                    fontSize: "18px",
+                    height: "54px",
+                    width: "216px",
+                    borderRadius: "36px",
+                  }}
+                >
+                  Get Started
+                </Button>
+              </Stack>
+            </Card>
+          </Dialog>
         </PageWrapper>
       ) : (
         <Stack
