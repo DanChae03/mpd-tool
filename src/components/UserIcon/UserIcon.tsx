@@ -44,9 +44,6 @@ export function UserIcon(): ReactElement {
             bgcolor: "primary.main",
             width: "50px",
             height: "50px",
-            "&:hover": {
-              bgcolor: "primary.dark",
-            },
           }}
           src={src ?? ""}
         />

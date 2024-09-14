@@ -20,11 +20,9 @@ export function Navbar({ page }: NavbarProps) {
       width="270px"
       bgcolor="background.paper"
     >
-      <Link href="https://give.studentlife.org.nz/">
-        <Stack width="270px" marginTop="45px" alignItems="center">
-          <Image src="/logo.svg" alt="Logo" width={203} height={70} />
-        </Stack>
-      </Link>
+      <Stack width="270px" marginTop="45px" alignItems="center">
+        <Image src="/logo.png" alt="Logo" width={203} height={70} />
+      </Stack>
       <Stack
         width="270px"
         justifyContent="center"

@@ -62,12 +62,13 @@ export default function Home(): ReactElement {
         bgcolor: "background.paper",
       }}
     >
-      <Link
-        href="https://give.studentlife.org.nz/"
+      <Image
+        src="/logo.png"
+        alt="Logo"
+        width={290}
+        height={100}
         style={{ position: "absolute" }}
-      >
-        <Image src="/logo.svg" alt="Logo" width={290} height={100} />
-      </Link>
+      />
       <Stack
         alignItems="center"
         justifyContent="center"
