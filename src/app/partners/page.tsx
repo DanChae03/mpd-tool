@@ -353,7 +353,7 @@ export default function Partners(): ReactElement {
 
   const visibleRows = useMemo(() => {
     const dataToUse =
-      filters.length === 7 && searchKey.trim() === ""
+      filters.length === 7 && searchKey.trim() === "" && !onlySaved
         ? partners
         : filteredPartners;
 
@@ -363,6 +363,7 @@ export default function Partners(): ReactElement {
   }, [
     filters.length,
     searchKey,
+    onlySaved,
     partners,
     filteredPartners,
     order,
@@ -692,7 +693,7 @@ export default function Partners(): ReactElement {
                 rowsPerPageOptions={[4, 6, 8, 10, 15, 20]}
                 component="div"
                 count={
-                  filters.length === 7 && searchKey.trim() === ""
+                  filters.length === 7 && searchKey.trim() === "" && !onlySaved
                     ? partners.length
                     : filteredPartners.length
                 }
