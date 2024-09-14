@@ -94,7 +94,7 @@ export default function Home(): ReactElement {
             with ease.
           </Typography>
           <Typography variant="h6" color="primary.main" textAlign="center">
-            MPD Tool allows for simple tracking of supporters and their
+            MPD Easy allows for simple tracking of supporters and their
             donations.
             <br /> Say goodbye to those tedious spreadsheets!
           </Typography>

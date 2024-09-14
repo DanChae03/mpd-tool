@@ -288,7 +288,7 @@ export default function Dashboard(): ReactElement {
             <Card sx={{ width: "100%", padding: "45px" }}>
               <Stack spacing="18px" alignItems="center">
                 <Typography variant="h4" fontWeight="bold" color="primary">
-                  Welcome to mpd-tool!
+                  Welcome to MPD Easy!
                 </Typography>
                 <Typography variant="h6" textAlign="center">
                   This tool was developed by Dan Chae after he tried to support

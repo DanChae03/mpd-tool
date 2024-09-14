@@ -1,4 +1,4 @@
-# mpd-tool
+# MPD Easy
 
 Web-based tool to help track support raising.
 
