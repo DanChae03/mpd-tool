@@ -36,8 +36,8 @@ export const signInWithGoogle = () => signInWithPopup(auth, provider);
 
 export default app;
 
-export const fetchDocument = async (UUI: string) => {
-  const docRef = doc(database, "users", UUI);
+export const fetchDocument = async (email: string) => {
+  const docRef = doc(database, "users", email);
 
   try {
     const docSnap = await getDoc(docRef);
@@ -50,10 +50,10 @@ export const fetchDocument = async (UUI: string) => {
   }
 };
 
-export const fetchPartners = async (UUI: string) => {
+export const fetchPartners = async (email: string) => {
   try {
     const querySnapshot = await getDocs(
-      collection(database, "users", UUI, "partners")
+      collection(database, "users", email, "partners")
     );
     const partners: Partner[] = [];
     querySnapshot.forEach((doc) => {
@@ -70,9 +70,9 @@ export const fetchPartners = async (UUI: string) => {
   }
 };
 
-export const setPartner = async (UID: string, partner: Partner) => {
+export const setPartner = async (email: string, partner: Partner) => {
   try {
-    await setDoc(doc(database, "users", UID, "partners", partner.id), {
+    await setDoc(doc(database, "users", email, "partners", partner.id), {
       name: partner.name,
       email: partner.email,
       number: partner.number,
@@ -89,17 +89,17 @@ export const setPartner = async (UID: string, partner: Partner) => {
   }
 };
 
-export const deletePartner = async (UID: string, id: string) => {
+export const deletePartner = async (email: string, id: string) => {
   try {
-    await deleteDoc(doc(database, "users", UID, "partners", id));
+    await deleteDoc(doc(database, "users", email, "partners", id));
   } catch (error) {
     console.error("Error deleting document:", error);
   }
 };
 
-export const createUser = async (UID: string) => {
+export const createUser = async (email: string) => {
   try {
-    await setDoc(doc(database, "users", UID), {
+    await setDoc(doc(database, "users", email), {
       deadline: dayjs().add(1, "month").toString(),
       target: 850,
       message: "Add your Support Raising message here.",

@@ -42,16 +42,16 @@ export default function Dashboard(): ReactElement {
   useEffect(() => {
     const getData = async () => {
       if (target === 0) {
-        const UID = auth.currentUser?.uid;
-        if (UID != null) {
-          const data = await fetchDocument(UID);
+        const email = auth.currentUser?.email;
+        if (email != null) {
+          const data = await fetchDocument(email);
           if (data != null) {
             setMessage(data.message);
             setTarget(data.target);
             setDeadline(dayjs(data.deadline));
             setOpen(data.newUser);
           }
-          const partnerData = await fetchPartners(UID);
+          const partnerData = await fetchPartners(email);
           if (partnerData.length !== 0) {
             setPartners(partnerData);
           }
@@ -69,9 +69,9 @@ export default function Dashboard(): ReactElement {
   }, [router, setDeadline, setMessage, setPartners, setTarget, target]);
 
   const completeOnboarding = async () => {
-    const UID = auth.currentUser?.uid;
-    if (UID != null) {
-      await updateDoc(doc(database, "users", UID), {
+    const email = auth.currentUser?.email;
+    if (email != null) {
+      await updateDoc(doc(database, "users", email), {
         newUser: false,
       }).then(() => {
         setOpen(false);

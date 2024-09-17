@@ -243,15 +243,15 @@ export default function Partners(): ReactElement {
   useEffect(() => {
     const getData = async () => {
       if (target === 0) {
-        const UID = auth.currentUser?.uid;
-        if (UID != null) {
-          const data = await fetchDocument(UID);
+        const email = auth.currentUser?.email;
+        if (email != null) {
+          const data = await fetchDocument(email);
           if (data != null) {
             setMessage(data.message);
             setTarget(data.target);
             setDeadline(dayjs(data.deadline));
           }
-          const partnerData = await fetchPartners(UID);
+          const partnerData = await fetchPartners(email);
           if (partnerData.length !== 0) {
             setPartners(partnerData);
           }

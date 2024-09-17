@@ -43,9 +43,9 @@ export default function Home(): ReactElement {
       .then((result) => {
         localStorage.clear();
         const isNewUser = getAdditionalUserInfo(result)?.isNewUser;
-        const UID = auth.currentUser?.uid;
-        if (isNewUser && UID != null) {
-          createUser(UID);
+        const email = auth.currentUser?.email;
+        if (isNewUser && email != null) {
+          createUser(email);
         }
       })
       .catch((error) => {

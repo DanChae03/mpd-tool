@@ -96,8 +96,8 @@ export function DrawerContent({
   };
 
   const handleSave = async () => {
-    const UID = auth.currentUser?.uid;
-    if (UID != null) {
+    const userEmail = auth.currentUser?.email;
+    if (userEmail != null) {
       const newPartner: Partner = {
         id: partner != null ? partner.id : uuidv4(),
         name: name,
@@ -123,7 +123,7 @@ export function DrawerContent({
         status: status,
         saved: saved,
       };
-      await setPartner(UID, newPartner).then(() => {
+      await setPartner(userEmail, newPartner).then(() => {
         updatePartners(newPartner, newPartner.id, partner == null);
         setSnackbarMessage(
           partner != null
@@ -137,9 +137,9 @@ export function DrawerContent({
   };
 
   const handleDelete = async () => {
-    const UID = auth.currentUser?.uid;
-    if (UID != null && partner != null) {
-      await deletePartner(UID, partner.id).then(() => {
+    const userEmail = auth.currentUser?.email;
+    if (userEmail != null && partner != null) {
+      await deletePartner(userEmail, partner.id).then(() => {
         updatePartners(null, partner.id, false);
         setSnackbarMessage("Partner removed successfully.");
         setSnackbarOpen();
