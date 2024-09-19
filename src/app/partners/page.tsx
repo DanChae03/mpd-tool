@@ -235,8 +235,15 @@ export default function Partners(): ReactElement {
     "Operation successful."
   );
 
-  const { partners, setPartners, setMessage, target, setTarget, setDeadline } =
-    useContext(DataContext);
+  const {
+    partners,
+    setPartners,
+    setMessage,
+    target,
+    setTarget,
+    setDeadline,
+    setProject,
+  } = useContext(DataContext);
 
   const router = useRouter();
 
@@ -250,6 +257,7 @@ export default function Partners(): ReactElement {
             setMessage(data.message);
             setTarget(data.target);
             setDeadline(dayjs(data.deadline));
+            setProject(data.project);
           }
           const partnerData = await fetchPartners(email);
           if (partnerData.length !== 0) {
@@ -266,7 +274,15 @@ export default function Partners(): ReactElement {
         router.push("/");
       }
     });
-  }, [router, setDeadline, setMessage, setPartners, setTarget, target]);
+  }, [
+    router,
+    setDeadline,
+    setMessage,
+    setPartners,
+    setProject,
+    setTarget,
+    target,
+  ]);
 
   useEffect(() => {
     const calculateTotals = () => {

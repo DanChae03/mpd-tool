@@ -33,6 +33,7 @@ export default function Dashboard(): ReactElement {
     setTarget,
     setDeadline,
     setMessage,
+    setProject,
   } = useContext(DataContext);
   const router = useRouter();
 
@@ -50,6 +51,7 @@ export default function Dashboard(): ReactElement {
             setTarget(data.target);
             setDeadline(dayjs(data.deadline));
             setOpen(data.newUser);
+            setProject(data.project);
           }
           const partnerData = await fetchPartners(email);
           if (partnerData.length !== 0) {
@@ -66,7 +68,15 @@ export default function Dashboard(): ReactElement {
         router.push("/");
       }
     });
-  }, [router, setDeadline, setMessage, setPartners, setTarget, target]);
+  }, [
+    router,
+    setDeadline,
+    setMessage,
+    setPartners,
+    setProject,
+    setTarget,
+    target,
+  ]);
 
   const completeOnboarding = async () => {
     const email = auth.currentUser?.email;

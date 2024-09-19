@@ -5,8 +5,14 @@ import { ReactElement, useContext, useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { doc, updateDoc } from "firebase/firestore";
-import { auth, database, fetchDocument, fetchPartners } from "@/utils/firebase";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  auth,
+  database,
+  fetchDocument,
+  fetchPartners,
+  fetchProjects,
+} from "@/utils/firebase";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { Check } from "@mui/icons-material";
@@ -19,6 +25,8 @@ import { useRouter } from "next/navigation";
 import { DataContext } from "@/components/DataProvider/DataProvider";
 import { PageWrapper } from "@/components/PageWrapper";
 import CircularProgress from "@mui/material/CircularProgress";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 
 export default function Dashboard(): ReactElement {
   const [open, setOpen] = useState<boolean>(false);
@@ -31,10 +39,15 @@ export default function Dashboard(): ReactElement {
     message,
     setMessage,
     setPartners,
+    setProject,
+    project,
+    projects,
+    setProjects,
   } = useContext(DataContext);
   const [currentTarget, setCurrentTarget] = useState<number>(target);
   const [currentDeadline, setCurrentDeadline] = useState<Dayjs>(deadline);
   const [currentMessage, setCurrentMessage] = useState<string>(message);
+  const [currentProject, setCurrentProject] = useState<string>(project);
 
   const router = useRouter();
 
@@ -48,9 +61,11 @@ export default function Dashboard(): ReactElement {
             setMessage(data.message);
             setTarget(data.target);
             setDeadline(dayjs(data.deadline));
+            setProject(data.project);
             setCurrentMessage(data.message);
             setCurrentTarget(data.target);
             setCurrentDeadline(dayjs(data.deadline));
+            setCurrentProject(data.project);
           }
           const partnerData = await fetchPartners(email);
           if (partnerData.length !== 0) {
@@ -60,14 +75,34 @@ export default function Dashboard(): ReactElement {
       }
     };
 
+    const getProjects = async () => {
+      if (projects.length === 0) {
+        const data = await fetchProjects();
+        if (data != null) {
+          setProjects(data.projects);
+        }
+      }
+    };
+
     onAuthStateChanged(auth, (user) => {
       if (user) {
         getData();
+        getProjects();
       } else {
         router.push("/");
       }
     });
-  }, [router, setDeadline, setMessage, setPartners, setTarget, target]);
+  }, [
+    projects.length,
+    router,
+    setDeadline,
+    setMessage,
+    setPartners,
+    setProject,
+    setProjects,
+    setTarget,
+    target,
+  ]);
 
   const setData = async () => {
     const email = auth.currentUser?.email;
@@ -76,10 +111,12 @@ export default function Dashboard(): ReactElement {
         message: currentMessage,
         deadline: currentDeadline != null ? currentDeadline.toString() : null,
         target: currentTarget,
+        project: currentProject,
       }).then(() => {
         setMessage(currentMessage);
         setDeadline(currentDeadline);
         setTarget(currentTarget);
+        setProject(currentProject);
         setOpen(true);
         setChanged(false);
       });
@@ -93,6 +130,28 @@ export default function Dashboard(): ReactElement {
         <PageWrapper title="Settings" page="settings">
           <Stack width="100%" spacing="18px">
             <Stack direction="row" alignItems="center" spacing="45px">
+              <Stack spacing="9px">
+                <Typography variant="h6">Current Project:</Typography>
+                <Select
+                  sx={{
+                    width: "270px",
+                    height: "63px",
+                    bgcolor: "background.paper",
+                    fontSize: "18px",
+                  }}
+                  value={currentProject}
+                  onChange={(event) => {
+                    setCurrentProject(event.target.value);
+                    setChanged(event.target.value !== project);
+                  }}
+                >
+                  {projects.map((proj) => (
+                    <MenuItem sx={{ height: "100%" }} value={proj} key={proj}>
+                      {proj}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Stack>
               <Stack spacing="9px">
                 <Typography variant="h6">Support Deadline:</Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>

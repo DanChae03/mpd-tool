@@ -50,6 +50,18 @@ export const fetchDocument = async (email: string) => {
   }
 };
 
+export const fetchProjects = async () => {
+  const docRef = doc(database, "projects", "projects");
+  try {
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return docSnap.data();
+    }
+  } catch (error) {
+    console.error("Error getting document:", error);
+  }
+};
+
 export const fetchPartners = async (email: string) => {
   try {
     const querySnapshot = await getDocs(
@@ -104,6 +116,8 @@ export const createUser = async (email: string) => {
       target: 850,
       message: "Add your Support Raising message here.",
       newUser: true,
+      admin: false,
+      project: "No Project",
     });
   } catch (error) {
     console.error("Error creating document:", error);

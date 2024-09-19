@@ -22,6 +22,10 @@ interface DataContextType {
   setDeadline: Dispatch<SetStateAction<Dayjs>>;
   message: string;
   setMessage: Dispatch<SetStateAction<string>>;
+  project: string;
+  setProject: Dispatch<SetStateAction<string>>;
+  projects: string[];
+  setProjects: Dispatch<SetStateAction<string[]>>;
 }
 
 export const DataContext = createContext<DataContextType>(
@@ -33,6 +37,8 @@ export function DataProvider({ children }: DataProviderProps) {
   const [target, setTarget] = useState<number>(0);
   const [deadline, setDeadline] = useState<Dayjs>(dayjs());
   const [message, setMessage] = useState<string>("");
+  const [project, setProject] = useState<string>("No Project");
+  const [projects, setProjects] = useState<string[]>([]);
 
   return (
     <DataContext.Provider
@@ -45,6 +51,10 @@ export function DataProvider({ children }: DataProviderProps) {
         setDeadline,
         message,
         setMessage,
+        project,
+        setProject,
+        projects,
+        setProjects,
       }}
     >
       {children}

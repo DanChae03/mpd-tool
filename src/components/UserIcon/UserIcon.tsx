@@ -21,7 +21,6 @@ export function UserIcon(): ReactElement {
   const logout = () => {
     signOut(auth)
       .then(() => {
-        localStorage.clear();
         router.push("/");
       })
       .catch((error) => {
