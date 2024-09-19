@@ -6,7 +6,6 @@ import {
   Dispatch,
   ReactNode,
   SetStateAction,
-  useEffect,
   useState,
 } from "react";
 
@@ -34,47 +33,6 @@ export function DataProvider({ children }: DataProviderProps) {
   const [target, setTarget] = useState<number>(0);
   const [deadline, setDeadline] = useState<Dayjs>(dayjs());
   const [message, setMessage] = useState<string>("");
-
-  const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
-    const storedValue =
-      typeof window !== "undefined" ? localStorage.getItem(key) : null;
-    if (storedValue == null) {
-      return defaultValue;
-    } else {
-      return JSON.parse(storedValue);
-    }
-  };
-
-  const setLocalStorageItem = (key: string, value: any) => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem(key, JSON.stringify(value));
-    }
-  };
-
-  useEffect(() => {
-    setPartners(getLocalStorageItem<Partner[]>("partners", []));
-    setTarget(getLocalStorageItem<number>("target", 0));
-    setDeadline(
-      dayjs(getLocalStorageItem<string>("deadline", dayjs().toString()))
-    );
-    setMessage(getLocalStorageItem<string>("message", ""));
-  }, []);
-
-  useEffect(() => {
-    setLocalStorageItem("partners", partners);
-  }, [partners]);
-
-  useEffect(() => {
-    setLocalStorageItem("target", target);
-  }, [target]);
-
-  useEffect(() => {
-    setLocalStorageItem("deadline", deadline.toString());
-  }, [deadline]);
-
-  useEffect(() => {
-    setLocalStorageItem("message", message);
-  }, [message]);
 
   return (
     <DataContext.Provider
