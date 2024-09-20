@@ -11,3 +11,12 @@ export type Partner = {
   status: string;
   saved: boolean;
 };
+
+export type Order = "asc" | "desc";
+
+export type Statistics = {
+  confirmed: number;
+  letters: number;
+  outstandingLetters: number;
+  pledged: number;
+};

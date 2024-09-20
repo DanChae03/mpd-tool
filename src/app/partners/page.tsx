@@ -1,21 +1,26 @@
 "use client";
 
 import Stack from "@mui/material/Stack";
-import { ReactElement, useContext, useEffect, useMemo, useState } from "react";
+import {
+  ReactElement,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  MouseEvent,
+  ChangeEvent,
+} from "react";
 import { Navbar } from "@/components/Navbar";
 import Typography from "@mui/material/Typography";
 import TableContainer from "@mui/material/TableContainer";
 import Table from "@mui/material/Table";
-import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import Paper from "@mui/material/Paper";
 import TablePagination from "@mui/material/TablePagination";
-import { Partner } from "@/utils/types";
-import TableSortLabel from "@mui/material/TableSortLabel";
+import { Order, Partner } from "@/utils/types";
 import Box from "@mui/material/Box";
-import { visuallyHidden } from "@mui/utils";
 import IconButton from "@mui/material/IconButton";
 import {
   Add,
@@ -47,6 +52,7 @@ import Switch from "@mui/material/Switch";
 import Alert from "@mui/material/Alert";
 import CircularProgress from "@mui/material/CircularProgress";
 import { doc, updateDoc } from "firebase/firestore";
+import { StyledTable } from "@/components/StyledTable";
 
 const stateOrder = new Map<string, number>([
   ["To Ask", 0],
@@ -91,8 +97,6 @@ function comparator<T>(a: T, b: T, orderBy: keyof T) {
   return 0;
 }
 
-type Order = "asc" | "desc";
-
 function getComparator<Key extends keyof any>(
   order: Order,
   orderBy: Key
@@ -103,110 +107,6 @@ function getComparator<Key extends keyof any>(
   return order === "asc"
     ? (a, b) => comparator(a, b, orderBy)
     : (a, b) => -comparator(a, b, orderBy);
-}
-
-interface HeadCell {
-  disablePadding: boolean;
-  id: keyof Partner;
-  label: string;
-  numeric: boolean;
-}
-
-const headCells: readonly HeadCell[] = [
-  {
-    id: "name",
-    numeric: false,
-    disablePadding: false,
-    label: "Name",
-  },
-  {
-    id: "email",
-    numeric: false,
-    disablePadding: false,
-    label: "Email",
-  },
-  {
-    id: "number",
-    numeric: false,
-    disablePadding: false,
-    label: "Number",
-  },
-  {
-    id: "nextStepDate",
-    numeric: false,
-    disablePadding: false,
-    label: "Next Step",
-  },
-  {
-    id: "pledgedAmount",
-    numeric: true,
-    disablePadding: false,
-    label: "Pledged Amount",
-  },
-  {
-    id: "confirmedAmount",
-    numeric: true,
-    disablePadding: false,
-    label: "Confirmed Amount",
-  },
-  {
-    id: "status",
-    numeric: false,
-    disablePadding: false,
-    label: "Status",
-  },
-  {
-    id: "saved",
-    numeric: false,
-    disablePadding: false,
-    label: "Saved",
-  },
-];
-
-interface EnhancedTableProps {
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: keyof Partner
-  ) => void;
-  order: Order;
-  orderBy: string;
-  rowCount: number;
-}
-
-function EnhancedTableHead(props: EnhancedTableProps) {
-  const { order, orderBy, onRequestSort } = props;
-  const createSortHandler =
-    (property: keyof Partner) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
-
-  return (
-    <TableHead>
-      <TableRow>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ fontSize: "18px", color: "primary.main" }}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
 }
 
 export default function Partners(): ReactElement {
@@ -224,8 +124,6 @@ export default function Partners(): ReactElement {
     "Confirmed",
     "Rejected",
   ]);
-  const [pledged, setPledged] = useState<number>(0);
-  const [confirmed, setConfirmed] = useState<number>(0);
   const [filteredPartners, setFilteredPartners] = useState<Partner[]>([]);
   const [searchKey, setSearchKey] = useState<string>("");
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
@@ -290,21 +188,6 @@ export default function Partners(): ReactElement {
   ]);
 
   useEffect(() => {
-    const calculateTotals = () => {
-      const totalPledged = partners.reduce((sum, partner) => {
-        return sum + (partner.pledgedAmount ?? 0);
-      }, 0);
-
-      const totalConfirmed = partners.reduce((sum, partner) => {
-        return sum + (partner.confirmedAmount ?? 0);
-      }, 0);
-
-      setPledged(totalPledged);
-      setConfirmed(totalConfirmed);
-    };
-
-    calculateTotals();
-
     let filteredSearch = partners;
 
     if (searchKey.trim() != "") {
@@ -322,59 +205,48 @@ export default function Partners(): ReactElement {
     if (onlySaved) {
       filteredSearch = filteredSearch.filter((partner) => partner.saved);
     }
+
     setPage(0);
     setFilteredPartners(filteredSearch);
   }, [filters, onlySaved, partners, searchKey]);
 
   useEffect(() => {
     const calculateStats = async () => {
-      const outstandingLetters = partners.filter(
-        (partner) => partner.status === "Letter Sent"
-      ).length;
-      const letters = partners.filter(
-        (partner) =>
-          partner.status !== "To Ask" &&
-          partner.status !== "Asked" &&
-          partner.status !== "Rejected"
-      ).length;
+      const newStats = {
+        outstandingLetters: partners.filter(
+          (partner) => partner.status === "Letter Sent"
+        ).length,
+        letters: partners.filter(
+          (partner) =>
+            partner.status !== "To Ask" &&
+            partner.status !== "Asked" &&
+            partner.status !== "Rejected"
+        ).length,
+        pledged: partners.reduce((sum, partner) => {
+          return sum + (partner.pledgedAmount ?? 0);
+        }, 0),
+        confirmed: partners.reduce((sum, partner) => {
+          return sum + (partner.confirmedAmount ?? 0);
+        }, 0),
+      };
+
       const email = auth.currentUser?.email;
+
       if (
-        stats.confirmed !== confirmed ||
-        stats.pledged !== pledged ||
-        stats.outstandingLetters !== outstandingLetters ||
-        stats.letters !== letters
+        (stats.confirmed !== newStats.confirmed ||
+          stats.pledged !== newStats.pledged ||
+          stats.outstandingLetters !== newStats.outstandingLetters ||
+          stats.letters !== newStats.letters) &&
+        email != null
       ) {
-        if (email != null) {
-          await updateDoc(doc(database, "users", email), {
-            stats: {
-              confirmed: confirmed,
-              pledged: pledged,
-              outstandingLetters: outstandingLetters,
-              letters: letters,
-            },
-          }).then(() =>
-            setStats({
-              confirmed: confirmed,
-              pledged: pledged,
-              outstandingLetters: outstandingLetters,
-              letters: letters,
-            })
-          );
-        }
+        await updateDoc(doc(database, "users", email), {
+          stats: newStats,
+        }).then(() => setStats(newStats));
       }
     };
 
     calculateStats();
-  }, [
-    confirmed,
-    partners,
-    pledged,
-    setStats,
-    stats.confirmed,
-    stats.letters,
-    stats.outstandingLetters,
-    stats.pledged,
-  ]);
+  }, [partners, setStats, stats]);
 
   const handleSetFilters = (filter: string) => {
     if (!filters.includes(filter)) {
@@ -387,7 +259,7 @@ export default function Partners(): ReactElement {
   };
 
   const handleRequestSort = (
-    _event: React.MouseEvent<unknown>,
+    _event: MouseEvent<unknown>,
     property: keyof Partner
   ) => {
     const isAsc = orderBy === property && order === "asc";
@@ -396,23 +268,21 @@ export default function Partners(): ReactElement {
     setOrderBy(property);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, partner: Partner) => {
+  const handleClick = (_event: MouseEvent<unknown>, partner: Partner) => {
     setSelectedPartner(partner);
     setDrawerOpen(true);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
-  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleMenuClick = (event: MouseEvent<HTMLElement>) => {
     setAnchorElement(event.currentTarget);
   };
   const handleMenuClose: () => void = () => {
@@ -466,10 +336,10 @@ export default function Partners(): ReactElement {
                   Partners
                 </Typography>
                 <Typography variant="h6" fontWeight="bold" paddingBottom="18px">
-                  Total Pledged: ${pledged}
+                  Total Pledged: ${stats.pledged}
                 </Typography>
                 <Typography variant="h6" fontWeight="bold" paddingBottom="18px">
-                  Total Confirmed: ${confirmed}
+                  Total Confirmed: ${stats.confirmed}
                 </Typography>
               </Stack>
               <Stack
@@ -620,7 +490,7 @@ export default function Partners(): ReactElement {
             <Paper sx={{ width: "100%", mb: 2 }}>
               <TableContainer>
                 <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
-                  <EnhancedTableHead
+                  <StyledTable
                     order={order}
                     orderBy={orderBy}
                     onRequestSort={handleRequestSort}
@@ -639,11 +509,11 @@ export default function Partners(): ReactElement {
                               row.confirmedAmount &&
                               row.pledgedAmount &&
                               row.confirmedAmount >= row.pledgedAmount
-                                ? "#EDFCEF"
+                                ? "#EDFCEF" // Light Green
                                 : row.status === "Pledged"
-                                  ? "#EDF7FC"
+                                  ? "#EDF7FC" // Light Blue
                                   : row.status === "Rejected"
-                                    ? "#FCEDED"
+                                    ? "#FCEDED" // Light Red
                                     : "inherit",
                           }}
                         >

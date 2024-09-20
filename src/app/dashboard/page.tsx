@@ -38,6 +38,7 @@ export default function Dashboard(): ReactElement {
     setDeadline,
     setMessage,
     setProject,
+    stats,
     setStats,
   } = useContext(DataContext);
 
@@ -45,8 +46,6 @@ export default function Dashboard(): ReactElement {
 
   const [pagination, setPagination] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
-  const [pledged, setPledged] = useState<number>(0);
-  const [confirmed, setConfirmed] = useState<number>(0);
 
   useEffect(() => {
     const getData = async () => {
@@ -60,8 +59,6 @@ export default function Dashboard(): ReactElement {
           setOpen(data.newUser);
           setProject(data.project);
           setStats(data.stats);
-          setPledged(data.stats.pledged);
-          setConfirmed(data.stats.confirmed);
         }
         const partnerData = await fetchPartners(email);
         if (partnerData.length !== 0) {
@@ -145,16 +142,17 @@ export default function Dashboard(): ReactElement {
             <Card sx={{ width: "100%", padding: "45px" }}>
               <Stack direction="row" spacing="18px" alignItems="center">
                 <Typography variant="h3" fontWeight="bold" color="primary.main">
-                  ${confirmed}
+                  ${stats.confirmed}
                 </Typography>
                 <Savings fontSize="large" sx={{ color: "primary.main" }} />
               </Stack>
               <Typography variant="h6">
                 <>
-                  Of ${target} raised ({((confirmed / target) * 100).toFixed(1)}
+                  Of ${target} raised (
+                  {((stats.confirmed / target) * 100).toFixed(1)}
                   %)
-                  <br /> ${pledged} pledged (
-                  {((pledged / target) * 100).toFixed(1)}%)
+                  <br /> ${stats.pledged} pledged (
+                  {((stats.pledged / target) * 100).toFixed(1)}%)
                 </>
               </Typography>
             </Card>

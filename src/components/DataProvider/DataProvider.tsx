@@ -1,5 +1,5 @@
 "use client";
-import { Partner } from "@/utils/types";
+import { Partner, Statistics } from "@/utils/types";
 import dayjs, { Dayjs } from "dayjs";
 import {
   createContext,
@@ -26,20 +26,8 @@ interface DataContextType {
   setProject: Dispatch<SetStateAction<string>>;
   projects: string[];
   setProjects: Dispatch<SetStateAction<string[]>>;
-  stats: {
-    confirmed: number;
-    letters: number;
-    outstandingLetters: number;
-    pledged: number;
-  };
-  setStats: Dispatch<
-    SetStateAction<{
-      confirmed: number;
-      letters: number;
-      outstandingLetters: number;
-      pledged: number;
-    }>
-  >;
+  stats: Statistics;
+  setStats: Dispatch<SetStateAction<Statistics>>;
 }
 
 export const DataContext = createContext<DataContextType>(
@@ -53,12 +41,7 @@ export function DataProvider({ children }: DataProviderProps) {
   const [message, setMessage] = useState<string>("");
   const [project, setProject] = useState<string>("No Project");
   const [projects, setProjects] = useState<string[]>([]);
-  const [stats, setStats] = useState<{
-    confirmed: number;
-    letters: number;
-    outstandingLetters: number;
-    pledged: number;
-  }>({
+  const [stats, setStats] = useState<Statistics>({
     confirmed: 0,
     letters: 0,
     outstandingLetters: 0,
