@@ -13,7 +13,12 @@ import {
 } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { Chart } from "@/components/Chart";
-import { auth, database, fetchDocument, fetchPartners } from "@/utils/firebase";
+import {
+  auth,
+  fetchDocument,
+  fetchPartners,
+  setNewUser,
+} from "@/utils/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { DataContext } from "@/components/DataProvider/DataProvider";
@@ -22,43 +27,45 @@ import IconButton from "@mui/material/IconButton";
 import CircularProgress from "@mui/material/CircularProgress";
 import Dialog from "@mui/material/Dialog";
 import Button from "@mui/material/Button";
-import { doc, updateDoc } from "firebase/firestore";
 
 export default function Dashboard(): ReactElement {
   const {
     partners,
-    target,
-    deadline,
     setPartners,
+    target,
     setTarget,
+    deadline,
     setDeadline,
     setMessage,
     setProject,
     setStats,
   } = useContext(DataContext);
+
   const router = useRouter();
 
   const [pagination, setPagination] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
+  const [pledged, setPledged] = useState<number>(0);
+  const [confirmed, setConfirmed] = useState<number>(0);
 
   useEffect(() => {
     const getData = async () => {
-      if (target === 0) {
-        const email = auth.currentUser?.email;
-        if (email != null) {
-          const data = await fetchDocument(email);
-          if (data != null) {
-            setMessage(data.message);
-            setTarget(data.target);
-            setDeadline(dayjs(data.deadline));
-            setOpen(data.newUser);
-            setProject(data.project);
-            setStats(data.stats);
-          }
-          const partnerData = await fetchPartners(email);
-          if (partnerData.length !== 0) {
-            setPartners(partnerData);
-          }
+      const email = auth.currentUser?.email;
+      if (target === 0 && email != null) {
+        const data = await fetchDocument(email);
+        if (data != null) {
+          setMessage(data.message);
+          setTarget(data.target);
+          setDeadline(dayjs(data.deadline));
+          setOpen(data.newUser);
+          setProject(data.project);
+          setStats(data.stats);
+          setPledged(data.stats.pledged);
+          setConfirmed(data.stats.confirmed);
+        }
+        const partnerData = await fetchPartners(email);
+        if (partnerData.length !== 0) {
+          setPartners(partnerData);
         }
       }
     };
@@ -84,21 +91,11 @@ export default function Dashboard(): ReactElement {
   const completeOnboarding = async () => {
     const email = auth.currentUser?.email;
     if (email != null) {
-      await updateDoc(doc(database, "users", email), {
-        newUser: false,
-      }).then(() => {
+      await setNewUser(email).then(() => {
         setOpen(false);
       });
     }
   };
-
-  const totalPledged = partners.reduce((sum, partner) => {
-    return sum + (partner.pledgedAmount ?? 0);
-  }, 0);
-
-  const support = partners.reduce((sum, partner) => {
-    return sum + (partner.confirmedAmount ?? 0);
-  }, 0);
 
   const supporters = partners.filter(
     (partner) => partner.confirmedAmount != null && partner.confirmedAmount
@@ -121,22 +118,6 @@ export default function Dashboard(): ReactElement {
     );
 
   const paginationPartners = filteredPartners.slice(pagination, pagination + 4);
-
-  const confirmedPartners = partners
-    .filter(
-      (partner) =>
-        partner.confirmedAmount != null &&
-        partner.confirmedAmount > 0 &&
-        partner.confirmedDate != null
-    )
-    .sort((a, b) => {
-      const dateA = dayjs(a.confirmedDate);
-      const dateB = dayjs(b.confirmedDate);
-
-      if (dateA.isBefore(dateB)) return -1;
-      if (dateA.isAfter(dateB)) return 1;
-      return 0;
-    });
 
   const handlePagination = (add: boolean) => {
     if (add) {
@@ -164,15 +145,16 @@ export default function Dashboard(): ReactElement {
             <Card sx={{ width: "100%", padding: "45px" }}>
               <Stack direction="row" spacing="18px" alignItems="center">
                 <Typography variant="h3" fontWeight="bold" color="primary.main">
-                  ${support}
+                  ${confirmed}
                 </Typography>
                 <Savings fontSize="large" sx={{ color: "primary.main" }} />
               </Stack>
               <Typography variant="h6">
                 <>
-                  Of ${target} raised ({((support / target) * 100).toFixed(1)}%)
-                  <br /> ${totalPledged} pledged (
-                  {((totalPledged / target) * 100).toFixed(1)}%)
+                  Of ${target} raised ({((confirmed / target) * 100).toFixed(1)}
+                  %)
+                  <br /> ${pledged} pledged (
+                  {((pledged / target) * 100).toFixed(1)}%)
                 </>
               </Typography>
             </Card>
@@ -293,7 +275,7 @@ export default function Dashboard(): ReactElement {
                 spacing="36px"
                 height="100%"
               >
-                <Chart partners={confirmedPartners} />
+                <Chart />
               </Stack>
             </Card>
           </Stack>

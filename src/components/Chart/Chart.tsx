@@ -1,15 +1,13 @@
 "use client";
 
-import { Partner } from "@/utils/types";
 import { LineChart } from "@mui/x-charts/LineChart";
 import dayjs from "dayjs";
-import { ReactElement } from "react";
+import { ReactElement, useContext } from "react";
+import { DataContext } from "../DataProvider/DataProvider";
 
-interface ChartProps {
-  partners: Partner[]; // only those with confirmed amounts, sorted by chronological order
-}
+export function Chart(): ReactElement {
+  const { partners } = useContext(DataContext);
 
-export function Chart({ partners }: ChartProps): ReactElement {
   const names: string[] = [];
   const dates: (Date | null)[] = [];
   const amounts: (number | null)[] = [];
@@ -17,11 +15,28 @@ export function Chart({ partners }: ChartProps): ReactElement {
 
   let cumulative = 0;
 
-  partners.forEach((partner) => {
+  const confirmedPartners = partners
+    .filter(
+      (partner) =>
+        partner.confirmedAmount != null &&
+        partner.confirmedAmount > 0 &&
+        partner.confirmedDate != null
+    )
+    .sort((a, b) => {
+      const dateA = dayjs(a.confirmedDate);
+      const dateB = dayjs(b.confirmedDate);
+
+      if (dateA.isBefore(dateB)) return -1;
+      if (dateA.isAfter(dateB)) return 1;
+      return 0;
+    });
+
+  confirmedPartners.forEach((partner) => {
     names.push(partner.name);
     dates.push(dayjs(partner.confirmedDate).toDate());
     amounts.push(partner.confirmedAmount);
     cumulativeAmounts.push((partner.confirmedAmount ?? 0) + cumulative);
+
     cumulative += partner.confirmedAmount ?? 0;
   });
 

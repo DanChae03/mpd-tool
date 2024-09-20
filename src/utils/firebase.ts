@@ -7,6 +7,7 @@ import {
   getDocs,
   getFirestore,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { Partner } from "./types";
@@ -128,4 +129,10 @@ export const createUser = async (email: string) => {
   } catch (error) {
     console.error("Error creating document:", error);
   }
+};
+
+export const setNewUser = async (email: string) => {
+  await updateDoc(doc(database, "users", email), {
+    newUser: false,
+  });
 };
