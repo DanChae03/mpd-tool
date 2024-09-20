@@ -5,13 +5,12 @@ import { ReactElement, useContext, useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
 import {
   auth,
-  database,
   fetchDocument,
   fetchPartners,
   fetchProjects,
+  updateSettings,
 } from "@/utils/firebase";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
@@ -110,7 +109,7 @@ export default function Dashboard(): ReactElement {
   const setData = async () => {
     const email = auth.currentUser?.email;
     if (email != null) {
-      await updateDoc(doc(database, "users", email), {
+      await updateSettings(email, {
         message: currentMessage,
         deadline: currentDeadline != null ? currentDeadline.toString() : null,
         target: currentTarget,

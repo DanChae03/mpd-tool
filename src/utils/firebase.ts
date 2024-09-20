@@ -10,7 +10,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { Partner } from "./types";
+import { Partner, Settings } from "./types";
 import dayjs from "dayjs";
 
 const firebaseConfig = {
@@ -135,4 +135,8 @@ export const setNewUser = async (email: string) => {
   await updateDoc(doc(database, "users", email), {
     newUser: false,
   });
+};
+
+export const updateSettings = async (email: string, settings: Settings) => {
+  await updateDoc(doc(database, "users", email), settings);
 };

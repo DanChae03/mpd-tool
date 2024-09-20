@@ -20,3 +20,10 @@ export type Statistics = {
   outstandingLetters: number;
   pledged: number;
 };
+
+export type Settings = {
+  message: string;
+  deadline: string | null;
+  target: number;
+  project: string;
+};
