@@ -26,10 +26,10 @@ import { PageWrapper } from "@/components/PageWrapper";
 import CircularProgress from "@mui/material/CircularProgress";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import { CurrentSettings } from "@/utils/types";
 
 export default function Dashboard(): ReactElement {
   const [open, setOpen] = useState<boolean>(false);
-  const [changed, setChanged] = useState<boolean>(false);
   const {
     target,
     setTarget,
@@ -44,10 +44,22 @@ export default function Dashboard(): ReactElement {
     setProjects,
     setStats,
   } = useContext(DataContext);
-  const [currentTarget, setCurrentTarget] = useState<number>(target);
-  const [currentDeadline, setCurrentDeadline] = useState<Dayjs>(deadline);
-  const [currentMessage, setCurrentMessage] = useState<string>(message);
-  const [currentProject, setCurrentProject] = useState<string>(project);
+
+  const [settings, setSettings] = useState<CurrentSettings>({
+    currentTarget: target,
+    currentDeadline: deadline,
+    currentMessage: message,
+    currentProject: project,
+    changed: false,
+  });
+
+  const handleSettingsChange = (key: string, value: any) => {
+    setSettings((prev) => ({
+      ...prev,
+      [key]: value,
+      changed: true,
+    }));
+  };
 
   const router = useRouter();
 
@@ -62,10 +74,13 @@ export default function Dashboard(): ReactElement {
             setTarget(data.target);
             setDeadline(dayjs(data.deadline));
             setProject(data.project);
-            setCurrentMessage(data.message);
-            setCurrentTarget(data.target);
-            setCurrentDeadline(dayjs(data.deadline));
-            setCurrentProject(data.project);
+            setSettings({
+              currentMessage: data.message,
+              currentTarget: data.target,
+              currentDeadline: dayjs(data.deadline),
+              currentProject: data.project,
+              changed: false,
+            });
             setStats(data.stats);
           }
           const partnerData = await fetchPartners(email);
@@ -110,17 +125,17 @@ export default function Dashboard(): ReactElement {
     const email = auth.currentUser?.email;
     if (email != null) {
       await updateSettings(email, {
-        message: currentMessage,
-        deadline: currentDeadline != null ? currentDeadline.toString() : null,
-        target: currentTarget,
-        project: currentProject,
+        message: settings.currentMessage,
+        deadline: settings.currentDeadline.toString(),
+        target: settings.currentTarget,
+        project: settings.currentProject,
       }).then(() => {
-        setMessage(currentMessage);
-        setDeadline(currentDeadline);
-        setTarget(currentTarget);
-        setProject(currentProject);
+        setMessage(settings.currentMessage);
+        setDeadline(settings.currentDeadline);
+        setTarget(settings.currentTarget);
+        setProject(settings.currentProject);
         setOpen(true);
-        setChanged(false);
+        setSettings((prev) => ({ ...prev, changed: false }));
       });
     }
   };
@@ -128,7 +143,7 @@ export default function Dashboard(): ReactElement {
   return (
     <>
       {auth.currentUser?.displayName != undefined &&
-      (target > 0 || currentTarget > 0) ? (
+      (target > 0 || settings.currentTarget > 0) ? (
         <PageWrapper title="Settings" page="settings">
           <Stack width="100%" spacing="18px">
             <Stack direction="row" alignItems="center" spacing="45px">
@@ -141,11 +156,10 @@ export default function Dashboard(): ReactElement {
                     bgcolor: "background.paper",
                     fontSize: "18px",
                   }}
-                  value={currentProject}
-                  onChange={(event) => {
-                    setCurrentProject(event.target.value);
-                    setChanged(event.target.value !== project);
-                  }}
+                  value={settings.currentProject}
+                  onChange={(event) =>
+                    handleSettingsChange("currentProject", event.target.value)
+                  }
                 >
                   {projects.map((proj) => (
                     <MenuItem sx={{ height: "100%" }} value={proj} key={proj}>
@@ -158,11 +172,10 @@ export default function Dashboard(): ReactElement {
                 <Typography variant="h6">Support Deadline:</Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
-                    value={currentDeadline}
+                    value={settings.currentDeadline}
                     onChange={(newDate: Dayjs | null) => {
                       if (newDate != null) {
-                        setCurrentDeadline(newDate);
-                        setChanged(true);
+                        handleSettingsChange("currentDeadline", newDate);
                       }
                     }}
                     format="DD/MM/YYYY"
@@ -183,12 +196,14 @@ export default function Dashboard(): ReactElement {
               <Stack spacing="9px">
                 <Typography variant="h6">Support Target ($):</Typography>
                 <TextField
-                  value={currentTarget}
+                  value={settings.currentTarget}
                   type="number"
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setCurrentTarget(parseFloat(event.target.value));
-                    setChanged(true);
-                  }}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                    handleSettingsChange(
+                      "currentTarget",
+                      parseFloat(event.target.value)
+                    )
+                  }
                   slotProps={{
                     input: { style: { fontSize: "18px", height: "63px" } },
                   }}
@@ -208,11 +223,10 @@ export default function Dashboard(): ReactElement {
               <TextField
                 multiline
                 rows="12"
-                value={currentMessage}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setCurrentMessage(event.target.value);
-                  setChanged(true);
-                }}
+                value={settings.currentMessage}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  handleSettingsChange("currentMessage", event.target.value)
+                }
                 slotProps={{
                   input: { style: { fontSize: "18px" } },
                 }}
@@ -224,11 +238,10 @@ export default function Dashboard(): ReactElement {
               <Button
                 onClick={() => setData()}
                 disabled={
-                  !changed ||
-                  Number.isNaN(currentTarget) ||
-                  currentTarget < 0 ||
-                  !currentMessage ||
-                  currentMessage === ""
+                  !settings.changed ||
+                  Number.isNaN(settings.currentTarget) ||
+                  settings.currentTarget < 0 ||
+                  !settings.currentMessage
                 }
                 variant="contained"
                 sx={{

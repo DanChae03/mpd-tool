@@ -1,3 +1,5 @@
+import { Dayjs } from "dayjs";
+
 export type Partner = {
   id: string; // unique
   name: string;
@@ -23,7 +25,15 @@ export type Statistics = {
 
 export type Settings = {
   message: string;
-  deadline: string | null;
+  deadline: string;
   target: number;
   project: string;
+};
+
+export type CurrentSettings = {
+  currentTarget: number;
+  currentDeadline: Dayjs;
+  currentMessage: string;
+  currentProject: string;
+  changed: boolean;
 };
