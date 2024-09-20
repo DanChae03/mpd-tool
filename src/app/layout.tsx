@@ -2,6 +2,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import type { Metadata } from "next";
 import "./globals.css";
 import { DataProvider } from "@/components/DataProvider";
+import { PartnersProvider } from "@/components/PartnersProvider";
 
 export const metadata: Metadata = {
   title: "Support Raising Tool",
@@ -17,7 +18,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <DataProvider>
-          <ThemeProvider>{children}</ThemeProvider>
+          <PartnersProvider>
+            <ThemeProvider>{children}</ThemeProvider>
+          </PartnersProvider>
         </DataProvider>
       </body>
     </html>

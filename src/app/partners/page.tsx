@@ -53,6 +53,7 @@ import Alert from "@mui/material/Alert";
 import CircularProgress from "@mui/material/CircularProgress";
 import { doc, updateDoc } from "firebase/firestore";
 import { StyledTable } from "@/components/StyledTable";
+import { PartnersContext } from "@/components/PartnersProvider/PartnersProvider";
 
 const stateOrder = new Map<string, number>([
   ["To Ask", 0],
@@ -110,26 +111,9 @@ function getComparator<Key extends keyof any>(
 }
 
 export default function Partners(): ReactElement {
-  const [order, setOrder] = useState<Order>("asc");
-  const [orderBy, setOrderBy] = useState<keyof Partner>("id");
-  const [page, setPage] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(8);
-  const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null);
-  const [filters, setFilters] = useState<string[]>([
-    "To Ask",
-    "Asked",
-    "Letter Sent",
-    "Contacted",
-    "Pledged",
-    "Confirmed",
-    "Rejected",
-  ]);
-  const [filteredPartners, setFilteredPartners] = useState<Partner[]>([]);
-  const [searchKey, setSearchKey] = useState<string>("");
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
-  const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
-  const [onlySaved, setOnlySaved] = useState<boolean>(false);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+  const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null);
   const [snackbarMessage, setSnackbarMessage] = useState<string>(
     "Operation successful."
   );
@@ -145,6 +129,27 @@ export default function Partners(): ReactElement {
     stats,
     setStats,
   } = useContext(DataContext);
+
+  const {
+    order,
+    setOrder,
+    orderBy,
+    setOrderBy,
+    page,
+    setPage,
+    rowsPerPage,
+    setRowsPerPage,
+    filters,
+    setFilters,
+    filteredPartners,
+    setFilteredPartners,
+    searchKey,
+    setSearchKey,
+    selectedPartner,
+    setSelectedPartner,
+    onlySaved,
+    setOnlySaved,
+  } = useContext(PartnersContext);
 
   const router = useRouter();
 
@@ -205,7 +210,7 @@ export default function Partners(): ReactElement {
 
     setPage(0);
     setFilteredPartners(filteredSearch);
-  }, [filters, onlySaved, partners, searchKey]);
+  }, [filters, onlySaved, partners, searchKey, setFilteredPartners, setPage]);
 
   useEffect(() => {
     const calculateStats = async () => {
