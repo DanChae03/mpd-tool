@@ -1,6 +1,6 @@
 "use client";
 
-import { Partner } from "@/utils/types";
+import { Partner, SelectedPartner } from "@/utils/types";
 import {
   Call,
   DeleteForever,
@@ -48,30 +48,31 @@ export function DrawerContent({
   setSnackbarOpen,
   setSnackbarMessage,
 }: DrawerContentProps): ReactElement {
-  const [name, setName] = useState<string>(partner?.name ?? "");
-  const [email, setEmail] = useState<string | undefined | null>(partner?.email);
-  const [number, setNumber] = useState<string | undefined | null>(
-    partner?.number
-  );
-  const [status, setStatus] = useState<string>(partner?.status ?? "To Ask");
-  const [notes, setNotes] = useState<string>(partner?.notes ?? "");
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-  const [saved, setSaved] = useState<boolean>(partner?.saved ?? false);
-
-  const [nextStepDate, setNextStepDate] = useState<Dayjs | null>(
-    dayjs(partner?.nextStepDate)
-  );
-  const [pledgedAmount, setPledgedAmount] = useState<number>(
-    partner?.pledgedAmount ?? 0
-  );
-  const [confirmedDate, setConfirmedDate] = useState<Dayjs | null>(
-    dayjs(partner?.confirmedDate)
-  );
-  const [confirmedAmount, setConfirmedAmount] = useState<number>(
-    partner?.confirmedAmount ?? 0
-  );
+  const [selectedPartner, setSelectedPartner] = useState<SelectedPartner>({
+    name: partner?.name ?? "",
+    email: partner?.email ?? null,
+    number: partner?.number ?? null,
+    nextStepDate: partner?.nextStepDate
+      ? dayjs(partner.nextStepDate).format("DD/MM/YYYY")
+      : null,
+    pledgedAmount: partner?.pledgedAmount ?? null,
+    confirmedDate: partner?.confirmedDate
+      ? dayjs(partner.confirmedDate).format("DD/MM/YYYY")
+      : null,
+    confirmedAmount: partner?.confirmedAmount ?? null,
+    notes: partner?.notes ?? "",
+    status: partner?.status ?? "To Ask",
+    saved: partner?.saved ?? false,
+  });
 
   const { setPartners, partners, message } = useContext(DataContext);
+
+  const handleFieldChange = (field: keyof SelectedPartner, value: any) => {
+    setSelectedPartner((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
   const updatePartners = (
     newPartner: Partner | null,
@@ -127,28 +128,17 @@ export function DrawerContent({
     if (userEmail != null) {
       const newPartner: Partner = {
         id: partner != null ? partner.id : uuidv4(),
-        name: name,
-        email: email || null,
-        number: number || null,
+        ...selectedPartner,
         nextStepDate:
-          nextStepDate != null && status !== "Confirmed"
-            ? nextStepDate.toString()
-            : null,
-        pledgedAmount:
-          pledgedAmount > 0 && (status === "Pledged" || status === "Confirmed")
-            ? pledgedAmount
+          selectedPartner.nextStepDate != null &&
+          selectedPartner.status !== "Confirmed"
+            ? dayjs(selectedPartner.nextStepDate, "DD/MM/YYYY").toString()
             : null,
         confirmedDate:
-          confirmedDate != null && status === "Confirmed"
-            ? confirmedDate.toString()
+          selectedPartner.confirmedDate != null &&
+          selectedPartner.status === "Confirmed"
+            ? dayjs(selectedPartner.confirmedDate, "DD/MM/YYYY").toString()
             : null,
-        confirmedAmount:
-          confirmedAmount > 0 && status === "Confirmed"
-            ? confirmedAmount
-            : null,
-        notes: notes || null,
-        status: status,
-        saved: saved,
       };
       updatePartners(newPartner, newPartner.id, partner == null);
     }
@@ -161,6 +151,8 @@ export function DrawerContent({
     }
   };
 
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+
   return (
     <Stack width="630px" padding="63px" spacing="18px">
       <Stack
@@ -171,11 +163,13 @@ export function DrawerContent({
       >
         <Stack direction="row" alignItems="center" spacing="9px">
           <Typography variant="h4" fontWeight="bold">
-            {partner != null ? name : "New Partner"}
+            {partner != null ? selectedPartner.name : "New Partner"}
           </Typography>
           {partner != null && (
-            <IconButton onClick={() => setSaved(!saved)}>
-              {saved ? (
+            <IconButton
+              onClick={() => handleFieldChange("saved", !selectedPartner.saved)}
+            >
+              {selectedPartner.saved ? (
                 <Star fontSize="large" sx={{ color: "#FFC443" }} />
               ) : (
                 <StarBorder fontSize="large" />
@@ -186,16 +180,16 @@ export function DrawerContent({
         {partner != null && (
           <Stack direction="row" spacing="9px">
             <IconButton
-              disabled={!number}
+              disabled={!selectedPartner.number}
               sx={{ color: "success.main" }}
-              href={`tel:${number}`}
+              href={`tel:${selectedPartner.number}`}
             >
               <Call fontSize="large" />
             </IconButton>
             <IconButton
-              disabled={!email}
+              disabled={!selectedPartner.email}
               sx={{ color: "#4C8BF5" }}
-              href={`mailto:${email}?subject=Support Raising Letter - ${name}&body=${message}`}
+              href={`mailto:${selectedPartner.email}?subject=Support Raising Letter - ${selectedPartner.name}&body=${message}`}
             >
               <Email fontSize="large" />
             </IconButton>
@@ -214,8 +208,8 @@ export function DrawerContent({
         <Select
           size="small"
           fullWidth
-          value={status}
-          onChange={(event) => setStatus(event.target.value)}
+          value={selectedPartner.status}
+          onChange={(event) => handleFieldChange("status", event.target.value)}
         >
           <MenuItem value={"To Ask"}>To Ask</MenuItem>
           <MenuItem value={"Asked"}>Asked</MenuItem>
@@ -226,36 +220,45 @@ export function DrawerContent({
           <MenuItem value={"Rejected"}>Rejected</MenuItem>
         </Select>
       </Stack>
-      {status !== "Rejected" && status !== "Confirmed" && (
-        <Stack
-          direction="row"
-          alignItems="center"
-          width="100%"
-          justifyContent="space-between"
-        >
-          <Typography width="50%" fontWeight="bold" fontSize="18px">
-            Next Step Date
-          </Typography>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              value={nextStepDate}
-              onChange={(newDate: Dayjs | null) => setNextStepDate(newDate)}
-              format="DD/MM/YYYY"
-              sx={{
-                width: "100%",
-
-                "& .MuiOutlinedInput-root": {
-                  bgcolor: "background.paper",
-                  height: "40px",
-                },
-                "& .MuiIconButton-root": {
-                  marginRight: "0px",
-                },
-              }}
-            />
-          </LocalizationProvider>
-        </Stack>
-      )}
+      {selectedPartner.status !== "Rejected" &&
+        selectedPartner.status !== "Confirmed" && (
+          <Stack
+            direction="row"
+            alignItems="center"
+            width="100%"
+            justifyContent="space-between"
+          >
+            <Typography width="50%" fontWeight="bold" fontSize="18px">
+              Next Step Date
+            </Typography>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                value={
+                  selectedPartner.nextStepDate
+                    ? dayjs(selectedPartner.nextStepDate, "DD/MM/YYYY")
+                    : null
+                }
+                onChange={(newDate) =>
+                  handleFieldChange(
+                    "nextStepDate",
+                    newDate ? newDate.format("DD/MM/YYYY") : null
+                  )
+                }
+                format="DD/MM/YYYY"
+                sx={{
+                  width: "100%",
+                  "& .MuiOutlinedInput-root": {
+                    bgcolor: "background.paper",
+                    height: "40px",
+                  },
+                  "& .MuiIconButton-root": {
+                    marginRight: "0px",
+                  },
+                }}
+              />
+            </LocalizationProvider>
+          </Stack>
+        )}
       <Stack
         direction="row"
         alignItems="center"
@@ -269,8 +272,8 @@ export function DrawerContent({
           fullWidth
           placeholder="Full Name"
           size="small"
-          value={name}
-          onChange={(event) => setName(event.target.value)}
+          value={selectedPartner.name}
+          onChange={(event) => handleFieldChange("name", event.target.value)}
         />
       </Stack>
       <Stack
@@ -286,8 +289,8 @@ export function DrawerContent({
           fullWidth
           placeholder="example@example.com"
           size="small"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
+          value={selectedPartner.email}
+          onChange={(event) => handleFieldChange("email", event.target.value)}
         />
       </Stack>
       <Stack
@@ -303,8 +306,8 @@ export function DrawerContent({
           fullWidth
           placeholder="Phone Number here"
           size="small"
-          value={number}
-          onChange={(event) => setNumber(event.target.value)}
+          value={selectedPartner.number}
+          onChange={(event) => handleFieldChange("number", event.target.value)}
         />
       </Stack>
       <Stack
@@ -322,11 +325,12 @@ export function DrawerContent({
           maxRows={4}
           placeholder="Notes"
           size="small"
-          value={notes}
-          onChange={(event) => setNotes(event.target.value)}
+          value={selectedPartner.notes}
+          onChange={(event) => handleFieldChange("notes", event.target.value)}
         />
       </Stack>
-      {(status === "Pledged" || status === "Confirmed") && (
+      {(selectedPartner.status === "Pledged" ||
+        selectedPartner.status === "Confirmed") && (
         <Stack
           direction="row"
           alignItems="center"
@@ -341,14 +345,14 @@ export function DrawerContent({
             fullWidth
             placeholder="Pledged Amount"
             size="small"
-            value={pledgedAmount}
+            value={selectedPartner.pledgedAmount ?? ""}
             onChange={(event) =>
-              setPledgedAmount(parseFloat(event.target.value))
+              handleFieldChange("pledgedAmount", parseFloat(event.target.value))
             }
           />
         </Stack>
       )}
-      {status === "Confirmed" && (
+      {selectedPartner.status === "Confirmed" && (
         <>
           <Stack
             direction="row"
@@ -364,9 +368,12 @@ export function DrawerContent({
               fullWidth
               placeholder="Confirmed Amount"
               size="small"
-              value={confirmedAmount}
+              value={selectedPartner.confirmedAmount ?? ""}
               onChange={(event) =>
-                setConfirmedAmount(parseFloat(event.target.value))
+                handleFieldChange(
+                  "confirmedAmount",
+                  parseFloat(event.target.value)
+                )
               }
             />
           </Stack>
@@ -381,12 +388,20 @@ export function DrawerContent({
             </Typography>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
-                value={confirmedDate}
-                onChange={(newDate: Dayjs | null) => setConfirmedDate(newDate)}
+                value={
+                  selectedPartner.confirmedDate
+                    ? dayjs(selectedPartner.confirmedDate, "DD/MM/YYYY")
+                    : null
+                }
+                onChange={(newDate) =>
+                  handleFieldChange(
+                    "confirmedDate",
+                    newDate ? newDate.format("DD/MM/YYYY") : null
+                  )
+                }
                 format="DD/MM/YYYY"
                 sx={{
                   width: "100%",
-
                   "& .MuiOutlinedInput-root": {
                     bgcolor: "background.paper",
                     height: "40px",
@@ -419,7 +434,7 @@ export function DrawerContent({
             Cancel
           </Button>
           <Button
-            disabled={!name || !name.trim()}
+            disabled={!selectedPartner.name || !selectedPartner.name.trim()}
             variant="contained"
             sx={{
               textTransform: "none",
@@ -444,10 +459,9 @@ export function DrawerContent({
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" onClick={() => setDialogOpen(false)}>
-            Cancel
-          </Button>
+          <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
           <Button
+            variant="contained"
             onClick={() => {
               handleDelete();
             }}

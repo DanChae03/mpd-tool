@@ -560,7 +560,9 @@ export default function Partners(): ReactElement {
                           >
                             {row.status === "Confirmed"
                               ? "Done"
-                              : dayjs(row.nextStepDate).format("DD/MM")}
+                              : row.nextStepDate != null
+                                ? dayjs(row.nextStepDate).format("DD/MM")
+                                : "None"}
                           </TableCell>
                           <TableCell
                             sx={{
