@@ -41,7 +41,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Drawer from "@mui/material/Drawer";
 import { DrawerContent } from "@/components/DrawerContent";
 import Button from "@mui/material/Button";
-import { auth, database, fetchDocument, fetchPartners } from "@/utils/firebase";
+import { auth, database, fetchDocument } from "@/utils/firebase";
 import Snackbar from "@mui/material/Snackbar";
 import dayjs from "dayjs";
 import { UserIcon } from "@/components/UserIcon";
@@ -160,10 +160,7 @@ export default function Partners(): ReactElement {
             setDeadline(dayjs(data.deadline));
             setProject(data.project);
             setStats(data.stats);
-          }
-          const partnerData = await fetchPartners(email);
-          if (partnerData.length !== 0) {
-            setPartners(partnerData);
+            setPartners(data.partners);
           }
         }
       }

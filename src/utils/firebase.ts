@@ -1,10 +1,7 @@
 import { initializeApp } from "firebase/app";
 import {
-  collection,
-  deleteDoc,
   doc,
   getDoc,
-  getDocs,
   getFirestore,
   setDoc,
   updateDoc,
@@ -63,48 +60,11 @@ export const fetchProjects = async () => {
   }
 };
 
-export const fetchPartners = async (email: string) => {
+export const updateNewPartners = async (email: string, partners: Partner[]) => {
   try {
-    const querySnapshot = await getDocs(
-      collection(database, "users", email, "partners")
-    );
-    const partners: Partner[] = [];
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      partners.push({
-        ...data,
-        id: doc.id,
-      } as Partner);
+    await updateDoc(doc(database, "users", email), {
+      partners: partners,
     });
-    return partners;
-  } catch (error) {
-    console.error("Error getting document:", error);
-    return [];
-  }
-};
-
-export const setPartner = async (email: string, partner: Partner) => {
-  try {
-    await setDoc(doc(database, "users", email, "partners", partner.id), {
-      name: partner.name,
-      email: partner.email,
-      number: partner.number,
-      nextStepDate: partner.nextStepDate,
-      pledgedAmount: partner.pledgedAmount,
-      confirmedDate: partner.confirmedDate,
-      confirmedAmount: partner.confirmedAmount,
-      notes: partner.notes,
-      status: partner.status,
-      saved: partner.saved,
-    });
-  } catch (error) {
-    console.error("Error updating document:", error);
-  }
-};
-
-export const deletePartner = async (email: string, id: string) => {
-  try {
-    await deleteDoc(doc(database, "users", email, "partners", id));
   } catch (error) {
     console.error("Error deleting document:", error);
   }

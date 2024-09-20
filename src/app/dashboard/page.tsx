@@ -13,12 +13,7 @@ import {
 } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { Chart } from "@/components/Chart";
-import {
-  auth,
-  fetchDocument,
-  fetchPartners,
-  setNewUser,
-} from "@/utils/firebase";
+import { auth, fetchDocument, setNewUser } from "@/utils/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { DataContext } from "@/components/DataProvider/DataProvider";
@@ -59,10 +54,7 @@ export default function Dashboard(): ReactElement {
           setOpen(data.newUser);
           setProject(data.project);
           setStats(data.stats);
-        }
-        const partnerData = await fetchPartners(email);
-        if (partnerData.length !== 0) {
-          setPartners(partnerData);
+          setPartners(data.partners);
         }
       }
     };
@@ -115,6 +107,8 @@ export default function Dashboard(): ReactElement {
     );
 
   const paginationPartners = filteredPartners.slice(pagination, pagination + 4);
+
+  console.log(paginationPartners);
 
   const handlePagination = (add: boolean) => {
     if (add) {

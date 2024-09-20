@@ -8,7 +8,6 @@ import Button from "@mui/material/Button";
 import {
   auth,
   fetchDocument,
-  fetchPartners,
   fetchProjects,
   updateSettings,
 } from "@/utils/firebase";
@@ -82,10 +81,7 @@ export default function Dashboard(): ReactElement {
               changed: false,
             });
             setStats(data.stats);
-          }
-          const partnerData = await fetchPartners(email);
-          if (partnerData.length !== 0) {
-            setPartners(partnerData);
+            setPartners(data.partners);
           }
         }
       }

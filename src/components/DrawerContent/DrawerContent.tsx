@@ -33,7 +33,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
-import { auth, deletePartner, setPartner } from "@/utils/firebase";
+import { auth, updateNewPartners } from "@/utils/firebase";
 import { v4 as uuidv4 } from "uuid";
 import { DataContext } from "../DataProvider/DataProvider";
 
@@ -81,21 +81,51 @@ export function DrawerContent({
     id: string,
     isNew: boolean
   ) => {
-    if (newPartner != null && !isNew) {
-      const updatedPartners = partners.map((partner) =>
-        partner.id === id ? newPartner : partner
-      );
-      setPartners(updatedPartners);
-    } else if (newPartner != null) {
-      const updatedPartners = [...partners, newPartner];
-      setPartners(updatedPartners);
-    } else {
-      const updatedPartners = partners.filter((partner) => partner.id !== id);
-      setPartners(updatedPartners);
+    const userEmail = auth.currentUser?.email;
+    if (userEmail != null) {
+      if (newPartner != null && !isNew) {
+        // Update
+        const updatedPartners = partners.map((partner) =>
+          partner.id === id ? newPartner : partner
+        );
+        updateNewPartners(userEmail, updatedPartners).then(() => {
+          setSnackbarMessage(
+            partner != null
+              ? "Partner updated successfully."
+              : "Partner created successfully."
+          );
+          setSnackbarOpen();
+          onClose();
+          setPartners(updatedPartners);
+        });
+      } else if (newPartner != null) {
+        // New
+        const updatedPartners = [...partners, newPartner];
+        updateNewPartners(userEmail, updatedPartners).then(() => {
+          setSnackbarMessage(
+            partner != null
+              ? "Partner updated successfully."
+              : "Partner created successfully."
+          );
+          setSnackbarOpen();
+          onClose();
+          setPartners(updatedPartners);
+        });
+      } else {
+        // Delete
+        const updatedPartners = partners.filter((partner) => partner.id !== id);
+        updateNewPartners(userEmail, updatedPartners).then(() => {
+          setSnackbarMessage("Partner removed successfully.");
+          setSnackbarOpen();
+          setDialogOpen(false);
+          onClose();
+          setPartners(updatedPartners);
+        });
+      }
     }
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     const userEmail = auth.currentUser?.email;
     if (userEmail != null) {
       const newPartner: Partner = {
@@ -123,29 +153,14 @@ export function DrawerContent({
         status: status,
         saved: saved,
       };
-      await setPartner(userEmail, newPartner).then(() => {
-        updatePartners(newPartner, newPartner.id, partner == null);
-        setSnackbarMessage(
-          partner != null
-            ? "Partner updated successfully."
-            : "Partner created successfully."
-        );
-        setSnackbarOpen();
-        onClose();
-      });
+      updatePartners(newPartner, newPartner.id, partner == null);
     }
   };
 
   const handleDelete = async () => {
     const userEmail = auth.currentUser?.email;
     if (userEmail != null && partner != null) {
-      await deletePartner(userEmail, partner.id).then(() => {
-        updatePartners(null, partner.id, false);
-        setSnackbarMessage("Partner removed successfully.");
-        setSnackbarOpen();
-        setDialogOpen(false);
-        onClose();
-      });
+      updatePartners(null, partner.id, false);
     }
   };
 
