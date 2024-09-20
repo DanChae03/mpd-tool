@@ -34,6 +34,7 @@ export default function Dashboard(): ReactElement {
     setDeadline,
     setMessage,
     setProject,
+    setStats,
   } = useContext(DataContext);
   const router = useRouter();
 
@@ -52,6 +53,7 @@ export default function Dashboard(): ReactElement {
             setDeadline(dayjs(data.deadline));
             setOpen(data.newUser);
             setProject(data.project);
+            setStats(data.stats);
           }
           const partnerData = await fetchPartners(email);
           if (partnerData.length !== 0) {
@@ -74,6 +76,7 @@ export default function Dashboard(): ReactElement {
     setMessage,
     setPartners,
     setProject,
+    setStats,
     setTarget,
     target,
   ]);

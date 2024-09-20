@@ -36,7 +36,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Drawer from "@mui/material/Drawer";
 import { DrawerContent } from "@/components/DrawerContent";
 import Button from "@mui/material/Button";
-import { auth, fetchDocument, fetchPartners } from "@/utils/firebase";
+import { auth, database, fetchDocument, fetchPartners } from "@/utils/firebase";
 import Snackbar from "@mui/material/Snackbar";
 import dayjs from "dayjs";
 import { UserIcon } from "@/components/UserIcon";
@@ -46,6 +46,7 @@ import { DataContext } from "@/components/DataProvider/DataProvider";
 import Switch from "@mui/material/Switch";
 import Alert from "@mui/material/Alert";
 import CircularProgress from "@mui/material/CircularProgress";
+import { doc, updateDoc } from "firebase/firestore";
 
 const stateOrder = new Map<string, number>([
   ["To Ask", 0],
@@ -243,6 +244,8 @@ export default function Partners(): ReactElement {
     setTarget,
     setDeadline,
     setProject,
+    stats,
+    setStats,
   } = useContext(DataContext);
 
   const router = useRouter();
@@ -258,6 +261,7 @@ export default function Partners(): ReactElement {
             setTarget(data.target);
             setDeadline(dayjs(data.deadline));
             setProject(data.project);
+            setStats(data.stats);
           }
           const partnerData = await fetchPartners(email);
           if (partnerData.length !== 0) {
@@ -280,6 +284,7 @@ export default function Partners(): ReactElement {
     setMessage,
     setPartners,
     setProject,
+    setStats,
     setTarget,
     target,
   ]);
@@ -320,6 +325,56 @@ export default function Partners(): ReactElement {
     setPage(0);
     setFilteredPartners(filteredSearch);
   }, [filters, onlySaved, partners, searchKey]);
+
+  useEffect(() => {
+    const calculateStats = async () => {
+      const outstandingLetters = partners.filter(
+        (partner) => partner.status === "Letter Sent"
+      ).length;
+      const letters = partners.filter(
+        (partner) =>
+          partner.status !== "To Ask" &&
+          partner.status !== "Asked" &&
+          partner.status !== "Rejected"
+      ).length;
+      const email = auth.currentUser?.email;
+      if (
+        stats.confirmed !== confirmed ||
+        stats.pledged !== pledged ||
+        stats.outstandingLetters !== outstandingLetters ||
+        stats.letters !== letters
+      ) {
+        if (email != null) {
+          await updateDoc(doc(database, "users", email), {
+            stats: {
+              confirmed: confirmed,
+              pledged: pledged,
+              outstandingLetters: outstandingLetters,
+              letters: letters,
+            },
+          }).then(() =>
+            setStats({
+              confirmed: confirmed,
+              pledged: pledged,
+              outstandingLetters: outstandingLetters,
+              letters: letters,
+            })
+          );
+        }
+      }
+    };
+
+    calculateStats();
+  }, [
+    confirmed,
+    partners,
+    pledged,
+    setStats,
+    stats.confirmed,
+    stats.letters,
+    stats.outstandingLetters,
+    stats.pledged,
+  ]);
 
   const handleSetFilters = (filter: string) => {
     if (!filters.includes(filter)) {

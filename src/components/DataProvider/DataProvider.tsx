@@ -26,6 +26,20 @@ interface DataContextType {
   setProject: Dispatch<SetStateAction<string>>;
   projects: string[];
   setProjects: Dispatch<SetStateAction<string[]>>;
+  stats: {
+    confirmed: number;
+    letters: number;
+    outstandingLetters: number;
+    pledged: number;
+  };
+  setStats: Dispatch<
+    SetStateAction<{
+      confirmed: number;
+      letters: number;
+      outstandingLetters: number;
+      pledged: number;
+    }>
+  >;
 }
 
 export const DataContext = createContext<DataContextType>(
@@ -39,6 +53,17 @@ export function DataProvider({ children }: DataProviderProps) {
   const [message, setMessage] = useState<string>("");
   const [project, setProject] = useState<string>("No Project");
   const [projects, setProjects] = useState<string[]>([]);
+  const [stats, setStats] = useState<{
+    confirmed: number;
+    letters: number;
+    outstandingLetters: number;
+    pledged: number;
+  }>({
+    confirmed: 0,
+    letters: 0,
+    outstandingLetters: 0,
+    pledged: 0,
+  });
 
   return (
     <DataContext.Provider
@@ -55,6 +80,8 @@ export function DataProvider({ children }: DataProviderProps) {
         setProject,
         projects,
         setProjects,
+        stats,
+        setStats,
       }}
     >
       {children}

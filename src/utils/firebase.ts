@@ -118,6 +118,12 @@ export const createUser = async (email: string) => {
       newUser: true,
       admin: false,
       project: "No Project",
+      stats: {
+        letters: 0,
+        outstandingLetters: 0,
+        pledged: 0,
+        confirmed: 0,
+      },
     });
   } catch (error) {
     console.error("Error creating document:", error);

@@ -2,7 +2,7 @@
 
 import Button from "@mui/material/Button";
 import { Google } from "@mui/icons-material";
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
@@ -10,21 +10,25 @@ import { auth, createUser, signInWithGoogle } from "@/utils/firebase";
 import { useRouter } from "next/navigation";
 import CircularProgress from "@mui/material/CircularProgress";
 import { getAdditionalUserInfo, onAuthStateChanged } from "firebase/auth";
+import { DataContext } from "@/components/DataProvider/DataProvider";
 
 export default function Home(): ReactElement {
   const [state, setState] = useState<"loading" | "error" | undefined>(
     undefined
   );
 
+  const { setTarget } = useContext(DataContext);
+
   const router = useRouter();
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        setTarget(0);
         router.push("/dashboard");
       }
     });
-  }, [router]);
+  }, [router, setTarget]);
 
   const handleGoogleLogin = () => {
     setState("loading");

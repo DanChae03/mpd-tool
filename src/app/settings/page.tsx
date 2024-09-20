@@ -43,6 +43,7 @@ export default function Dashboard(): ReactElement {
     project,
     projects,
     setProjects,
+    setStats,
   } = useContext(DataContext);
   const [currentTarget, setCurrentTarget] = useState<number>(target);
   const [currentDeadline, setCurrentDeadline] = useState<Dayjs>(deadline);
@@ -66,6 +67,7 @@ export default function Dashboard(): ReactElement {
             setCurrentTarget(data.target);
             setCurrentDeadline(dayjs(data.deadline));
             setCurrentProject(data.project);
+            setStats(data.stats);
           }
           const partnerData = await fetchPartners(email);
           if (partnerData.length !== 0) {
@@ -100,6 +102,7 @@ export default function Dashboard(): ReactElement {
     setPartners,
     setProject,
     setProjects,
+    setStats,
     setTarget,
     target,
   ]);
