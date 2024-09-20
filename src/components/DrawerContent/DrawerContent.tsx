@@ -3,9 +3,7 @@
 import { Partner } from "@/utils/types";
 import {
   Call,
-  Clear,
   DeleteForever,
-  Edit,
   Email,
   Star,
   StarBorder,
@@ -57,7 +55,6 @@ export function DrawerContent({
   );
   const [status, setStatus] = useState<string>(partner?.status ?? "To Ask");
   const [notes, setNotes] = useState<string>(partner?.notes ?? "");
-  const [disabled, setDisabled] = useState<boolean>(partner != null);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [saved, setSaved] = useState<boolean>(partner?.saved ?? false);
 
@@ -177,7 +174,7 @@ export function DrawerContent({
             {partner != null ? name : "New Partner"}
           </Typography>
           {partner != null && (
-            <IconButton disabled={disabled} onClick={() => setSaved(!saved)}>
+            <IconButton onClick={() => setSaved(!saved)}>
               {saved ? (
                 <Star fontSize="large" sx={{ color: "#FFC443" }} />
               ) : (
@@ -202,13 +199,6 @@ export function DrawerContent({
             >
               <Email fontSize="large" />
             </IconButton>
-            <IconButton onClick={() => setDisabled(!disabled)}>
-              {disabled ? (
-                <Edit fontSize="large" color={"primary"} />
-              ) : (
-                <Clear fontSize="large" color={"primary"} />
-              )}
-            </IconButton>
           </Stack>
         )}
       </Stack>
@@ -222,7 +212,6 @@ export function DrawerContent({
           Current Status
         </Typography>
         <Select
-          disabled={disabled}
           size="small"
           fullWidth
           value={status}
@@ -249,7 +238,6 @@ export function DrawerContent({
           </Typography>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
-              disabled={disabled}
               value={nextStepDate}
               onChange={(newDate: Dayjs | null) => setNextStepDate(newDate)}
               format="DD/MM/YYYY"
@@ -278,7 +266,6 @@ export function DrawerContent({
           Name
         </Typography>
         <TextField
-          disabled={disabled}
           fullWidth
           placeholder="Full Name"
           size="small"
@@ -296,7 +283,6 @@ export function DrawerContent({
           Email
         </Typography>
         <TextField
-          disabled={disabled}
           fullWidth
           placeholder="example@example.com"
           size="small"
@@ -314,7 +300,6 @@ export function DrawerContent({
           Number
         </Typography>
         <TextField
-          disabled={disabled}
           fullWidth
           placeholder="Phone Number here"
           size="small"
@@ -332,7 +317,6 @@ export function DrawerContent({
           Notes
         </Typography>
         <TextField
-          disabled={disabled}
           fullWidth
           multiline
           maxRows={4}
@@ -353,7 +337,6 @@ export function DrawerContent({
             Amount Pledged
           </Typography>
           <TextField
-            disabled={disabled}
             type="number"
             fullWidth
             placeholder="Pledged Amount"
@@ -377,7 +360,6 @@ export function DrawerContent({
               Amount Confirmed
             </Typography>
             <TextField
-              disabled={disabled}
               type="number"
               fullWidth
               placeholder="Confirmed Amount"
@@ -399,7 +381,6 @@ export function DrawerContent({
             </Typography>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
-                disabled={disabled}
                 value={confirmedDate}
                 onChange={(newDate: Dayjs | null) => setConfirmedDate(newDate)}
                 format="DD/MM/YYYY"
@@ -435,10 +416,10 @@ export function DrawerContent({
               borderRadius: "27px",
             }}
           >
-            Exit
+            Cancel
           </Button>
           <Button
-            disabled={disabled || !name || !name.trim()}
+            disabled={!name || !name.trim()}
             variant="contained"
             sx={{
               textTransform: "none",
