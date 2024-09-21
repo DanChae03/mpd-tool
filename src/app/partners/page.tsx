@@ -69,10 +69,10 @@ function comparator<T>(a: T, b: T, orderBy: keyof T) {
   const aValue = a[orderBy];
   const bValue = b[orderBy];
 
-  if (aValue === null && bValue !== null) {
+  if (aValue == null && bValue != null) {
     return 1;
   }
-  if (aValue !== null && bValue === null) {
+  if (aValue != null && bValue == null) {
     return -1;
   }
 

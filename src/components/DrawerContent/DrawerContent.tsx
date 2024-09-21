@@ -25,7 +25,7 @@ import {
   useContext,
   useState,
 } from "react";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -134,6 +134,19 @@ export function DrawerContent({
           selectedPartner.status !== "Confirmed"
             ? dayjs(selectedPartner.nextStepDate, "DD/MM/YYYY").toString()
             : null,
+        pledgedAmount:
+          selectedPartner.pledgedAmount != null &&
+          selectedPartner.pledgedAmount > 0 &&
+          (selectedPartner.status === "Confirmed" ||
+            selectedPartner.status === "Pledged")
+            ? selectedPartner.pledgedAmount
+            : null,
+        confirmedAmount:
+          selectedPartner.confirmedAmount != null &&
+          selectedPartner.confirmedAmount > 0 &&
+          selectedPartner.status === "Confirmed"
+            ? selectedPartner.confirmedAmount
+            : null,
         confirmedDate:
           selectedPartner.confirmedDate != null &&
           selectedPartner.status === "Confirmed"
@@ -150,6 +163,20 @@ export function DrawerContent({
       updatePartners(null, partner.id, false);
     }
   };
+
+  const enabled =
+    (selectedPartner.status === "Pledged"
+      ? selectedPartner.pledgedAmount != null &&
+        selectedPartner.pledgedAmount > 0
+      : selectedPartner.status === "Confirmed"
+        ? selectedPartner.pledgedAmount != null &&
+          selectedPartner.pledgedAmount > 0 &&
+          selectedPartner.confirmedAmount != null &&
+          selectedPartner.confirmedAmount > 0 &&
+          selectedPartner.confirmedDate != null
+        : true) &&
+    selectedPartner.name &&
+    selectedPartner.name.trim();
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
@@ -434,7 +461,7 @@ export function DrawerContent({
             Cancel
           </Button>
           <Button
-            disabled={!selectedPartner.name || !selectedPartner.name.trim()}
+            disabled={!enabled}
             variant="contained"
             sx={{
               textTransform: "none",
