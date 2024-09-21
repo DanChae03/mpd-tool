@@ -108,8 +108,6 @@ export default function Dashboard(): ReactElement {
 
   const paginationPartners = filteredPartners.slice(pagination, pagination + 4);
 
-  console.log(paginationPartners);
-
   const handlePagination = (add: boolean) => {
     if (add) {
       setPagination(pagination + 4);

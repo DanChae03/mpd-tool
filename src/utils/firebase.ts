@@ -85,6 +85,7 @@ export const createUser = async (email: string) => {
         pledged: 0,
         confirmed: 0,
       },
+      partners: [],
     });
   } catch (error) {
     console.error("Error creating document:", error);
