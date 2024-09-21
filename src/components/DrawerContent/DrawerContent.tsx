@@ -212,6 +212,7 @@ export function DrawerContent({
               disabled={!currentPartner.number}
               sx={{ color: "success.main" }}
               href={`tel:${currentPartner.number}`}
+              target="_blank"
             >
               <Call fontSize="large" />
             </IconButton>
@@ -219,6 +220,7 @@ export function DrawerContent({
               disabled={!currentPartner.email}
               sx={{ color: "#4C8BF5" }}
               href={`mailto:${currentPartner.email}?subject=Support Raising Letter - ${currentPartner.name}&body=${message}`}
+              target="_blank"
             >
               <Email fontSize="large" />
             </IconButton>
