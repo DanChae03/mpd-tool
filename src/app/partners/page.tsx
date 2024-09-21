@@ -633,7 +633,6 @@ export default function Partners(): ReactElement {
             }}
           >
             <DrawerContent
-              partner={selectedPartner}
               onClose={() => {
                 setDrawerOpen(false);
                 setSelectedPartner(null);

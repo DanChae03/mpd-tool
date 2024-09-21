@@ -14,7 +14,7 @@ export type Partner = {
   saved: boolean;
 };
 
-export type SelectedPartner = {
+export type CurrentPartner = {
   name: string;
   email: string | null;
   number: string | null;

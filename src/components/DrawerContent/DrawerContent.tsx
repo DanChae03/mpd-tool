@@ -1,6 +1,6 @@
 "use client";
 
-import { Partner, SelectedPartner } from "@/utils/types";
+import { Partner, CurrentPartner } from "@/utils/types";
 import {
   Call,
   DeleteForever,
@@ -35,43 +35,44 @@ import { auth, updateNewPartners } from "@/utils/firebase";
 import { v4 as uuidv4 } from "uuid";
 import { DataContext } from "../DataProvider/DataProvider";
 import { useTheme } from "@mui/material";
+import { PartnersContext } from "../PartnersProvider/PartnersProvider";
 
 interface DrawerContentProps {
-  partner: Partner | null;
   onClose: () => void;
   setSnackbarOpen: () => void;
   setSnackbarMessage: Dispatch<SetStateAction<string>>;
 }
 
 export function DrawerContent({
-  partner,
   onClose,
   setSnackbarOpen,
   setSnackbarMessage,
 }: DrawerContentProps): ReactElement {
-  const [selectedPartner, setSelectedPartner] = useState<SelectedPartner>({
-    name: partner?.name ?? "",
-    email: partner?.email ?? null,
-    number: partner?.number ?? null,
-    nextStepDate: partner?.nextStepDate
-      ? dayjs(partner.nextStepDate).format("DD/MM/YYYY")
+  const { selectedPartner, setSelectedPartner } = useContext(PartnersContext);
+
+  const [currentPartner, setCurrentPartner] = useState<CurrentPartner>({
+    name: selectedPartner?.name ?? "",
+    email: selectedPartner?.email ?? null,
+    number: selectedPartner?.number ?? null,
+    nextStepDate: selectedPartner?.nextStepDate
+      ? dayjs(selectedPartner.nextStepDate).format("DD/MM/YYYY")
       : null,
-    pledgedAmount: partner?.pledgedAmount ?? null,
-    confirmedDate: partner?.confirmedDate
-      ? dayjs(partner.confirmedDate).format("DD/MM/YYYY")
+    pledgedAmount: selectedPartner?.pledgedAmount ?? null,
+    confirmedDate: selectedPartner?.confirmedDate
+      ? dayjs(selectedPartner.confirmedDate).format("DD/MM/YYYY")
       : null,
-    confirmedAmount: partner?.confirmedAmount ?? null,
-    notes: partner?.notes ?? "",
-    status: partner?.status ?? "To Ask",
-    saved: partner?.saved ?? false,
+    confirmedAmount: selectedPartner?.confirmedAmount ?? null,
+    notes: selectedPartner?.notes ?? "",
+    status: selectedPartner?.status ?? "To Ask",
+    saved: selectedPartner?.saved ?? false,
   });
 
   const { setPartners, partners, message } = useContext(DataContext);
 
   const theme = useTheme();
 
-  const handleFieldChange = (field: keyof SelectedPartner, value: any) => {
-    setSelectedPartner((prev) => ({
+  const handleFieldChange = (field: keyof CurrentPartner, value: any) => {
+    setCurrentPartner((prev) => ({
       ...prev,
       [field]: value,
     }));
@@ -91,12 +92,11 @@ export function DrawerContent({
         );
         updateNewPartners(userEmail, updatedPartners).then(() => {
           setSnackbarMessage(
-            partner != null
+            selectedPartner != null
               ? "Partner updated successfully."
               : "Partner created successfully."
           );
           setSnackbarOpen();
-          onClose();
           setPartners(updatedPartners);
         });
       } else if (newPartner != null) {
@@ -104,13 +104,13 @@ export function DrawerContent({
         const updatedPartners = [...partners, newPartner];
         updateNewPartners(userEmail, updatedPartners).then(() => {
           setSnackbarMessage(
-            partner != null
+            selectedPartner != null
               ? "Partner updated successfully."
               : "Partner created successfully."
           );
           setSnackbarOpen();
-          onClose();
           setPartners(updatedPartners);
+          setSelectedPartner(newPartner);
         });
       } else {
         // Delete
@@ -130,56 +130,55 @@ export function DrawerContent({
     const userEmail = auth.currentUser?.email;
     if (userEmail != null) {
       const newPartner: Partner = {
-        id: partner != null ? partner.id : uuidv4(),
-        ...selectedPartner,
+        id: selectedPartner != null ? selectedPartner.id : uuidv4(),
+        ...currentPartner,
         nextStepDate:
-          selectedPartner.nextStepDate != null &&
-          selectedPartner.status !== "Confirmed"
-            ? dayjs(selectedPartner.nextStepDate, "DD/MM/YYYY").toString()
+          currentPartner.nextStepDate != null &&
+          currentPartner.status !== "Confirmed"
+            ? dayjs(currentPartner.nextStepDate, "DD/MM/YYYY").toString()
             : null,
         pledgedAmount:
-          selectedPartner.pledgedAmount != null &&
-          selectedPartner.pledgedAmount > 0 &&
-          (selectedPartner.status === "Confirmed" ||
-            selectedPartner.status === "Pledged")
-            ? selectedPartner.pledgedAmount
+          currentPartner.pledgedAmount != null &&
+          currentPartner.pledgedAmount > 0 &&
+          (currentPartner.status === "Confirmed" ||
+            currentPartner.status === "Pledged")
+            ? currentPartner.pledgedAmount
             : null,
         confirmedAmount:
-          selectedPartner.confirmedAmount != null &&
-          selectedPartner.confirmedAmount > 0 &&
-          selectedPartner.status === "Confirmed"
-            ? selectedPartner.confirmedAmount
+          currentPartner.confirmedAmount != null &&
+          currentPartner.confirmedAmount > 0 &&
+          currentPartner.status === "Confirmed"
+            ? currentPartner.confirmedAmount
             : null,
         confirmedDate:
-          selectedPartner.confirmedDate != null &&
-          selectedPartner.status === "Confirmed"
-            ? dayjs(selectedPartner.confirmedDate, "DD/MM/YYYY").toString()
+          currentPartner.confirmedDate != null &&
+          currentPartner.status === "Confirmed"
+            ? dayjs(currentPartner.confirmedDate, "DD/MM/YYYY").toString()
             : null,
       };
-      updatePartners(newPartner, newPartner.id, partner == null);
+      updatePartners(newPartner, newPartner.id, selectedPartner == null);
     }
   };
 
   const handleDelete = async () => {
     const userEmail = auth.currentUser?.email;
-    if (userEmail != null && partner != null) {
-      updatePartners(null, partner.id, false);
+    if (userEmail != null && selectedPartner != null) {
+      updatePartners(null, selectedPartner.id, false);
     }
   };
 
   const enabled =
-    (selectedPartner.status === "Pledged"
-      ? selectedPartner.pledgedAmount != null &&
-        selectedPartner.pledgedAmount > 0
-      : selectedPartner.status === "Confirmed"
-        ? selectedPartner.pledgedAmount != null &&
-          selectedPartner.pledgedAmount > 0 &&
-          selectedPartner.confirmedAmount != null &&
-          selectedPartner.confirmedAmount > 0 &&
-          selectedPartner.confirmedDate != null
+    (currentPartner.status === "Pledged"
+      ? currentPartner.pledgedAmount != null && currentPartner.pledgedAmount > 0
+      : currentPartner.status === "Confirmed"
+        ? currentPartner.pledgedAmount != null &&
+          currentPartner.pledgedAmount > 0 &&
+          currentPartner.confirmedAmount != null &&
+          currentPartner.confirmedAmount > 0 &&
+          currentPartner.confirmedDate != null
         : true) &&
-    selectedPartner.name &&
-    selectedPartner.name.trim();
+    currentPartner.name &&
+    currentPartner.name.trim();
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
@@ -193,13 +192,13 @@ export function DrawerContent({
       >
         <Stack direction="row" alignItems="center" spacing="9px">
           <Typography variant="h4" fontWeight="bold">
-            {partner != null ? selectedPartner.name : "New Partner"}
+            {selectedPartner != null ? currentPartner.name : "New Partner"}
           </Typography>
-          {partner != null && (
+          {selectedPartner != null && (
             <IconButton
-              onClick={() => handleFieldChange("saved", !selectedPartner.saved)}
+              onClick={() => handleFieldChange("saved", !currentPartner.saved)}
             >
-              {selectedPartner.saved ? (
+              {currentPartner.saved ? (
                 <Star fontSize="large" sx={{ color: "#FFC443" }} />
               ) : (
                 <StarBorder fontSize="large" />
@@ -207,19 +206,19 @@ export function DrawerContent({
             </IconButton>
           )}
         </Stack>
-        {partner != null && (
+        {selectedPartner != null && (
           <Stack direction="row" spacing="9px">
             <IconButton
-              disabled={!selectedPartner.number}
+              disabled={!currentPartner.number}
               sx={{ color: "success.main" }}
-              href={`tel:${selectedPartner.number}`}
+              href={`tel:${currentPartner.number}`}
             >
               <Call fontSize="large" />
             </IconButton>
             <IconButton
-              disabled={!selectedPartner.email}
+              disabled={!currentPartner.email}
               sx={{ color: "#4C8BF5" }}
-              href={`mailto:${selectedPartner.email}?subject=Support Raising Letter - ${selectedPartner.name}&body=${message}`}
+              href={`mailto:${currentPartner.email}?subject=Support Raising Letter - ${currentPartner.name}&body=${message}`}
             >
               <Email fontSize="large" />
             </IconButton>
@@ -238,7 +237,7 @@ export function DrawerContent({
         <Select
           size="small"
           fullWidth
-          value={selectedPartner.status}
+          value={currentPartner.status}
           onChange={(event) => handleFieldChange("status", event.target.value)}
         >
           <MenuItem value={"To Ask"}>To Ask</MenuItem>
@@ -250,8 +249,8 @@ export function DrawerContent({
           <MenuItem value={"Rejected"}>Rejected</MenuItem>
         </Select>
       </Stack>
-      {selectedPartner.status !== "Rejected" &&
-        selectedPartner.status !== "Confirmed" && (
+      {currentPartner.status !== "Rejected" &&
+        currentPartner.status !== "Confirmed" && (
           <Stack
             direction="row"
             alignItems="center"
@@ -264,8 +263,8 @@ export function DrawerContent({
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 value={
-                  selectedPartner.nextStepDate
-                    ? dayjs(selectedPartner.nextStepDate, "DD/MM/YYYY")
+                  currentPartner.nextStepDate
+                    ? dayjs(currentPartner.nextStepDate, "DD/MM/YYYY")
                     : null
                 }
                 onChange={(newDate) =>
@@ -303,7 +302,7 @@ export function DrawerContent({
           fullWidth
           placeholder="Full Name"
           size="small"
-          value={selectedPartner.name}
+          value={currentPartner.name}
           onChange={(event) => handleFieldChange("name", event.target.value)}
         />
       </Stack>
@@ -320,7 +319,7 @@ export function DrawerContent({
           fullWidth
           placeholder="example@example.com"
           size="small"
-          value={selectedPartner.email}
+          value={currentPartner.email}
           onChange={(event) => handleFieldChange("email", event.target.value)}
         />
       </Stack>
@@ -337,7 +336,7 @@ export function DrawerContent({
           fullWidth
           placeholder="Phone Number here"
           size="small"
-          value={selectedPartner.number}
+          value={currentPartner.number}
           onChange={(event) => handleFieldChange("number", event.target.value)}
         />
       </Stack>
@@ -356,12 +355,12 @@ export function DrawerContent({
           maxRows={4}
           placeholder="Notes"
           size="small"
-          value={selectedPartner.notes}
+          value={currentPartner.notes}
           onChange={(event) => handleFieldChange("notes", event.target.value)}
         />
       </Stack>
-      {(selectedPartner.status === "Pledged" ||
-        selectedPartner.status === "Confirmed") && (
+      {(currentPartner.status === "Pledged" ||
+        currentPartner.status === "Confirmed") && (
         <Stack
           direction="row"
           alignItems="center"
@@ -377,14 +376,14 @@ export function DrawerContent({
             fullWidth
             placeholder="Pledged Amount"
             size="small"
-            value={selectedPartner.pledgedAmount ?? ""}
+            value={currentPartner.pledgedAmount ?? ""}
             onChange={(event) =>
               handleFieldChange("pledgedAmount", parseFloat(event.target.value))
             }
           />
         </Stack>
       )}
-      {selectedPartner.status === "Confirmed" && (
+      {currentPartner.status === "Confirmed" && (
         <>
           <Stack
             direction="row"
@@ -401,7 +400,7 @@ export function DrawerContent({
               fullWidth
               placeholder="Confirmed Amount"
               size="small"
-              value={selectedPartner.confirmedAmount ?? ""}
+              value={currentPartner.confirmedAmount ?? ""}
               onChange={(event) =>
                 handleFieldChange(
                   "confirmedAmount",
@@ -423,8 +422,8 @@ export function DrawerContent({
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 value={
-                  selectedPartner.confirmedDate
-                    ? dayjs(selectedPartner.confirmedDate, "DD/MM/YYYY")
+                  currentPartner.confirmedDate
+                    ? dayjs(currentPartner.confirmedDate, "DD/MM/YYYY")
                     : null
                 }
                 onChange={(newDate) =>
