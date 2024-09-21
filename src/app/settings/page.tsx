@@ -36,12 +36,11 @@ export default function Dashboard(): ReactElement {
     setDeadline,
     message,
     setMessage,
-    setPartners,
     setProject,
     project,
     projects,
     setProjects,
-    setStats,
+    setCoreData,
   } = useContext(DataContext);
 
   const [settings, setSettings] = useState<CurrentSettings>({
@@ -64,34 +63,18 @@ export default function Dashboard(): ReactElement {
 
   useEffect(() => {
     const getData = async () => {
-      if (target === 0) {
-        const email = auth.currentUser?.email;
-        if (email != null) {
-          const data = await fetchDocument(email);
-          if (data != null) {
-            setMessage(data.message);
-            setTarget(data.target);
-            setDeadline(dayjs(data.deadline));
-            setProject(data.project);
-            setSettings({
-              currentMessage: data.message,
-              currentTarget: data.target,
-              currentDeadline: dayjs(data.deadline),
-              currentProject: data.project,
-              changed: false,
-            });
-            setStats(data.stats);
-            setPartners(data.partners);
-          }
-        }
-      }
-    };
-
-    const getProjects = async () => {
-      if (projects.length === 0) {
-        const data = await fetchProjects();
+      const email = auth.currentUser?.email;
+      if (target === 0 && email != null) {
+        const data = await fetchDocument(email);
         if (data != null) {
-          setProjects(data.projects);
+          setCoreData(data);
+          setSettings({
+            currentMessage: data.message,
+            currentTarget: data.target,
+            currentDeadline: dayjs(data.deadline),
+            currentProject: data.project,
+            changed: false,
+          });
         }
       }
     };
@@ -104,18 +87,16 @@ export default function Dashboard(): ReactElement {
         router.push("/");
       }
     });
-  }, [
-    projects.length,
-    router,
-    setDeadline,
-    setMessage,
-    setPartners,
-    setProject,
-    setProjects,
-    setStats,
-    setTarget,
-    target,
-  ]);
+
+    const getProjects = async () => {
+      if (projects.length === 0) {
+        const data = await fetchProjects();
+        if (data != null) {
+          setProjects(data.projects);
+        }
+      }
+    };
+  }, [projects.length, router, setCoreData, setProjects, target]);
 
   const setData = async () => {
     const email = auth.currentUser?.email;

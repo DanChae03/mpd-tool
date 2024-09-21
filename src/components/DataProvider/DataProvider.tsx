@@ -1,6 +1,7 @@
 "use client";
 import { Partner, Statistics } from "@/utils/types";
 import dayjs, { Dayjs } from "dayjs";
+import { DocumentData } from "firebase/firestore";
 import {
   createContext,
   Dispatch,
@@ -28,6 +29,7 @@ interface DataContextType {
   setProjects: Dispatch<SetStateAction<string[]>>;
   stats: Statistics;
   setStats: Dispatch<SetStateAction<Statistics>>;
+  setCoreData: (data: DocumentData) => void;
 }
 
 export const DataContext = createContext<DataContextType>(
@@ -40,13 +42,23 @@ export function DataProvider({ children }: DataProviderProps) {
   const [deadline, setDeadline] = useState<Dayjs>(dayjs());
   const [message, setMessage] = useState<string>("");
   const [project, setProject] = useState<string>("No Project");
-  const [projects, setProjects] = useState<string[]>([]);
   const [stats, setStats] = useState<Statistics>({
     confirmed: 0,
     letters: 0,
     outstandingLetters: 0,
     pledged: 0,
   });
+
+  const setCoreData = (data: DocumentData) => {
+    setMessage(data.message);
+    setTarget(data.target);
+    setDeadline(dayjs(data.deadline));
+    setProject(data.project);
+    setStats(data.stats);
+    setPartners(data.partners);
+  };
+
+  const [projects, setProjects] = useState<string[]>([]);
 
   return (
     <DataContext.Provider
@@ -65,6 +77,7 @@ export function DataProvider({ children }: DataProviderProps) {
         setProjects,
         stats,
         setStats,
+        setCoreData,
       }}
     >
       {children}

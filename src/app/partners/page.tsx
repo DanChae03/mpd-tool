@@ -118,17 +118,8 @@ export default function Partners(): ReactElement {
     "Operation successful."
   );
 
-  const {
-    partners,
-    setPartners,
-    setMessage,
-    target,
-    setTarget,
-    setDeadline,
-    setProject,
-    stats,
-    setStats,
-  } = useContext(DataContext);
+  const { partners, target, stats, setStats, setCoreData } =
+    useContext(DataContext);
 
   const {
     order,
@@ -155,18 +146,11 @@ export default function Partners(): ReactElement {
 
   useEffect(() => {
     const getData = async () => {
-      if (target === 0) {
-        const email = auth.currentUser?.email;
-        if (email != null) {
-          const data = await fetchDocument(email);
-          if (data != null) {
-            setMessage(data.message);
-            setTarget(data.target);
-            setDeadline(dayjs(data.deadline));
-            setProject(data.project);
-            setStats(data.stats);
-            setPartners(data.partners);
-          }
+      const email = auth.currentUser?.email;
+      if (target === 0 && email != null) {
+        const data = await fetchDocument(email);
+        if (data != null) {
+          setCoreData(data);
         }
       }
     };
@@ -178,16 +162,7 @@ export default function Partners(): ReactElement {
         router.push("/");
       }
     });
-  }, [
-    router,
-    setDeadline,
-    setMessage,
-    setPartners,
-    setProject,
-    setStats,
-    setTarget,
-    target,
-  ]);
+  }, [router, setCoreData, target]);
 
   useEffect(() => {
     let filteredSearch = partners;

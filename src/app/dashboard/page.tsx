@@ -24,18 +24,8 @@ import Dialog from "@mui/material/Dialog";
 import Button from "@mui/material/Button";
 
 export default function Dashboard(): ReactElement {
-  const {
-    partners,
-    setPartners,
-    target,
-    setTarget,
-    deadline,
-    setDeadline,
-    setMessage,
-    setProject,
-    stats,
-    setStats,
-  } = useContext(DataContext);
+  const { partners, target, deadline, stats, setCoreData } =
+    useContext(DataContext);
 
   const router = useRouter();
 
@@ -48,13 +38,8 @@ export default function Dashboard(): ReactElement {
       if (target === 0 && email != null) {
         const data = await fetchDocument(email);
         if (data != null) {
-          setMessage(data.message);
-          setTarget(data.target);
-          setDeadline(dayjs(data.deadline));
+          setCoreData(data);
           setOpen(data.newUser);
-          setProject(data.project);
-          setStats(data.stats);
-          setPartners(data.partners);
         }
       }
     };
@@ -66,16 +51,7 @@ export default function Dashboard(): ReactElement {
         router.push("/");
       }
     });
-  }, [
-    router,
-    setDeadline,
-    setMessage,
-    setPartners,
-    setProject,
-    setStats,
-    setTarget,
-    target,
-  ]);
+  }, [router, setCoreData, target]);
 
   const completeOnboarding = async () => {
     const email = auth.currentUser?.email;
