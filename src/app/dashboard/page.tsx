@@ -233,7 +233,7 @@ export default function Dashboard(): ReactElement {
                 </Stack>
               </Stack>
             </Card>
-            <Card sx={{ width: "60%", padding: "27px", maxHeight: "396px" }}>
+            <Card sx={{ width: "55%", padding: "27px", maxHeight: "396px" }}>
               <Stack
                 direction="row"
                 justifyContent="space-between"

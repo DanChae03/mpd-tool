@@ -34,6 +34,7 @@ import DialogActions from "@mui/material/DialogActions";
 import { auth, updateNewPartners } from "@/utils/firebase";
 import { v4 as uuidv4 } from "uuid";
 import { DataContext } from "../DataProvider/DataProvider";
+import { useTheme } from "@mui/material";
 
 interface DrawerContentProps {
   partner: Partner | null;
@@ -66,6 +67,8 @@ export function DrawerContent({
   });
 
   const { setPartners, partners, message } = useContext(DataContext);
+
+  const theme = useTheme();
 
   const handleFieldChange = (field: keyof SelectedPartner, value: any) => {
     setSelectedPartner((prev) => ({
@@ -229,7 +232,7 @@ export function DrawerContent({
         width="100%"
         justifyContent="space-between"
       >
-        <Typography width="50%" fontWeight="bold" fontSize="18px">
+        <Typography width="55%" fontWeight="bold" fontSize="18px">
           Current Status
         </Typography>
         <Select
@@ -255,7 +258,7 @@ export function DrawerContent({
             width="100%"
             justifyContent="space-between"
           >
-            <Typography width="50%" fontWeight="bold" fontSize="18px">
+            <Typography width="55%" fontWeight="bold" fontSize="18px">
               Next Step Date
             </Typography>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -292,8 +295,9 @@ export function DrawerContent({
         width="100%"
         justifyContent="space-between"
       >
-        <Typography width="50%" fontWeight="bold" fontSize="18px">
+        <Typography width="55%" fontWeight="bold" fontSize="18px">
           Name
+          <span style={{ color: theme.palette.primary.main }}> *</span>
         </Typography>
         <TextField
           fullWidth
@@ -309,7 +313,7 @@ export function DrawerContent({
         width="100%"
         justifyContent="space-between"
       >
-        <Typography width="50%" fontWeight="bold" fontSize="18px">
+        <Typography width="55%" fontWeight="bold" fontSize="18px">
           Email
         </Typography>
         <TextField
@@ -326,7 +330,7 @@ export function DrawerContent({
         width="100%"
         justifyContent="space-between"
       >
-        <Typography width="50%" fontWeight="bold" fontSize="18px">
+        <Typography width="55%" fontWeight="bold" fontSize="18px">
           Number
         </Typography>
         <TextField
@@ -343,7 +347,7 @@ export function DrawerContent({
         width="100%"
         justifyContent="space-between"
       >
-        <Typography width="50%" fontWeight="bold" fontSize="18px">
+        <Typography width="55%" fontWeight="bold" fontSize="18px">
           Notes
         </Typography>
         <TextField
@@ -364,8 +368,9 @@ export function DrawerContent({
           width="100%"
           justifyContent="space-between"
         >
-          <Typography width="50%" fontWeight="bold" fontSize="18px">
+          <Typography width="55%" fontWeight="bold" fontSize="18px">
             Amount Pledged
+            <span style={{ color: theme.palette.primary.main }}> *</span>
           </Typography>
           <TextField
             type="number"
@@ -387,8 +392,9 @@ export function DrawerContent({
             width="100%"
             justifyContent="space-between"
           >
-            <Typography width="50%" fontWeight="bold" fontSize="18px">
+            <Typography width="55%" fontWeight="bold" fontSize="18px">
               Amount Confirmed
+              <span style={{ color: theme.palette.primary.main }}> *</span>
             </Typography>
             <TextField
               type="number"
@@ -410,8 +416,9 @@ export function DrawerContent({
             width="100%"
             justifyContent="space-between"
           >
-            <Typography width="50%" fontWeight="bold" fontSize="18px">
+            <Typography width="55%" fontWeight="bold" fontSize="18px">
               Date Received
+              <span style={{ color: theme.palette.primary.main }}> *</span>
             </Typography>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
