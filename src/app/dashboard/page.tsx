@@ -252,11 +252,12 @@ export default function Dashboard(): ReactElement {
                   Welcome to MPD Easy!
                 </Typography>
                 <Typography variant="h6" textAlign="center">
-                  This tool was developed by Dan Chae after he tried to support
-                  raise for an International project using an Excel spreadsheet.
+                  This tool was developed by Dan Chae after his struggles trying
+                  to support raise for the 2023 Taiwan Project using an Excel
+                  spreadsheet.
                 </Typography>
                 <Typography variant="h6" fontWeight="bold" textAlign="center">
-                  {`Get started by going to the Settings Page and changing the
+                  {`Get started by going to the Settings Page and selecting your Project from the dropdown. Next, change the
                   Support target and Deadline date to that of your Project's.
                   Make sure to save your changes.`}
                 </Typography>

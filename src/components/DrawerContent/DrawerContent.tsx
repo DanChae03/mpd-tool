@@ -219,7 +219,7 @@ export function DrawerContent({
             <IconButton
               disabled={!currentPartner.email}
               sx={{ color: "#4C8BF5" }}
-              href={`mailto:${currentPartner.email}?subject=Support Raising Letter - ${currentPartner.name}&body=${message}`}
+              href={`mailto:${currentPartner.email}?subject=Support Raising Letter - ${encodeURIComponent(currentPartner.name)}&body=${encodeURIComponent(message)}`}
               target="_blank"
             >
               <Email fontSize="large" />
