@@ -27,7 +27,12 @@ import InputLabel from "@mui/material/InputLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
 
-import { auth, fetchDocument, fetchProjects } from "@/utils/firebase";
+import {
+  auth,
+  fetchDocument,
+  fetchProjects,
+  fetchUsers,
+} from "@/utils/firebase";
 import { UserIcon } from "@/components/UserIcon";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
@@ -65,8 +70,15 @@ function getComparator<Key extends keyof any>(
 }
 
 export default function Users(): ReactElement {
-  const { target, setCoreData, users, projects, setProjects } =
-    useContext(DataContext);
+  const {
+    target,
+    setCoreData,
+    users,
+    setUsers,
+    projects,
+    setProjects,
+    isAdmin,
+  } = useContext(DataContext);
 
   const {
     order,
@@ -88,6 +100,19 @@ export default function Users(): ReactElement {
   const router = useRouter();
 
   useEffect(() => {
+    const getUsers = async () => {
+      if (users.length === 0) {
+        const newUsers = await fetchUsers();
+        if (newUsers != null) {
+          setUsers(newUsers);
+        }
+      }
+    };
+
+    getUsers();
+  }, [setUsers, users]);
+
+  useEffect(() => {
     const getData = async () => {
       const email = auth.currentUser?.email;
       if (target === 0 && email != null) {
@@ -99,7 +124,9 @@ export default function Users(): ReactElement {
     };
 
     onAuthStateChanged(auth, (user) => {
-      if (user) {
+      if (user && !isAdmin) {
+        router.push("/dashboard");
+      } else if (user) {
         getData();
         getProjects();
       } else {
@@ -115,7 +142,7 @@ export default function Users(): ReactElement {
         }
       }
     };
-  }, [projects.length, router, setCoreData, setProjects, target]);
+  }, [projects, router, setCoreData, setProjects, setUsers, target, users]);
 
   useEffect(() => {
     let filteredSearch = users;

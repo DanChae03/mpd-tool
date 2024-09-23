@@ -9,7 +9,6 @@ import {
   SetStateAction,
   useState,
 } from "react";
-import { userData } from "./testData";
 
 interface DataProviderProps {
   children: ReactNode;
@@ -54,7 +53,7 @@ export function DataProvider({ children }: DataProviderProps) {
     pledged: 0,
   });
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const [users, setUsers] = useState<UserStatistics[]>(userData);
+  const [users, setUsers] = useState<UserStatistics[]>([]);
 
   const setCoreData = (data: DocumentData) => {
     setMessage(data.message);

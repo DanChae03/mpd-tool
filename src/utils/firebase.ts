@@ -1,13 +1,17 @@
 import { initializeApp } from "firebase/app";
 import {
+  collection,
   doc,
   getDoc,
+  getDocs,
   getFirestore,
+  query,
   setDoc,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { Partner, Settings } from "./types";
+import { Partner, Settings, UserStatistics } from "./types";
 import dayjs from "dayjs";
 
 const firebaseConfig = {
@@ -70,7 +74,7 @@ export const updateNewPartners = async (email: string, partners: Partner[]) => {
   }
 };
 
-export const createUser = async (email: string) => {
+export const createUser = async (name: string, email: string) => {
   try {
     await setDoc(doc(database, "users", email), {
       deadline: dayjs().add(1, "month").toString(),
@@ -86,6 +90,7 @@ export const createUser = async (email: string) => {
         confirmed: 0,
       },
       partners: [],
+      name: name,
     });
   } catch (error) {
     console.error("Error creating document:", error);
@@ -100,4 +105,31 @@ export const setNewUser = async (email: string) => {
 
 export const updateSettings = async (email: string, settings: Settings) => {
   await updateDoc(doc(database, "users", email), settings);
+};
+
+export const fetchUsers = async () => {
+  const usersRef = collection(database, "users");
+  const queryRef = query(usersRef, where("admin", "==", false));
+
+  try {
+    const querySnapshot = await getDocs(queryRef);
+    const users: UserStatistics[] = [];
+    querySnapshot.docs.forEach((doc) => {
+      const docData = doc.data();
+      users.push({
+        ...docData.stats,
+        id: doc.id,
+        project: docData.project,
+        name: docData.name,
+        target: docData.target,
+      });
+    });
+
+    console.log(users);
+
+    return users;
+  } catch (error) {
+    console.error("Error fetching users: ", error);
+  }
+  return undefined;
 };

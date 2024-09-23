@@ -36,8 +36,9 @@ export default function Home(): ReactElement {
       .then((result) => {
         const isNewUser = getAdditionalUserInfo(result)?.isNewUser;
         const email = auth.currentUser?.email;
-        if (isNewUser && email != null) {
-          createUser(email);
+        const name = auth.currentUser?.displayName;
+        if (isNewUser && email != null && name != null) {
+          createUser(name, email);
         }
       })
       .catch((error) => {
