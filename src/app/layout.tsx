@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { DataProvider } from "@/components/DataProvider";
 import { PartnersProvider } from "@/components/PartnersProvider";
+import { UsersProvider } from "@/components/UsersProvider/UsersProvider";
 
 export const metadata: Metadata = {
   title: "Support Raising Tool",
@@ -19,7 +20,9 @@ export default function RootLayout({
       <body>
         <DataProvider>
           <PartnersProvider>
-            <ThemeProvider>{children}</ThemeProvider>
+            <UsersProvider>
+              <ThemeProvider>{children}</ThemeProvider>
+            </UsersProvider>
           </PartnersProvider>
         </DataProvider>
       </body>

@@ -1,5 +1,5 @@
 "use client";
-import { Partner, Statistics } from "@/utils/types";
+import { Partner, Statistics, UserStatistics } from "@/utils/types";
 import dayjs, { Dayjs } from "dayjs";
 import { DocumentData } from "firebase/firestore";
 import {
@@ -9,6 +9,7 @@ import {
   SetStateAction,
   useState,
 } from "react";
+import { userData } from "./testData";
 
 interface DataProviderProps {
   children: ReactNode;
@@ -29,6 +30,10 @@ interface DataContextType {
   setProjects: Dispatch<SetStateAction<string[]>>;
   stats: Statistics;
   setStats: Dispatch<SetStateAction<Statistics>>;
+  isAdmin: boolean;
+  setIsAdmin: Dispatch<SetStateAction<boolean>>;
+  users: UserStatistics[];
+  setUsers: Dispatch<SetStateAction<UserStatistics[]>>;
   setCoreData: (data: DocumentData) => void;
 }
 
@@ -48,6 +53,8 @@ export function DataProvider({ children }: DataProviderProps) {
     outstandingLetters: 0,
     pledged: 0,
   });
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [users, setUsers] = useState<UserStatistics[]>(userData);
 
   const setCoreData = (data: DocumentData) => {
     setMessage(data.message);
@@ -56,6 +63,7 @@ export function DataProvider({ children }: DataProviderProps) {
     setProject(data.project);
     setStats(data.stats);
     setPartners(data.partners);
+    setIsAdmin(data.admin);
   };
 
   const [projects, setProjects] = useState<string[]>([]);
@@ -77,6 +85,10 @@ export function DataProvider({ children }: DataProviderProps) {
         setProjects,
         stats,
         setStats,
+        isAdmin,
+        setIsAdmin,
+        users,
+        setUsers,
         setCoreData,
       }}
     >

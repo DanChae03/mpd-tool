@@ -1,18 +1,27 @@
 "use client";
 
-import { Handshake, Settings, SpaceDashboard } from "@mui/icons-material";
+import {
+  Handshake,
+  People,
+  Settings,
+  SpaceDashboard,
+} from "@mui/icons-material";
 import CardActionArea from "@mui/material/CardActionArea";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import Image from "next/image";
+import { DataContext } from "../DataProvider/DataProvider";
+import { useContext } from "react";
 
 interface NavbarProps {
-  page: string; // "dashboard" | "partners" | "settings";
+  page: string; // "dashboard" | "partners" | "settings" | "users";
 }
 
 export function Navbar({ page }: NavbarProps) {
+  const { isAdmin } = useContext(DataContext);
+
   return (
     <Stack
       alignItems="center"
@@ -29,6 +38,39 @@ export function Navbar({ page }: NavbarProps) {
         height="100%"
         marginBottom="115px"
       >
+        {isAdmin && (
+          <>
+            <Link
+              href="/users"
+              replace
+              style={{ textDecoration: "none", width: "100%" }}
+            >
+              <CardActionArea
+                sx={{
+                  py: "18px",
+                  px: "45px",
+                  bgcolor:
+                    page !== "users"
+                      ? "background.paper"
+                      : "background.default",
+                }}
+              >
+                <Typography
+                  variant="h5"
+                  fontWeight="bold"
+                  color={page === "users" ? "primary.main" : "secondary.main"}
+                  justifyContent="space-between"
+                  alignItems="center"
+                  display="flex"
+                >
+                  Users
+                  <People />
+                </Typography>
+              </CardActionArea>
+            </Link>
+            <Divider />
+          </>
+        )}
         <Link
           href="/dashboard"
           replace

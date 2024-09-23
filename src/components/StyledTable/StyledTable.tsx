@@ -1,4 +1,4 @@
-import { Order, Partner } from "@/utils/types";
+import { Order, Partner, UserStatistics } from "@/utils/types";
 import Box from "@mui/material/Box";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
@@ -10,6 +10,13 @@ import { visuallyHidden } from "@mui/utils";
 interface HeadCell {
   disablePadding: boolean;
   id: keyof Partner;
+  label: string;
+  numeric: boolean;
+}
+
+interface UserHeadCell {
+  disablePadding: boolean;
+  id: keyof UserStatistics;
   label: string;
   numeric: boolean;
 }
@@ -65,47 +72,129 @@ const headCells: HeadCell[] = [
   },
 ];
 
+const userHeadCells: UserHeadCell[] = [
+  {
+    id: "name",
+    numeric: false,
+    disablePadding: false,
+    label: "Name",
+  },
+  {
+    id: "letters",
+    numeric: true,
+    disablePadding: false,
+    label: "Letters",
+  },
+  {
+    id: "outstandingLetters",
+    numeric: true,
+    disablePadding: false,
+    label: "Letters Outstanding",
+  },
+  {
+    id: "pledged",
+    numeric: true,
+    disablePadding: false,
+    label: "Pledged Amount",
+  },
+  {
+    id: "confirmed",
+    numeric: true,
+    disablePadding: false,
+    label: "Confirmed Amount",
+  },
+  {
+    id: "target",
+    numeric: true,
+    disablePadding: false,
+    label: "Target",
+  },
+  {
+    id: "project",
+    numeric: true,
+    disablePadding: false,
+    label: "Project",
+  },
+];
+
 interface StyledTableProps {
   onRequestSort: (event: MouseEvent<unknown>, property: keyof Partner) => void;
+  onUsersRequestSort: (
+    event: MouseEvent<unknown>,
+    property: keyof UserStatistics
+  ) => void;
   order: Order;
   orderBy: string;
-  rowCount: number;
+  isPartners: boolean;
 }
 
 export function StyledTable({
   order,
   orderBy,
   onRequestSort,
+  onUsersRequestSort,
+  isPartners,
 }: StyledTableProps) {
   const createSortHandler =
     (property: keyof Partner) => (event: MouseEvent<unknown>) => {
       onRequestSort(event, property);
     };
 
+  const createUsersSortHandler =
+    (property: keyof UserStatistics) => (event: MouseEvent<unknown>) => {
+      onUsersRequestSort(event, property);
+    };
+
   return (
     <TableHead>
       <TableRow>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ fontSize: "18px", color: "primary.main" }}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
+        {isPartners
+          ? headCells.map((headCell) => (
+              <TableCell
+                key={headCell.id}
+                padding={headCell.disablePadding ? "none" : "normal"}
+                sortDirection={orderBy === headCell.id ? order : false}
+                sx={{ fontSize: "18px", color: "primary.main" }}
+              >
+                <TableSortLabel
+                  active={orderBy === headCell.id}
+                  direction={orderBy === headCell.id ? order : "asc"}
+                  onClick={createSortHandler(headCell.id)}
+                >
+                  {headCell.label}
+                  {orderBy === headCell.id ? (
+                    <Box component="span" sx={visuallyHidden}>
+                      {order === "desc"
+                        ? "sorted descending"
+                        : "sorted ascending"}
+                    </Box>
+                  ) : null}
+                </TableSortLabel>
+              </TableCell>
+            ))
+          : userHeadCells.map((headCell) => (
+              <TableCell
+                key={headCell.id}
+                padding={headCell.disablePadding ? "none" : "normal"}
+                sortDirection={orderBy === headCell.id ? order : false}
+                sx={{ fontSize: "18px", color: "primary.main" }}
+              >
+                <TableSortLabel
+                  active={orderBy === headCell.id}
+                  direction={orderBy === headCell.id ? order : "asc"}
+                  onClick={createUsersSortHandler(headCell.id)}
+                >
+                  {headCell.label}
+                  {orderBy === headCell.id ? (
+                    <Box component="span" sx={visuallyHidden}>
+                      {order === "desc"
+                        ? "sorted descending"
+                        : "sorted ascending"}
+                    </Box>
+                  ) : null}
+                </TableSortLabel>
+              </TableCell>
+            ))}
       </TableRow>
     </TableHead>
   );

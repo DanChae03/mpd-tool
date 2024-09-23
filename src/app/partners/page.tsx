@@ -136,7 +136,6 @@ export default function Partners(): ReactElement {
     setFilteredPartners,
     searchKey,
     setSearchKey,
-    selectedPartner,
     setSelectedPartner,
     onlySaved,
     setOnlySaved,
@@ -471,7 +470,8 @@ export default function Partners(): ReactElement {
                     order={order}
                     orderBy={orderBy}
                     onRequestSort={handleRequestSort}
-                    rowCount={partners.length}
+                    onUsersRequestSort={() => {}}
+                    isPartners
                   />
                   <TableBody>
                     {visibleRows.map((row) => {

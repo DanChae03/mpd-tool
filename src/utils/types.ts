@@ -1,19 +1,5 @@
 import { Dayjs } from "dayjs";
 
-export type Partner = {
-  id: string; // unique
-  name: string;
-  email: string | null;
-  number: string | null;
-  nextStepDate: string | null; // DD/MM/YY
-  pledgedAmount: number | null;
-  confirmedDate: string | null; // DD/MM/YY
-  confirmedAmount: number | null;
-  notes: string | null; // Sentence
-  status: string;
-  saved: boolean;
-};
-
 export type CurrentPartner = {
   name: string;
   email: string | null;
@@ -27,6 +13,10 @@ export type CurrentPartner = {
   saved: boolean;
 };
 
+export type Partner = {
+  id: string; // unique
+} & CurrentPartner;
+
 export type Order = "asc" | "desc";
 
 export type Statistics = {
@@ -35,6 +25,13 @@ export type Statistics = {
   outstandingLetters: number;
   pledged: number;
 };
+
+export type UserStatistics = {
+  name: string;
+  project: string;
+  id: string;
+  target: number;
+} & Statistics;
 
 export type Settings = {
   message: string;
