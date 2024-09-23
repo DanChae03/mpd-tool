@@ -109,24 +109,20 @@ export default function Users(): ReactElement {
       }
     };
 
-    getUsers();
-  }, [setUsers, users]);
-
-  useEffect(() => {
     const getData = async () => {
       const email = auth.currentUser?.email;
       if (target === 0 && email != null) {
         const data = await fetchDocument(email);
-        if (data != null) {
+        if (data != null && !data.admin) {
+          router.push("dashboard");
+        } else if (data != null) {
           setCoreData(data);
         }
       }
     };
 
     onAuthStateChanged(auth, (user) => {
-      if (user && !isAdmin) {
-        router.push("/dashboard");
-      } else if (user) {
+      if (user) {
         getData();
         getProjects();
       } else {
@@ -142,7 +138,17 @@ export default function Users(): ReactElement {
         }
       }
     };
-  }, [projects, router, setCoreData, setProjects, setUsers, target, users]);
+
+    getUsers();
+  }, [
+    projects.length,
+    router,
+    setCoreData,
+    setProjects,
+    setUsers,
+    target,
+    users.length,
+  ]);
 
   useEffect(() => {
     let filteredSearch = users;
