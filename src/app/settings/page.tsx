@@ -217,8 +217,9 @@ export default function Dashboard(): ReactElement {
                 disabled={
                   !settings.changed ||
                   Number.isNaN(settings.currentTarget) ||
-                  settings.currentTarget < 0 ||
-                  !settings.currentMessage
+                  settings.currentTarget <= 0 ||
+                  !settings.currentMessage ||
+                  !settings.currentDeadline.isValid()
                 }
                 variant="contained"
                 sx={{
