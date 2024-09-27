@@ -131,9 +131,8 @@ export default function Dashboard(): ReactElement {
                 </Typography>
                 <People fontSize="large" sx={{ color: "primary.main" }} />
               </Stack>
-
               <Typography variant="h6">
-                Partners supporting you in finance and prayer
+                {`Partner${supporters === 1 ? "" : "s"} supporting you in finance and prayer`}
               </Typography>
             </Card>
             <Card sx={{ width: "100%", padding: "45px" }}>
@@ -176,7 +175,7 @@ export default function Dashboard(): ReactElement {
                   >
                     Next Steps
                     {filteredPartners.length > 0
-                      ? ` (${filteredPartners.length} Partners)`
+                      ? ` (${filteredPartners.length} Partner${filteredPartners.length === 1 ? "" : "s"})`
                       : ""}
                   </Typography>
                   <Stack direction="row" alignItems="center">
