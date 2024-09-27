@@ -178,7 +178,9 @@ export function DrawerContent({
           currentPartner.confirmedDate != null
         : true) &&
     currentPartner.name &&
-    currentPartner.name.trim();
+    currentPartner.name.trim() &&
+    currentPartner.nextStepDate !== "Invalid Date" &&
+    currentPartner.confirmedDate !== "Invalid Date";
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
