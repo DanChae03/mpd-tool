@@ -23,6 +23,8 @@ import {
   ReactElement,
   SetStateAction,
   useContext,
+  useEffect,
+  useRef,
   useState,
 } from "react";
 import dayjs from "dayjs";
@@ -69,7 +71,19 @@ export function DrawerContent({
 
   const { setPartners, partners, message } = useContext(DataContext);
 
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [edited, setEdited] = useState<boolean>(false);
+
   const theme = useTheme();
+  const hasRendered = useRef<boolean>(false);
+
+  useEffect(() => {
+    if (hasRendered.current) {
+      setEdited(true);
+    } else {
+      hasRendered.current = true;
+    }
+  }, [currentPartner]);
 
   const handleFieldChange = (field: keyof CurrentPartner, value: any) => {
     setCurrentPartner((prev) => ({
@@ -157,6 +171,7 @@ export function DrawerContent({
             : null,
       };
       updatePartners(newPartner, newPartner.id, selectedPartner == null);
+      setEdited(false);
     }
   };
 
@@ -180,9 +195,8 @@ export function DrawerContent({
     currentPartner.name &&
     currentPartner.name.trim() &&
     currentPartner.nextStepDate !== "Invalid Date" &&
-    currentPartner.confirmedDate !== "Invalid Date";
-
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+    currentPartner.confirmedDate !== "Invalid Date" &&
+    edited;
 
   return (
     <Stack width="630px" padding="63px" spacing="18px">
