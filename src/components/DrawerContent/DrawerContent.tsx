@@ -236,6 +236,24 @@ export function DrawerContent({
         justifyContent="space-between"
       >
         <Typography width="55%" fontWeight="bold" fontSize="18px">
+          Name
+          <span style={{ color: theme.palette.primary.main }}> *</span>
+        </Typography>
+        <TextField
+          fullWidth
+          placeholder="Full Name"
+          size="small"
+          value={currentPartner.name}
+          onChange={(event) => handleFieldChange("name", event.target.value)}
+        />
+      </Stack>
+      <Stack
+        direction="row"
+        alignItems="center"
+        width="100%"
+        justifyContent="space-between"
+      >
+        <Typography width="55%" fontWeight="bold" fontSize="18px">
           Current Status
         </Typography>
         <Select
@@ -292,24 +310,6 @@ export function DrawerContent({
             </LocalizationProvider>
           </Stack>
         )}
-      <Stack
-        direction="row"
-        alignItems="center"
-        width="100%"
-        justifyContent="space-between"
-      >
-        <Typography width="55%" fontWeight="bold" fontSize="18px">
-          Name
-          <span style={{ color: theme.palette.primary.main }}> *</span>
-        </Typography>
-        <TextField
-          fullWidth
-          placeholder="Full Name"
-          size="small"
-          value={currentPartner.name}
-          onChange={(event) => handleFieldChange("name", event.target.value)}
-        />
-      </Stack>
       <Stack
         direction="row"
         alignItems="center"
